@@ -1,8 +1,8 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap'); */
 
 * {
-    font-family: 'Roboto Mono', monospace;
+    /* font-family: 'Roboto Mono', monospace; */
     font-size: large;
 }
 

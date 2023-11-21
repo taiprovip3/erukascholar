@@ -10,27 +10,11 @@ const fs = require('fs');
 require('dotenv').config();
 const session = require('express-session');
 require('./middleware');
-const { Pool } = require('pg');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+// const { Pool } = require('pg');
+// const jwt = require('jsonwebtoken');
+// const nodemailer = require('nodemailer');
 const bycrypt = require('bcryptjs');
-
-const pool = new Pool({
-    user: "taiproduaxe",
-    host: "dpg-cjt898h5mpss738mq070-a.singapore-postgres.render.com",
-    database: "datdundinh",
-    password: "X3K8bx6Xa9Fx3CK9IbT1jiVJ5ls3h9tZ",
-    port: 5432,
-    ssl: true,
-});
-
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('Lỗi khi kết nối đến PostgreSQL:', err);
-    } else {
-        console.log('Kết nối thành công vào PostgreSQL, thời gian hiện tại:', res.rows[0].now);
-    }
-});
+const { authenticateToken } = require('./utils/oauth-middleware');
 
 // App settings
 const app = express();
@@ -63,6 +47,12 @@ const io = socketIO(server);
 app.get('/', (req, res) => {
     return res.render('index');
 });
+
+app.get('/dashboard', authenticateToken, async (req, res) => {
+  return res.send(`Hello world, ${req.session.user.email}!`);
+});
+
+app.use(require('./routes/authentication.js'));
 
 // Khởi động server
 const port = process.env.PORT;

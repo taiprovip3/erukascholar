@@ -13,7 +13,7 @@
     
             <!-- Modal body -->
             <div class="modal-body">
-                <form action="">
+                <form onsubmit="onRegisterBoxSubmit(event);">
                     <div class="mb-3 mt-3">
                         <label for="email" class="form-label">Email:</label>
                         <input type="email" class="form-control" id="register-email" placeholder="Nhập địa chỉ email" name="register-email" required maxlength="255">
@@ -37,10 +37,10 @@
                     Đã có tài khoản?
                 </button>
                 <br>
-                <button class="btn btn-light border my-1" type="button">
+                <a class="btn btn-light border my-1" href="/oauth/google">
                     <img src="https://i.pinimg.com/originals/84/c7/00/84c7007eb6ac4374f77394d1e4954a96.png" alt="Google Icon" width="20" height="20" class="me-2">
                     Đăng nhập với Google
-                </button>
+                </a>
             </div>
             <!-- Modal footer -->
             <div class="modal-footer">
@@ -50,10 +50,52 @@
         </div>
     </div>
 </div>
-
 <script>
     function reShowLoginBox() {
         $("#registerBox").modal('toggle');
         $("#loginBox").modal('toggle');
+    }
+
+    function onRegisterBoxSubmit(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById("register-email").value;
+        const pwd = document.getElementById("register-pwd").value;
+        const repwd = document.getElementById("register-repwd").value;
+
+        // Validation
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if (!emailRegex.test(email)) {
+            toastr.error('Email sai định dạng.', 'Lỗi!');
+            document.getElementById("register-email").focus();
+            return false;
+        }
+        if(repwd !== pwd) {
+            toastr.error('Mật khẩu nhập lại chưa giống nhau.', 'Lỗi!');
+            document.getElementById("register-repwd").focus();
+            return false;
+        }
+
+        const data = {// json data
+            email: email,
+            password:  window.encryptPassword(pwd),
+        };
+
+        $.ajax({
+            url: '/register/email',
+            method: 'POST',
+            data: data,
+            success: function(response) {
+                console.log("Phản hồi từ máy chủ:", response);
+                swal({
+                    title: response.title,
+                    text: response.text,
+                    icon: response.icon,
+                });
+            }, error: function(error) {
+            console.error("Lỗi:", error);
+            }
+        });
+        return false;
     }
 </script>
