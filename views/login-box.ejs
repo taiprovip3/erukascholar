@@ -1,58 +1,119 @@
 <!-- The Modal -->
 <div class="modal fade" id="loginBox">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-    
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <div class="text-center">
-                    <h4 class="modal-title fw-bold">Vui lòng đăng nhập thành viên để sử dụng thêm nhiều tiện ích!</h4>
-                </div>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-    
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form action="">
-                    <div class="mb-3 mt-3">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="login-email" placeholder="Nhập địa chỉ email" name="login-email" required maxlength="255">
-                    </div>
-                    <div class="mb-3">
-                        <label for="pwd" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="login-pwd" placeholder="Nhập mật khẩu" name="login-pwd" required maxlength="255">
-                    </div>
-                    <div class="form-check mb-3 float-end">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="remember" checked> Ghi nhớ
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
-                </form>
-                <br>
-                <button class="btn btn-light border my-1" type="button" onclick="showRegisterBox();">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL1jmY-Wp0yjfP3lH1kZVwoO-XP97haYw4aQ&usqp=CAU" alt="Google Icon" width="20" height="20" class="me-2">
-                    Chưa có tài khoản?
-                </button>
-                <br>
-                <button class="btn btn-light border my-1" type="button" onclick="showRegisterBox();">
-                    <img src="https://cdn3.iconfinder.com/data/icons/business-2-43/34/164-512.png" alt="Google Icon" width="20" height="20" class="me-2">
-                    Quên mật khẩu?
-                </button>
-            </div>
-    
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
-            </div>
-    
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="text-center">
+          <h4 class="modal-title fw-bold">Vui lòng đăng nhập thành viên để sử dụng thêm nhiều tiện ích!</h4>
         </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form onsubmit="onLoginBoxSubmit(event);">
+          <div class="mb-3 mt-3">
+            <label for="email" class="form-label">Email:</label>
+            <input
+              type="email"
+              class="form-control"
+              id="login-email"
+              placeholder="Nhập địa chỉ email"
+              name="login-email"
+              required
+              maxlength="255"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="pwd" class="form-label">Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="login-pwd"
+              placeholder="Nhập mật khẩu"
+              name="login-pwd"
+              required
+              maxlength="255"
+            />
+          </div>
+          <div class="form-check mb-3 float-end">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" name="remember" id="remember" checked /> Ghi nhớ
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        </form>
+        <br />
+        <button class="btn btn-light border my-1" type="button" onclick="showRegisterBox();">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL1jmY-Wp0yjfP3lH1kZVwoO-XP97haYw4aQ&usqp=CAU"
+            alt="Google Icon"
+            width="20"
+            height="20"
+            class="me-2"
+          />
+          Chưa có tài khoản?
+        </button>
+        <br />
+        <button class="btn btn-light border my-1" type="button" onclick="showRegisterBox();">
+          <img
+            src="https://cdn3.iconfinder.com/data/icons/business-2-43/34/164-512.png"
+            alt="Google Icon"
+            width="20"
+            height="20"
+            class="me-2"
+          />
+          Quên mật khẩu?
+        </button>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    function showRegisterBox() {
-        $("#loginBox").modal('toggle');
-        $("#registerBox").modal('toggle');
-    }
+  function showRegisterBox() {
+    $('#loginBox').modal('toggle')
+    $('#registerBox').modal('toggle')
+  }
+  function onLoginBoxSubmit(e) {
+    e.preventDefault()
+
+    const email = $("#login-email").val();
+    const pwd = $("#login-pwd").val();
+    const remember = $("#remember").is(':checked') ? 1 : 0;
+    const data = {// json data
+      email: email,
+      password: pwd,
+      is_remember: remember,
+    };
+    $.ajax({
+      url: '/login/email',
+      method: 'POST',
+      data: data,
+      success: function(sweetResponse) {
+        console.log("Phản hồi từ máy chủ:", sweetResponse);// Có trả về jwt token
+        if(sweetResponse.icon === "success") {
+          // redirect sang route login with jwt token
+          window.location.href = "/dashboard";
+        } else {
+          swal({
+            title: sweetResponse.title,
+            text: sweetResponse.text,
+            icon: sweetResponse.icon,
+          }).then(() => {
+            $("#login-pwd").val("");
+            $("#login-pwd").focus();
+          });
+        }
+      }, error: function(error) {
+        console.error("Lỗi:", error);
+      }
+    });
+  }
 </script>

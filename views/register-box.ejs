@@ -1,101 +1,135 @@
 <!-- The Modal -->
 <div class="modal fade" id="registerBox">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-    
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <div class="text-center">
-                    <h4 class="modal-title fw-bold">Đăng ký tài khoản thành viên để dùng thêm nhiều tiện ích!</h4>
-                </div>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-    
-            <!-- Modal body -->
-            <div class="modal-body">
-                <form onsubmit="onRegisterBoxSubmit(event);">
-                    <div class="mb-3 mt-3">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="register-email" placeholder="Nhập địa chỉ email" name="register-email" required maxlength="255">
-                    </div>
-                    <div class="mb-3">
-                        <label for="pwd" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="register-pwd" placeholder="Nhập mật khẩu" name="register-pwd" required maxlength="255">
-                    </div>
-                    <div class="mb-3">
-                        <label for="pwd" class="form-label">Nhập lại Password:</label>
-                        <input type="password" class="form-control" id="register-repwd" placeholder="Nhập lại mật khẩu" name="register-repwd" required maxlength="255">
-                    </div>
-                    <div class="my-3 small text-info">
-                        Chúng tui sẽ gửi link xác thực tới email của bạn!
-                    </div>
-                    <button type="submit" class="btn btn-primary">Đăng ký</button>
-                </form>
-                <hr>
-                <button class="btn btn-light border my-1" type="button" onclick="reShowLoginBox();">
-                    <img src="https://www.inventicons.com/uploads/iconset/2360/wm/512/User-Login-2-48.png" alt="Google Icon" width="20" height="20" class="me-2">
-                    Đã có tài khoản?
-                </button>
-                <br>
-                <a class="btn btn-light border my-1" href="/oauth/google">
-                    <img src="https://i.pinimg.com/originals/84/c7/00/84c7007eb6ac4374f77394d1e4954a96.png" alt="Google Icon" width="20" height="20" class="me-2">
-                    Đăng nhập với Google
-                </a>
-            </div>
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
-            </div>
-    
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="text-center">
+          <h4 class="modal-title fw-bold">Đăng ký tài khoản thành viên để dùng thêm nhiều tiện ích!</h4>
         </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form onsubmit="onRegisterBoxSubmit(event);">
+          <div class="mb-3 mt-3">
+            <label for="email" class="form-label">Email:</label>
+            <input
+              type="email"
+              class="form-control"
+              id="register-email"
+              placeholder="Nhập địa chỉ email"
+              name="register-email"
+              required
+              maxlength="255"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="pwd" class="form-label">Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="register-pwd"
+              placeholder="Nhập mật khẩu"
+              name="register-pwd"
+              required
+              maxlength="255"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="pwd" class="form-label">Nhập lại Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="register-repwd"
+              placeholder="Nhập lại mật khẩu"
+              name="register-repwd"
+              required
+              maxlength="255"
+            />
+          </div>
+          <div class="my-3 small text-info"><i class="fa-solid fa-reply-all"></i> Chúng tui sẽ gửi link xác thực tới email của bạn!</div>
+          <button type="submit" class="btn btn-primary">Đăng ký</button>
+        </form>
+        <hr />
+        <button class="btn btn-light border my-1" type="button" onclick="reShowLoginBox();">
+          <img
+            src="https://www.inventicons.com/uploads/iconset/2360/wm/512/User-Login-2-48.png"
+            alt="Google Icon"
+            width="20"
+            height="20"
+            class="me-2"
+          />
+          Đã có tài khoản?
+        </button>
+        <br />
+        <a class="btn btn-light border my-1" href="/oauth/google">
+          <img
+            src="https://i.pinimg.com/originals/84/c7/00/84c7007eb6ac4374f77394d1e4954a96.png"
+            alt="Google Icon"
+            width="20"
+            height="20"
+            class="me-2"
+          />
+          Đăng nhập với Google
+        </a>
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+      </div>
     </div>
+  </div>
 </div>
 <script>
-    function reShowLoginBox() {
-        $("#registerBox").modal('toggle');
-        $("#loginBox").modal('toggle');
+  function reShowLoginBox() {
+    $('#registerBox').modal('toggle')
+    $('#loginBox').modal('toggle')
+  }
+
+  function onRegisterBoxSubmit(e) {
+    e.preventDefault()
+
+    const email = document.getElementById('register-email').value
+    const pwd = document.getElementById('register-pwd').value
+    const repwd = document.getElementById('register-repwd').value
+
+    // Validation
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+    if (!emailRegex.test(email)) {
+      toastr.error('Email sai định dạng.', 'Lỗi!')
+      document.getElementById('register-email').focus()
+      return false
+    }
+    if (repwd !== pwd) {
+      toastr.error('Mật khẩu nhập lại chưa giống nhau.', 'Lỗi!')
+      document.getElementById('register-repwd').focus()
+      return false
     }
 
-    function onRegisterBoxSubmit(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById("register-email").value;
-        const pwd = document.getElementById("register-pwd").value;
-        const repwd = document.getElementById("register-repwd").value;
-
-        // Validation
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-        if (!emailRegex.test(email)) {
-            toastr.error('Email sai định dạng.', 'Lỗi!');
-            document.getElementById("register-email").focus();
-            return false;
-        }
-        if(repwd !== pwd) {
-            toastr.error('Mật khẩu nhập lại chưa giống nhau.', 'Lỗi!');
-            document.getElementById("register-repwd").focus();
-            return false;
-        }
-
-        const data = {// json data
-            email: email,
-            password:  window.encryptPassword(pwd),
-        };
-
-        $.ajax({
-            url: '/register/email',
-            method: 'POST',
-            data: data,
-            success: function(response) {
-                console.log("Phản hồi từ máy chủ:", response);
-                swal({
-                    title: response.title,
-                    text: response.text,
-                    icon: response.icon,
-                });
-            }, error: function(error) {
-            console.error("Lỗi:", error);
-            }
-        });
-        return false;
+    const data = {
+      // json data
+      email: email,
+      password: window.encryptPassword(pwd),
     }
+
+    $.ajax({
+      url: '/register/email',
+      method: 'POST',
+      data: data,
+      success: function (response) {
+        console.log('Phản hồi từ máy chủ:', response)
+        swal({
+          title: response.title,
+          text: response.text,
+          icon: response.icon,
+        })
+      },
+      error: function (error) {
+        console.error('Lỗi:', error)
+      },
+    })
+    return false
+  }
 </script>
