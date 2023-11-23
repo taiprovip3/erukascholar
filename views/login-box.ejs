@@ -100,7 +100,10 @@
         console.log("Phản hồi từ máy chủ:", sweetResponse);// Có trả về jwt token
         if(sweetResponse.icon === "success") {
           // redirect sang route login with jwt token
-          window.location.href = "/dashboard";
+          toastr.success(sweetResponse.text, sweetResponse.title);
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 1000);
         } else {
           swal({
             title: sweetResponse.title,

@@ -48,8 +48,8 @@
                 <br />
                 <span class="d-block">Ship đồ ăn</span>
               </div>
-              <div class="border border-dark py-5 m-5 c rs">
-                <i class="fa-solid fa-pizza-slice lime"></i>
+              <div class="border border-dark py-5 m-5 crs">
+                <i class="fa-solid fa-book lime"></i>
                 <br />
                 Xem thực đơn
               </div>
@@ -59,7 +59,7 @@
         <div class="col-lg-6">
           <div class="text-center">
             <img src="./images/bbh-layer.png" alt="logo" width="100%" class="img-thumbnail" />
-            <p class="text-success fw-bold h3">ĐANG MỞ CỬA..</p>
+            <p class="text-success fw-bold" id="status">ĐANG MỞ CỬA..</p>
           </div>
         </div>
         <div class="col-lg-3">
@@ -92,14 +92,14 @@
       });
       %>
       <% if (payload) { %>
-        <div class="position-fixed end-0 top-0 rounded-2 py-3 px-5 border border-dark me-2 text-center bg-light small crs">
+        <div class="position-fixed end-0 top-0 rounded-2 py-3 px-5 border border-dark m-1 text-center bg-light small crs" data-bs-toggle="modal" data-bs-target="#profileBox">
           <i class="fa-solid fa-universal-access fa-2xl lime"></i>
           <span class="d-block fw-bold"><%= payload.email %></span>
-          <span class="d-block gold"><%= formatter.format(payload.iat) %></span>
+          <span class="d-block gold"><%= formatter.format(payload.balance) %></span>
         </div>
       <% } %>
     </div>
-    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %>
+    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
@@ -109,7 +109,7 @@
       console.log('Connected to server')
     })
     socket.on('emitter', function (data) {
-      console.log('emitter=', data)
+      console.log('client emitter=', data)
     })
 
     $(document).ready(function () {
@@ -118,5 +118,42 @@
     function showLoginBox() {
       $('#loginBox').modal('toggle')
     }
+    function getOpeningStatus() {
+      // Lấy thời gian hiện tại
+      const currentTime = new Date();
+      const currentHour = currentTime.getHours();
+      const currentMinute = currentTime.getMinutes();
+
+      // Đặt giờ mở cửa và giờ đóng cửa
+      const openHour1 = 7;
+      const openMinute1 = 30;
+      const closeHour1 = 11;
+      const closeMinute1 = 0;
+
+      const openHour2 = 18;
+      const openMinute2 = 0;
+      const closeHour2 = 22;
+      const closeMinute2 = 30;
+
+      // Kiểm tra xem có nằm trong khung giờ mở cửa hay không
+      if (
+        (currentHour > openHour1 || (currentHour === openHour1 && currentMinute >= openMinute1)) &&
+        (currentHour < closeHour1 || (currentHour === closeHour1 && currentMinute <= closeMinute1)) ||
+        (currentHour > openHour2 || (currentHour === openHour2 && currentMinute >= openMinute2)) &&
+        (currentHour < closeHour2 || (currentHour === closeHour2 && currentMinute <= closeMinute2))
+      ) {
+        // Nếu nằm trong khung giờ mở cửa, đặt cho thẻ p thành 'ĐANG MỞ CỬA'
+        $("#status").removeClass('text-danger');
+        $("#status").addClass('text-success');
+        $("#status").text("ĐANG MỞ CỬA✅");
+      } else {
+        // Nếu không nằm trong khung giờ mở cửa, đặt cho thẻ p thành 'ĐÓNG CỬA'
+        $("#status").removeClass('text-success');
+        $("#status").addClass('text-danger');
+        $("#status").text("ĐÓNG CỬA ❌");
+      }
+    }
+    getOpeningStatus();
+    setInterval(getOpeningStatus, 1000);
   </script>
 </html>

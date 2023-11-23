@@ -57,6 +57,17 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
 })
 
 app.use(require('./routes/authentication.js'))
+app.use(require('./routes/user.js'));
+
+const schedule = require('node-schedule');
+
+const cronExpress = '0 45 10 * * *';
+const j = schedule.scheduleJob(cronExpress, function(fireDate) {
+  console.log('running job!');
+  console.log(fireDate);
+  const message = 'OPENING';
+  io.emit('emitter', message);
+});
 
 // Khởi động server
 const port = process.env.PORT

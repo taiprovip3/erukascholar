@@ -83,11 +83,41 @@ router.get('/register/verify', async (req, res) => {
     }
     return res.render('temp-page', { sweetResponse })
   }
+  /**
+   * Các công việc cần làm sau khi user tạo acc
+   * 01. Kiểm tra acc đã verify hay chưa
+   * 02. Set is_verified thành true
+   * 03. Thêm record profile mới cho user
+   */
+  const clientQuery = await pool.connect();
   try {
     const payload = jwt.verify(token, 'concavang')
     const userId = payload.userId
-    await pool.query('UPDATE users SET is_verified = true WHERE id = $1', [userId])
-    // console.log('tokenFromRegisterVerify=',token);
+    const email = payload.email;
+    const queryResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    if(queryResult.rowCount <= 0) {
+      const sweetResponse = {
+        title: 'LỖI TÀI KHOẢN KHÔNG TỒN TẠI TRONG HỆ THỐNG',
+        text: `Tài khoản email ${email} không thể tìm thấy trong hệ thống chúng tôi. Có vẽ đã xảy ra bugs. Vui lòng liên hệ Admin để được hỗ trợ!`,
+        icon: 'error',
+      }
+      return res.render('temp-page', { sweetResponse })
+    }
+    const rowQuery = queryResult.rows[0];
+    const isVerified = rowQuery.is_verified;
+    if(isVerified) {
+      const sweetResponse = {
+        title: 'TÀI KHOẢN ĐÃ ĐƯỢC XÁC THỰC',
+        text: `Tài khoản email ${email} đã được xác thực trước đó. Không thể xác thực lại lần nữa. Vui lòng truy cập trang Đăng nhập để sử dụng hệ thống!`,
+        icon: 'error',
+      }
+      return res.render('temp-page', { sweetResponse });
+    }
+    await clientQuery.query('BEGIN');
+    await clientQuery.query('UPDATE users SET is_verified = true WHERE id = $1', [userId])
+    await clientQuery.query('INSERT INTO profiles (users_id) VALUES ($1)', [userId]);
+    console.log('Transaction successful');
+    await clientQuery.query('COMMIT');
     res.cookie('token', token, {
       httpOnly: true,
       secure: true,
@@ -98,6 +128,9 @@ router.get('/register/verify', async (req, res) => {
   } catch (error) {
     console.error('Lỗi khi xác thực token:', error)
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
+  } finally {
+    // Release the client back to the pool
+    clientQuery.release();
   }
 })
 
@@ -115,16 +148,22 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
   try {
     const email = req.user.email
     const password = ''
-    const resultQuery = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+    const resultQuery = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     if (resultQuery.rowCount > 0) {
-      const userId = resultQuery.rows[0].id
-      const isEmailVerified = resultQuery.rows[0].is_verified
+      const rowQuery = resultQuery.rows[0];
+      const userId = rowQuery.id
+      const isEmailVerified = rowQuery.is_verified
       if (isEmailVerified) {
         // là login
-        const payload = {
-          userId: userId,
-          email: email,
-        }
+        const profileQuery = await pool.query('SELECT * FROM profiles WHERE users_id = $1', [userId]);
+        const profileRow = profileQuery.rows[0];
+        const profileId = profileRow.profile_id;
+        const sdt = profileRow.sdt;
+        const country = profileRow.country;
+        const address = profileRow.address;
+        const fullname = profileRow.fullname;
+        const balance = profileRow.balance;
+        const payload = { userId, email, profileId, sdt, country, address, fullname, balance };
         const token = jwt.sign(payload, 'concavang', {
           expiresIn: '1d',
         })
@@ -186,7 +225,8 @@ router.get('/oauth/google/failure', (req, res) => {
 router.post('/login/email', async (req, res) => {
   try {
     const { email, password, is_remember } = req.body;
-    const queryUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    // const queryUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const queryUser = await pool.query('SELECT users.*, profiles.* FROM users INNER JOIN profiles ON users.id = profiles.users_id WHERE users.email = $1', [email]);
     /**
      * case1: account ko tồn tại
      * case2: account tồn tại nhưng chưa verified,
@@ -210,11 +250,16 @@ router.post('/login/email', async (req, res) => {
       };
       return res.json(sweetResponse);
     }
-    const userId = queryUser.rows[0].id;
-    const payload = {
-      userId: userId,
-      email: email,
-    }
+    const rows = queryUser.rows;
+    const row = rows[0];
+    const userId = row.id;
+    const profileId = row.profile_id;
+    const sdt = row.sdt;
+    const country = row.country;
+    const address = row.address;
+    const fullname = row.fullname;
+    const balance = row.balance;
+    const payload = { userId, email, profileId, sdt, country, address, fullname, balance };
     const token = jwt.sign(payload, 'concavang', { expiresIn: '1d' }); 
     res.cookie("token", token, {
       httpOnly: true,
@@ -232,6 +277,13 @@ router.post('/login/email', async (req, res) => {
     console.log('error=', error.message);
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.');
   }
+});
+
+router.get('/logout', (req, res) => {
+  req.session.user = "";
+  req.session.destroy();
+  res.clearCookie('token');
+  return res.redirect('/');
 });
 
 module.exports = router
