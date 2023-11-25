@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&family=Roboto+Mono&display=swap');
+* {
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.violet {
+    color: blueviolet;
+}
+
+.borrow {
+    color: rgb(15, 8, 8);
+}
+
+body {
+    background-image: url('https://media.thenerdstash.com/wp-content/uploads/2022/08/august119java-minecraft-01.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#nav {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxEYlVCkYbwRsCxqSJJwMfp_-mw_YTPBWnEBGPqk9BHAVIuvY2rYCzwLfahWDyYVzNpf0&usqp=CAU');
+    
+}
+
+#content {
+    background-image: url('https://www.craftycreations.net/wp-content/uploads/2019/08/Oak-Planks-7.png');
+}
+
+#pleft {
+    color: rgb(245, 244, 244);
+}
+
+#pright {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0Rm4h0eDFsX77X0Nu4CZKkaRCS1uHKLgaw7OcfQr34YZL0joS7_vJU-UHTF2DvdaQQUw&usqp=CAU');
+}
+
+#pright1 {
+    background-image: url('https://i.pinimg.com/564x/c6/3b/8e/c63b8e0a4fad79e99851eba9e133569b.jpg');
+    box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}

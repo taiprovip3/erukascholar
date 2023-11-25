@@ -50,6 +50,13 @@ app.get('/', (req, res) => {
   return res.render('index', { payload });
 })
 
+app.get('/theme1', async (req, res) => {
+  const queryResult = await pool.query('SELECT * FROM server_metrics');
+  const queryRow = queryResult.rows[0];
+  const payload = { serverMetrics: queryRow };
+  return res.render('theme1', { payload });
+})
+
 app.get('/dashboard', authenticateToken, async (req, res) => {
   console.log('payload=', req.session.user);
   // return res.send(`Hello world, ${req.session.user.email}!`)
@@ -58,8 +65,10 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
 
 app.use(require('./routes/authentication.js'))
 app.use(require('./routes/user.js'));
+app.use(require('./routes/rating-stars.js'));
 
 const schedule = require('node-schedule');
+const pool = require('./utils/db.js')
 
 const cronExpress = '0 45 10 * * *';
 const j = schedule.scheduleJob(cronExpress, function(fireDate) {
