@@ -66,6 +66,7 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
 app.use(require('./routes/authentication.js'))
 app.use(require('./routes/user.js'));
 app.use(require('./routes/rating-stars.js'));
+app.use(require('./routes/report.js'));
 
 const schedule = require('node-schedule');
 const pool = require('./utils/db.js')
