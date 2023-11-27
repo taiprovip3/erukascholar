@@ -73,6 +73,9 @@
                 <a class="nav-link fw-bold text-white" href="#">SỰ KIỆN</a>
               </li>
               <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
+              </li>
+              <li class="nav-item dropdown">
                 <a class="nav-link fw-bold text-white" href="#">TÀI KHOẢN <i class="fa-solid fa-sort-down"></i></a>
                 <ul class="nav nav-tabs dropdown_menu">
                   <li class="nav-item">
@@ -113,7 +116,7 @@
                       if((stars - i < 1) && (stars - i > 0)) { %>
                         <i class="fa-solid fa-star text-warning crs" onclick="letRate('<%= i %>')"></i>
                         <i class="fa-solid fa-star-half text-warning crs" onclick="letRate('<%= i %>')"></i> <!-- nữa sao vàng -->
-                      <% break;
+                      <% i++;
                       } else { %>
                         <i class="fa-solid fa-star text-warning crs" onclick="letRate('<%= i %>')"></i> <!-- ngôi sao vàng -->
                       <% }
