@@ -14,6 +14,7 @@ require('./middleware')
 // const jwt = require('jsonwebtoken');
 // const nodemailer = require('nodemailer');
 const { authenticateToken } = require('./utils/oauth-middleware')
+const { default: axios } = require('axios')
 
 // App settings
 const app = express()
@@ -53,7 +54,13 @@ app.get('/', (req, res) => {
 app.get('/theme1', async (req, res) => {
   const queryResult = await pool.query('SELECT * FROM server_metrics');
   const queryRow = queryResult.rows[0];
-  const payload = { serverMetrics: queryRow };
+  let payload = { serverMetrics: queryRow };
+  const serverStatusResponse = await axios.get('https://api.mcstatus.io/v2/status/java/play.hypixel.net:25565');
+  const onlinePlayers = serverStatusResponse.data.players.online;
+  const maxPlayers = serverStatusResponse.data.players.max; 
+  const serverStatus = { onlinePlayers, maxPlayers };
+  payload['serverStatus'] = serverStatus;
+  console.log('payload=', payload);
   return res.render('theme1', { payload });
 })
 
@@ -67,6 +74,7 @@ app.use(require('./routes/authentication.js'))
 app.use(require('./routes/user.js'));
 app.use(require('./routes/rating-stars.js'));
 app.use(require('./routes/report.js'));
+app.use(require('./routes/postings.js'));
 
 const schedule = require('node-schedule');
 const pool = require('./utils/db.js')

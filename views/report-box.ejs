@@ -53,7 +53,6 @@
 </div>
 
 <script>
-
     $('#reportBugForm').submit(function(event) {
         event.preventDefault();
         const inputArray = $("#reportBugForm").serializeArray();
@@ -82,44 +81,4 @@
             }
         });
     });
-
-    // function reportBug(e) {
-
-    //     e.preventDefault();
-        
-    //     const reporter = '<%= payload.email %>';
-    //     const inputArray = $("#reportBugForm").serializeArray();
-
-    //     console.log('inputArray=',inputArray);
-    //     return false;
-    // }
-    // $('#reportBugForm').submit(function(event) {
-    //     event.preventDefault();
-    //     let formDataObject = {reporter: ''};
-    //     const inputArray = $(this).serializeArray();
-    //     $.each(inputArray, function(i, field) {
-    //         formDataObject[field.name] = field.value;
-    //     });
-    //     $.ajax({
-    //         type: "POST",
-    //         url: pathNodejs+"/student-report",
-    //         data: JSON.stringify(formDataObject),
-    //         contentType: "application/json",
-    //         success: (data) => {
-    //             toastr.success('Cám ơn bạn đã dành thời gian report cho chúng tôi. Chúng tôi sẽ cố gắng giải quyết và phản hồi lại bạn trong thời gian sớm nhất', 'Báo lỗi thành công');
-    //             $('input[name="objectErrorType"]').val('');
-    //             $('textarea[name="noiDung"]').val('');
-    //             $('input[name="severity"]').prop('checked', false);
-    //             swal({
-    //                 title: 'Thành công',
-    //                 text: 'Cám ơn bạn đã dành thời gian report cho chúng\ntôi. Chúng tôi sẽ cố gắng giải quyết và phản\nhồi lại bạn trong thời gian sớm nhất',
-    //                 icon: 'success',
-    //             });
-    //             $('#ReportBugModal').modal('toggle');
-    //             $('#FeatureSelectorModal').modal('toggle');
-    //         }, error: (error) => {
-    //             console.error(error);
-    //         }
-    //     });
-    // });
 </script>
