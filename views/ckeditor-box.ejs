@@ -1,0 +1,52 @@
+<div class="modal fade" id="ckeditorBox">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form>
+                    <input type="text" name="ck_title" id="ck_title" class="form-control" placeholder="Nhập tiêu đề hiển thị cho bài đăng.." />
+                    <textarea id="ck_content"></textarea>
+                    <div class="w-100 text-end pt-4">
+                      <button class="btn btn-light borrow border border-dark fw-bold" type="button" onclick="postEvent();">Đăng sự kiện</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    tinymce.init({
+      selector: '#ck_content',
+      plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+      tinycomments_mode: 'embedded',
+      tinycomments_author: 'Author name',
+      mergetags_list: [
+        { value: 'First.Name', title: 'First Name' },
+        { value: 'Email', title: 'Email' },
+      ],
+      ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+    });
+
+    function postEvent() {
+      const content = tinymce.get('ck_content').getContent();
+      const title = $("#ck_title").val();
+      const formData = { userId: '<%= payload.userId %>', title, content };
+      $.ajax({
+        url: '/postings',
+        method: 'POST',
+        data: formData,
+        success: (sweetResponse) => {
+          swal({
+            title: sweetResponse.title,
+            text: sweetResponse.text,
+            icon: sweetResponse.icon
+          }).then(() => {
+            window.location.href = window.location.href;
+          });
+        }, error: (error) => {
+          console.error('error=', error.message);
+        }
+      }) 
+    }
+</script>

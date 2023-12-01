@@ -1,3 +1,5 @@
+/* root run */
+
 const passport = require('passport')
 const express = require('express')
 const https = require('https')
@@ -42,6 +44,10 @@ const options = {
   key: fs.readFileSync('./certificates/erukascholar.live/key.pem'),
   cert: fs.readFileSync('./certificates/erukascholar.live/certificate.crt'),
 }
+// const options = {
+//   key: fs.readFileSync('./certificates/erukalearn.me/key.pem'),
+//   cert: fs.readFileSync('./certificates/erukalearn.me/erukalearn_me.crt'),
+// };
 const server = https.createServer(options, app)
 const io = socketIO(server)
 
@@ -60,7 +66,6 @@ app.get('/theme1', async (req, res) => {
   const maxPlayers = serverStatusResponse.data.players.max; 
   const serverStatus = { onlinePlayers, maxPlayers };
   payload['serverStatus'] = serverStatus;
-  console.log('payload=', payload);
   return res.render('theme1', { payload });
 })
 
@@ -68,7 +73,7 @@ app.get('/dashboard', authenticateToken, async (req, res) => {
   console.log('payload=', req.session.user);
   // return res.send(`Hello world, ${req.session.user.email}!`)
   return res.redirect("/");
-})
+})  
 
 app.use(require('./routes/authentication.js'))
 app.use(require('./routes/user.js'));

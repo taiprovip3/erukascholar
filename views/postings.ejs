@@ -28,6 +28,7 @@
     />
     <script type="text/javascript" src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/7xj5wvv9kasumgezlf02vpj9b672i5o3hax0hj8zarftbbk9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
   </head>
   <body>
     <div class="container-fluid d-flex justify-content-center align-items-center overflow-auto">
@@ -97,138 +98,69 @@
         <div id="content" class="container-fluid">
           <div class="row">
             <!-- pleft -->
-            <div class="col-9 px-4 pt-2 position-relative" id="pleft">
-              
+            <div class="col-9 p-3 border" id="pleft">
+              <style>
+                #post-panel {
+                  background-image: url('https://external-preview.redd.it/TrmGyAU_8kiVPRRxAeS5ce0fXPfPsQqFOWg0qZCBQXk.jpg?auto=webp&s=f185bc3645ee4734be96d643ec9c6276458742a3  ');
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                  height: 100%;
+                }
+              </style>
+              <div id="post-panel">
+                <!-- filter -->
+                <div class="d-flex justify-content-between p-1" id="filter">
+                  <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#ckeditorBox">Tạo sự kiện mới</button>
+                  <select class="border-0" onchange="sortPosting(this);">
+                    <option value="NEWEST">Mới nhất</option>
+                    <option value="OLDEST">Cũ nhất</option>
+                  </select>
+                </div>
+                <!-- posts -->
+                <style>
+                  .childpost {
+                    background-image: url('https://my.mcpedl.com/storage/texturepacks/2594/images/suviles-slick-pack-v01_9.png');
+                    color: white;
+                  }
+                </style>
+                <div id="posts">
+                  <%
+                    for(let i=0; i<payload.posts.length; i++) {
+                      const post = payload.posts[i];
+                  %>
+                      <div data-post-id="<%= post.post_id %>" class="borrow py-3 px-2 mx-2 my-1 fw-bold border-top border-bottom border-dark d-flex justify-content-between align-items-center position-relative overflow-auto childpost">
+                        <div>
+                          <div class="d-flex align-items-center crs">
+                            <div>
+                              <img src="https://bconsps.net/wp-content/uploads/2022/07/iconhot710_583.gif" alt="hot-news" width="24" height="24" />
+                            </div>
+                            <div data-bs-toggle="collapse" href="#collapse<%= post.post_id %>" class="mx-1">
+                              <%= post.title %>
+                            </div>
+                          </div>
+                          <div id="collapse<%= post.post_id %>" class="collapse" data-bs-parent="#posts">
+                            <div class="card-body pt-2">
+                              <%- post.content %>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                          <i class="fa-regular fa-thumbs-up crs"></i>
+                          &ensp;
+                          <i class="fa-regular fa-thumbs-down crs"></i>
+                        </div>
+                        <div class="position-absolute bottom-0 end-0 small me-2 fst-italic">
+                          (<%= helper.calculateTimeAgo(post.created_at) %>)
+                        </div>
+                      </div>
+                  <%
+                    }
+                  %>
+                </div>
+              </div>
             </div>
             <!-- pright -->
-            <div class="col-3 px-4 pt-2" id="pright">
-              <!-- pright1 - text info -->
-              <div id="pright1" class="text-center pt-1">
-                <h5 class="text-white">Thông tin máy chủ</h5>
-              </div>
-              <!-- pright2 - counters -->
-              <style>
-                #counter {
-                  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/007/556/117/small_2x/pixel-background-games-concept-background-resizable-seamless-pattern-oak-plate-vector.jpg');
-                  background-repeat: no-repeat;
-                  background-size: cover;
-                  width: 100%;
-                  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-                }
-              </style>
-              <div class="text-center mt-4 py-3 fw-bold text-white position-relative d-flex align-items-center justify-content-center" id="counter">
-                <div class="position-absolute start-0 text-center">
-                  <img src="./images/now1.png" alt="emerald" width="40px" height="40px" />
-                  <br>
-                  <span class="small">Welcome</span>
-                </div>
-                <div class="text-center">
-                  <span class="d-block">ĐANG MỞ</span>
-                  <span class="d-block">0 / 1999</span>
-                </div>
-                <div class="position-absolute end-0 text-center">
-                  <img src="./images/now1.png" alt="emerald" width="40px" height="40px" />
-                  <br>
-                  <span class="small">Welcome</span>
-                </div>
-              </div>
-              <!-- pright3 - memberships -->
-              <style>
-                #membership {
-                  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/007/556/117/small_2x/pixel-background-games-concept-background-resizable-seamless-pattern-oak-plate-vector.jpg');
-                  background-repeat: no-repeat;
-                  background-size: cover;
-                  width: 100%;
-                  box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
-                }
-              </style>
-              <div class="mt-4 text-center text-white p-1" id="membership">
-                <img src="./images/steve-head.png" alt="steve-head" width="40" height="40" />
-                <br>
-                <span><span class="fw-bold text-decoration-underline">00</span> thành viên</span>
-                <br>
-                <span>đã tham gia</span>
-                <hr class="text-white">
-                <div class="text-start borrow fw-bolder">
-                  <i class="fa-solid fa-earth-asia text-bg-light text-success"></i>
-                  &emsp;IP:&emsp;<span>MYSERVER.COM</span>
-                </div>
-                <hr class="text-white">
-                <div class="text-start borrow fw-bolder">
-                  <i class="fa-solid fa-code-merge text-bg-light text-success"></i>
-                  &emsp;Phiên bản:</span>
-                  <ul>
-                    <li>1.8+, 1.9+, 1.10+, 1.11+, 1.12+, 1.13+, 1.14+, 1.15+, 1.16+, 1.17+, 1.18+, 1.19+, 1.20+</li>
-                  </ul>
-                  <hr class="text-white">
-                  <i class="fa-solid fa-code-fork text-bg-light text-success"></i>
-                  &emsp;Phiên bản ổn định:</span>
-                  <ul>  
-                    <li>1.8.8, 1.12.2, 1.16.5 (*), 1.20.2</li>
-                  </ul>
-                </div>
-              </div>
-              <style>
-                #types {
-                  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/007/556/117/small_2x/pixel-background-games-concept-background-resizable-seamless-pattern-oak-plate-vector.jpg');
-                  background-repeat: no-repeat;
-                  background-size: cover;
-                  width: 100%;
-                  box-shadow: rgba(240, 46, 170, 0.4) -5px 5px, rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px, rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;
-                }
-                #title-types {
-                  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1edov94Cdo8vZbaUlpcuRAkcR76tRLdT7ADz1EyHb3Wu7Ee0xiJ992jFJpGNaTapp7jQ&usqp=CAU');
-                }
-              </style>
-              <!-- types -->
-              <div class="mt-4 text-white p-1" id="types">
-                <div class="text-center p-1" id="title-types">
-                  <span class="fw-bolder text-white fw-bolder">Thông tin</span>&ensp;
-                  <i class="fa-solid fa-circle-question"></i>
-                </div>
-                <span class="fw-bold">Cày cuốc <i class="fa-solid fa-sack-dollar text-info"></i></span>
-                <span>
-                  SkyBlock, Prison, Towny, Faction, OneBlock, SkyMine, Minelord,..
-                </span>
-                <span class="fw-bold">Minigames <i class="fa-solid fa-khanda violet"></i></span>
-                <span>
-                  Bedwars, Skywars, Eggwars, Onepiece,..
-                </span>
-              </div>
-              <style>
-                #postings {
-                  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/007/556/117/small_2x/pixel-background-games-concept-background-resizable-seamless-pattern-oak-plate-vector.jpg');
-                  background-repeat: no-repeat;
-                  background-size: cover;
-                  width: 100%;
-                  box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
-                }
-                #title-posting {
-                  background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1edov94Cdo8vZbaUlpcuRAkcR76tRLdT7ADz1EyHb3Wu7Ee0xiJ992jFJpGNaTapp7jQ&usqp=CAU');
-                }
-              </style>
-              <!-- postings -->
-              <div class="mt-4 text-white p-1" id="postings">
-                <div class="text-center p-1" id="title-posting">
-                  <span class="fw-bolder text-white fw-bolder">Bài viết</span>&ensp;
-                  <i class="fa-solid fa-scroll"></i>
-                </div>
-                <ul class="nav flex-column">
-                  <li class="nav-item border-bottom border-dark crs">
-                    <a class="nav-link text-light fw-bolder" href="#">Sự kiện Black Friday giảm giá 49% tất cả máy chủ.</a>
-                  </li>
-                  <li class="nav-item border-bottom border-dark crs">
-                    <a class="nav-link text-light fw-bolder" href="#">Hóa trang Halloween Dracula, Wibu, { CHO KẸO HAY BỊ ĐẬP BẦM DẬP }</a>
-                  </li>
-                  <li class="nav-item border-bottom border-dark crs">
-                    <a class="nav-link text-light fw-bolder" href="#">Cập nhật danh sách member lỏ trong server.</a>
-                  </li>
-                  <li class="nav-item border-bottom border-dark crs">
-                    <a class="nav-link text-light fw-bolder" href="#">PIRATES - SERVER MỚI CHÍNH THỨC RA MẮT T9</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <%- include('info-panel.ejs'); %>
           </div>
         </div>
         <div class="position-absolute bottom-0 end-0 text-center m-1 text-danger crs" data-bs-toggle="modal" data-bs-target="#reportBox">
@@ -237,7 +169,7 @@
         </div>
       </div>
     </div>
-    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %>
+    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('ckeditor-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>
@@ -250,5 +182,36 @@
     socket.on('emitter', function (data) {
       console.log('client emitter=', data)
     })
+    function sortPosting(selectObject) {
+        console.log('selectObject=', selectObject.value);
+
+        const postsContainer = document.getElementById('posts');
+        const postDivs = Array.from(postsContainer.querySelectorAll('.childpost')); // Lấy tất cả các div post con
+
+        if (selectObject.value === 'NEWEST') {
+            // Sắp xếp mảng các div post theo id lớn nhất đến nhỏ nhất
+            postDivs.sort((a, b) => {
+              const idA = parseInt(a.getAttribute('data-post-id'));
+              const idB = parseInt(b.getAttribute('data-post-id'));
+              return idB - idA;
+            });
+        } else if (selectObject.value === 'OLDEST') {
+            // Sắp xếp mảng các div post theo id nhỏ nhất đến lớn nhất
+            postDivs.sort((a, b) => {
+              const idA = parseInt(a.getAttribute('data-post-id'));
+              const idB = parseInt(b.getAttribute('data-post-id'));
+              return idA - idB;
+            });
+        }
+
+        // Xóa nội dung cũ trong #posts
+        postsContainer.innerHTML = '';
+
+        // Thêm lại các div post đã được sắp xếp vào #posts
+        postDivs.forEach(postDiv => {
+            postsContainer.appendChild(postDiv);
+        });
+    }
+
   </script>
 </html>
