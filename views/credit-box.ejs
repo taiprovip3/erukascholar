@@ -1,0 +1,131 @@
+<!-- The Modal -->
+<% if(payload.userData) { %>
+    <div class="modal fade" id="creditBox">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+          <div class="modal-content">
+            <!-- Modal body -->
+            <div class="modal-body" style="background-color: #1A233A;">
+                <div class="text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="container">
+                    <div class="row" style="background-color: #272E48;">
+                        <div class="col-12 text-white">
+                            <p><i class="fa-solid fa-skull-crossbones text-warning"></i> Vui lòng lưu ý một vài điều sau trước khi nạp thẻ:</p>
+                            <ol class="list-group list-group-numbered">
+                                <li class="list-group-item">Sau khi nạp thẻ thành công, xu sẽ được cộng vào tài khoản website, chưa cộng xu vào trong game. Cần thêm 1 thao tác chuyển xu (🥮) vào server mới có xu trong game.</li>
+                                <li class="list-group-item">Không được phép chọn sai <b>MỆNH GIÁ THẺ</b> & <b>LOẠI THẺ</b> để tránh bị nuốt thẻ (không thể hỗ trợ).</li>
+                                <li class="list-group-item">Nên nạp chay cho admin thông qua banking ngân hàng hoặc momo. Tuy chậm mà chắc mà còn không bị chiết khấu. <a href="/chaybanking">Cách chuyển khoản <i class="fa-solid fa-up-right-from-square"></i></a></li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="row pt-2 mt-3" style="background-color: #272E48;">
+                        <div class="col-12 text-white">
+                            <ul class="mb-3 nav nav-tabs">
+                                <li class="nav-item" onclick="showCardForm();">
+                                  <a class="nav-link fw-bolder borrow active" href="javascript:void(0);" id="tab-card">Nạp thẻ</a>
+                                </li>
+                                <li class="nav-item" onclick="showBankTransferForm();">
+                                  <a class="nav-link" href="javascript:void(0);" id="tab-bank-transfer">Chuyển khoản</a>
+                                </li>
+                            </ul>
+                            <form method="post" id="card-form">
+                                <div class="mb-3">
+                                    <label for="credit_box_email">Tài khoản</label>
+                                    <input type="text" name="credit_box_email" id="credit_box_email" class="form-control bg-dark text-white" value="<%= payload.userData.email %>" required readonly />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="credit_box_email">Nhà mạng</label>
+                                    <select name="credit_box_provider" id="credit_box_provider" class="form-select bg-dark text-white">
+                                        <option value="VIETTEL">Viettel</option>
+                                        <option value="MOBIFONE">Mobifone</option>
+                                        <option value="VINAPHONE">Vinaphone</option>
+                                        <option value="GATE">Gate</option>
+                                        <option value="VCOIN">Vcoint</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="credit_box_email">Mệnh giá</label>
+                                    <select name="credit_box_email" id="credit_box_email" class="form-select bg-dark text-white">
+                                        <option value="10000">10.000 đ (100 🥮)</option>
+                                        <option value="20000">20.000 đ (200 🥮)</option>
+                                        <option value="50000">50.000 đ (500 🥮)</option>
+                                        <option value="100000">100.000 đ (1.000 🥮)</option>
+                                        <option value="200000">200.000 đ (2.000 🥮)</option>
+                                        <option value="500000">500.000 đ (5.000 🥮)</option>
+                                        <option value="1000000" selected>1.000.000 đ (10.000 🥮)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="credit_box_seri">Số seri</label>
+                                    <input type="text" name="credit_box_seri" id="credit_box_seri" class="form-control bg-dark text-white" placeholder="Nhập số seri..." required />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="credit_box_pin">Mã thẻ</label>
+                                    <input type="text" name="credit_box_pin" id="credit_box_pin" class="form-control bg-dark text-white" placeholder="Nhập mã thẻ..." required />
+                                </div>
+                                <div class="mb-3 text-end">
+                                    <button class="btn btn-primary fw-bold" type="submit">Nạp thẻ</button>
+                                </div>
+                            </form>
+                            <style>
+                                #bank-transfer-form {
+                                    display: none;
+                                }
+                            </style>
+                            <div id="bank-transfer-form">
+                                <span class="d-block">Để nạp xu vào tài khoản bằng cách chuyển khoản ngân hàng hoặc momo cho Admin. Chuyển tiền đến thông tin tài khoản sau:</span>
+                            
+                                <ul>
+                                    <li>STK Ngân hàng</li>
+                                    <li>0338188506</li>
+                                    <li>PHAN TAN TAI</li>
+                                    <li>MB Bank (Ngân hàng TMCP Quân Đội Việt Nam)</li>
+                                    <li>Hoặc quét mã QR sau:</li>
+                                    <li></li>
+                                    <li></li>
+                                    <li>Nội dung chuyển khoản:</li>
+                                    <li class="fst-italic">[Ghi email tài khoản website của bạn]</li>
+                                </ul>
+                                <ul>
+                                    <li>STK Ví Momo</li>
+                                    <li>0338188506</li>
+                                    <li>Phan Tấn Tài</li>
+                                    <li>Hoặc quét mã QR sau:</li>
+                                    <li></li>
+                                    <li></li>
+                                    <li>Nội dung chuyển khoản:</li>
+                                    <li class="fst-italic">[Ghi email tài khoản website của bạn]</li>
+                                </ul>
+                                <br>
+                                <span class="d-block text-danger"><i class="fa-solid fa-exclamation"></i> Lưu ý: Admin chỉ dùng 2 số tài khoản duy nhất bên dưới, các só khác hoặc tên khác đều là lừa đảo! Hãy cẩn thận</span>
+                                <span class="text-info">Sau khoản ~ 2-4h (Có thể lâu hơn). Căn cứ vào email, xu sẽ được thêm vào tài khoản củ bạn.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <% } %>
+    <script>
+        $("#card-form").on("submit", (e) => {
+            e.preventDefault();
+            toastr.info('Đang tiến hành nạp thẻ', 'Vui lòng chờ');
+        });
+        function showCardForm() {
+            $("#tab-bank-transfer").removeClass('active');
+            $("#tab-card").addClass('active');
+            $("#bank-transfer-form").hide();
+            $("#card-form").show();
+            
+        }
+        function showBankTransferForm() {
+            $("#tab-card").removeClass('active');
+            $("#tab-bank-transfer").addClass('active');
+            $("#card-form").hide();
+            $("#bank-transfer-form").show();
+        }
+    </script>
+      

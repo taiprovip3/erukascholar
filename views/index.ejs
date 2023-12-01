@@ -3,13 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bún Bò Huế Bảng Đen</title>
+    <title>Minecraft Forum Việt Nam</title>
     <script src="https://kit.fontawesome.com/ad778f42b3.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/css/comma.css" />
     <link rel="stylesheet" href="/css/index.css" />
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script
@@ -29,79 +30,173 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   </head>
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="text-center">
-            <p class="h1">XIN KÍNH CHÀO QUÝ KHÁCH!</p>
+    <div class="container-fluid d-flex justify-content-center align-items-center overflow-auto">
+      <div class="w-75 my-5 position-relative">
+        <!-- nav -->
+        <style>
+          .dropdown {
+            position: relative;
+          }
+          .dropdown_menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: calc(100% - 1px);
+            width: 200px;
+            background-image: url('https://mineblocks.com/1/wiki/images/a/a7/Sand.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+          .dropdown:hover > .dropdown_menu{
+            z-index: 100;
+            display: block;
+          }
+        </style>
+        <div id="nav" class="d-flex align-items-center justify-content-between text-white p-2">
+          <div>
+            <ul class="nav nav-tabs">
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold active" href="#">TRANG CHỦ</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#">HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="#">Cách tải Minecraft</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="#">Nạp tiền vào tài khoản </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="/postings">SỰ KIỆN</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#">TÀI KHOẢN <i class="fa-solid fa-sort-down"></i></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginBox">Đăng nhập thành viên</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#registerBox">Đăng ký tài khoản</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
           </div>
+          <div>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Xf26G7yYwc9DojeXTNj4EEy30_lu_YM5kkXiXtQraRLj7u6N0RFMJRZDqjU9TRaHL6c&usqp=CAU" alt="logo" width="32px" height="32px" />
+            <span>Minecraft Forum VN</span>
+          </div>
+          <%- include('block-profile.ejs') %>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="text-center">
-            <p class="small">Vui lòng chọn:</p>
-            <hr />
-            <div class="d-flex flex-column">
-              <div class="border border-dark py-5 m-5 crs">
-                <i class="fa-solid fa-truck-fast lime"></i>
-                <br />
-                <span class="d-block">Ship đồ ăn</span>
+        <!-- content Math.floor(payload.serverMetrics.stars); -->
+        <div id="content" class="container-fluid">
+          <div class="row">
+            <!-- pleft -->
+            <div class="col-9 px-4 pt-2 position-relative" id="pleft">
+              <div class="position-absolute top-0 end-0 text-end m-1">
+                <img src="https://i.pinimg.com/originals/ed/76/df/ed76df1b5da78ca7317a01cf9a648d0c.gif" alt="star icon gif" width="64px" height="64px" />
               </div>
-              <div class="border border-dark py-5 m-5 crs">
-                <i class="fa-solid fa-book lime"></i>
-                <br />
-                Xem thực đơn
+              <div class="position-absolute top-0 end-0 text-end me-1 mt-4">
+                <img src="https://image.jimcdn.com/app/cms/image/transf/none/path/s39145781b4b2fa7a/image/iff207b29f3f3c22d/version/1694950285/image.gif" alt="star icon gif2" width="64px" height="64px" />
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="text-center">
-            <img src="./images/bbh-layer.png" alt="logo" width="100%" class="img-thumbnail" />
-            <p class="text-success fw-bold" id="status">ĐANG MỞ CỬA..</p>
-          </div>
-        </div>
-        <div class="col-lg-3">
-          <div class="text-center">
-            <p class="small">Vui lòng chọn:</p>
-            <hr />
-            <% if(!payload) { %>
-              <div class="d-flex flex-column">
-                <div class="border border-dark py-5 m-5 crs" onclick="showLoginBox();">
-                  <i class="fa-solid fa-unlock lime"></i>
-                  <br />
-                  Đăng nhập
+              <h2>Giới thiệu</h2>
+              <div class="text-center">
+                <h4>My Server Minecraft Forum NETWORK</h4>
+              </div>
+              <div class="text-center small mb-3">
+                <%
+                  const stars = payload.serverMetrics.stars;
+                  for(let i=1; i<=5; i++) {
+                    if(stars >= i) {
+                      if((stars - i < 1) && (stars - i > 0)) { %>
+                        <i class="fa-solid fa-star text-warning crs" onclick="letRate('<%= i %>')"></i>
+                        <i class="fa-solid fa-star-half text-warning crs" onclick="letRate('<%= i %>')"></i> <!-- nữa sao vàng -->
+                      <% i++;
+                      } else { %>
+                        <i class="fa-solid fa-star text-warning crs" onclick="letRate('<%= i %>')"></i> <!-- ngôi sao vàng -->
+                      <% }
+                    } else { %>
+                      <i class="fa-solid fa-star crs" onclick="letRate('<%= i %>')"></i> <!-- ngôi sao trắng -->
+                    <% }
+                  } %>
+                <span> <%= payload.serverMetrics.stars.toFixed(2) %> / 5 (<%= payload.serverMetrics.rates %> bình chọn)</span>
+              </div>
+              <div>
+                <p class="float-start"><img src="https://24hstore.vn/upload_images/images/2020/03/04/minecraft-pe.jpg" alt="minecraft" width="128" height="64" class="float-start me-1 img-thumbnail" /> MINECRAFT là trò chơi điện tử sandbox được phát triển và phát hành bởi Mojang Studio. Trò chơi được tạo bởi Markus "Notch" Persson bằng ngôn ngữ lập trình Java. Sau khi thử nghiệm một số phiên bản riêng tư ban đầu, trò chơi được công khai rộng rãi lần đầu tiên vào tháng 5 năm 2009 trước khi phát hành đầy đủ vào tháng 11 năm 2011 với việc Notch từ chức và Jens "Jeb" Bergensten tiếp quản công việc phát triển. Kể từ đó Minecraft được chuyển sang một số nền tảng khác và trở thành trò chơi điện tử bán chạy nhất mọi thời đại với hơn 238 triệu bản được bán ra và gần 140 triệu người dùng hoạt động hằng tháng tính đến năm 2021. Để thưởng thức trò chơi này hãy tải ngay minecraft phiên bản mới nhất và tham gia vào server <a href="#" class="text-warning fw-bold"><%= process.env.SERVER_IP %></a> cùng những người bạn để trải nghiệm các thể loại hay nhất.</p>
+              </div>
+              <hr class="text-dark">
+              <div class="text-center">
+                <h4 class="text-decoration-underline">Trailers Official:</h4>
+                <div class="d-flex flex-column">
+                  <iframe class="m-2" width="560" height="315" src="https://www.youtube.com/embed/G_pTHJjG_XY" frameborder="0" allowfullscreen></iframe>
+                  <iframe class="m-2" width="560" height="315" src="https://www.youtube.com/embed/w27zhsfnhTA" frameborder="0" allowfullscreen></iframe>
                 </div>
               </div>
-            <% } %>
-            <div class="d-flex flex-column">
-              <div class="border border-dark py-5 m-5 crs">
-                <i class="fa-solid fa-location-dot lime"></i>
-                <br />
-                Xem vị trí
+              <hr class="text-dark">
+              <div class="text-center">
+                <h4 class="text-decoration-underline fw-bold">CHẾ ĐỘ CHƠI:</h4>
+              </div>
+              <div class="d-flex flex-column">
+                <div>
+                  <h4 class="fw-bold borrow">&#8226;	SKYBLOCK 🌍</h4>
+                  <img src="https://static.planetminecraft.com/files/image/minecraft/server/2023/821/17006282-dall-e-minecraft-floating-island-with-tree-logo-removebg-pr_l.webp" alt="skyblock" width="128px" height="128px" />
+                  <p>Chế độ chơi Skyblock là một thách thức độc đáo trong thế giới Minecraft, nơi người chơi bắt đầu trên một hòn đảo nhỏ giữa không trung và phải xây dựng mọi thứ từ đầu. Server Skyblock của chúng tôi mang đến trải nghiệm độc đáo và hấp dẫn với nhiều tính năng độc đáo.</p>
+                  <p>Hãy tham gia vào thế giới Skyblock của chúng tôi để trải nghiệm sự thách thức và sáng tạo không giới hạn. Bạn sẽ bắt đầu với tài nguyên hạn chế và phải sử dụng sự thông minh của mình để phát triển đảo của mình, xây dựng các cấu trúc độc đáo và thu thập tài nguyên quan trọng để sống sót.</p>
+                  <ul>
+                    <li>Hệ Thống Nhiệm Vụ (Quests): Cung cấp nhiệm vụ và thách thức cho người chơi để kiếm phần thưởng và khích lệ sự tiến bộ.</li>
+                    <li>Thương Mại và Kinh Tế: Tính năng này cho phép người chơi giao dịch tài nguyên với nhau, tạo nên một hệ thống kinh tế nội bộ trên server.</li>
+                    <li>Sự Kiện Hàng Ngày và Đặc Biệt: Tổ chức các sự kiện định kỳ hoặc sự kiện đặc biệt để giữ sự mới mẻ và thách thức cho người chơi.</li>
+                    <li>Rương Quà (Crate System): Hệ thống rương quà cung cấp phần thưởng đặc biệt và hiếm cho người chơi khi họ đạt được các mục tiêu cụ thể.</li>
+                    <li>Cấp Độ và Tiến Trình (Levels and Progression): Hệ thống cấp độ và tiến trình giúp người chơi theo dõi sự tiến bộ của họ và tăng cường trải nghiệm chơi game.</li>
+                    <li>Bảng Xếp Hạng (Leaderboards): Hiển thị danh sách xếp hạng những người chơi xuất sắc nhất trong các lĩnh vực như xây dựng, săn bắn, và kinh tế.</li>
+                    <li>Hệ Thống Gia Tăng (Upgrades System): Cho phép người chơi nâng cấp và tối ưu hóa các yếu tố trên đảo của họ, như máy trộn, máy phát điện, và hệ thống thu hoạch.</li>
+                    <li>Cộng Đồng Mạnh Mẽ: Tính năng này bao gồm các kênh trò chuyện, hỗ trợ cộng đồng và sự tương tác giữa người chơi.</li>
+                    <li>Các Mảnh Đảo Đặc Biệt: Ngoài đảo chính, có thể có các mảnh đảo đặc biệt với nhiệm vụ và thưởng riêng biệt.</li>
+                    <li>Hệ Thống Kỹ Năng (Skills System): Người chơi có thể phát triển các kỹ năng cụ thể, như đào, chế tạo, hoặc săn bắn, để trở thành chuyên gia trong lĩnh vực đó.</li>
+                    <li>...</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="fw-bold borrow">&#8226;	Prison ⚔️</h4>
+                  <img src="https://dunb17ur4ymx4.cloudfront.net/webstore/logos/1f1bda65bedafa00473a1d9e1fc11972891a9d32.png" alt="skyblock" width="128px" height="128px" />
+                  <p>Chế độ chơi Prison Server mang đến một trải nghiệm độc đáo trong thế giới Minecraft, nơi người chơi bắt đầu cuộc phiêu lưu của họ trong một tù nhân và phải vượt qua các thách thức để gia tăng cấp độ và kích thích kinh tế tù nhân. Dưới đây là một số tính năng phổ biến mà một server Prison thường có:</p>
+                  <ul>
+                    <li>Hệ Thống Khai Thác Mỏ (Mining System): Người chơi bắt đầu với một số lượng tài nguyên hạn chế và phải khai thác mỏ để kiếm tiền và thu thập vật phẩm quan trọng.</li>
+                    <li>Cấp Độ và Tiến Trình (Levels and Progression): Hệ thống cấp độ giúp người chơi theo dõi sự tiến bộ của họ và mở khóa các phần thưởng và quyền lợi mới khi đạt được cấp độ cao hơn.</li>
+                    <li>Thương Mại và Kinh Tế: Cung cấp hệ thống thương mại nội bộ giữa các tù nhân, tạo điều kiện cho giao dịch tài nguyên và đồ vật.</li>
+                    <li>Hệ Thống Nhiệm Vụ (Quests): Đưa ra nhiệm vụ và thách thức để người chơi hoàn thành, kiếm phần thưởng và tiền tù nhân.</li>
+                    <li>Các Cấp Độ Phòng Tù (Prison Ranks): Người chơi có thể tăng cấp từ tù nhân mới và đạt đến các cấp độ cao hơn, mỗi cấp độ đi kèm với các quyền lợi và thuận lợi riêng biệt.</li>
+                    <li>Hệ Thống Rương Quà (Crate System): Cung cấp rương quà chứa đựng phần thưởng và vật phẩm hiếm khi người chơi đạt được các mục tiêu cụ thể.</li>
+                    <li>Sự Kiện Hàng Ngày và Đặc Biệt: Tổ chức các sự kiện định kỳ hoặc sự kiện đặc biệt để giữ cho trải nghiệm chơi game luôn mới mẻ và thú vị.</li>
+                    <li>Hệ Thống Gia Tăng (Upgrades System): Cho phép tù nhân nâng cấp và tối ưu hóa các yếu tố trong phòng tù của họ, như tốc độ khai thác và năng suất.</li>
+                    <li>Bảng Xếp Hạng (Leaderboards): Hiển thị danh sách xếp hạng những tù nhân xuất sắc nhất dựa trên cấp độ, giàu có, hoặc thành tựu khác.</li>
+                    <li>Hệ Thống Mua Sắm (Shop System): Cung cấp cửa hàng nơi tù nhân có thể mua và bán các vật phẩm và dịch vụ.</li>
+                    <li>...</li>
+                  </ul>
+                </div>
               </div>
             </div>
+            <!-- pright -->
+            <%- include('info-panel.ejs') %>
           </div>
         </div>
-      </div>
-      <%
-      const formatter = new Intl.NumberFormat('vi-VN', {
-        style: 'currency',
-        currency: 'VND'
-      });
-      %>
-      <% if (payload) { %>
-        <div class="position-fixed end-0 top-0 rounded-2 py-3 px-5 border border-dark m-1 text-center bg-light small crs" data-bs-toggle="modal" data-bs-target="#profileBox">
-          <i class="fa-solid fa-universal-access fa-2xl lime"></i>
-          <span class="d-block fw-bold"><%= payload.email %></span>
-          <span class="d-block gold"><%= formatter.format(payload.balance) %></span>
+        <div class="position-absolute bottom-0 end-0 text-center m-1 text-danger crs" data-bs-toggle="modal" data-bs-target="#reportBox">
+          <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+          <span>Report</span>
         </div>
-      <% } %>
+      </div>
     </div>
-    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %>
+    
+    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('credit-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
+  <script src="/javascripts/rating-stars.js"></script>
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
   <script>
     var socket = io.connect('wss://erukascholar.live')
@@ -111,49 +206,5 @@
     socket.on('emitter', function (data) {
       console.log('client emitter=', data)
     })
-
-    $(document).ready(function () {
-      /*...*/
-    })
-    function showLoginBox() {
-      $('#loginBox').modal('toggle')
-    }
-    function getOpeningStatus() {
-      // Lấy thời gian hiện tại
-      const currentTime = new Date();
-      const currentHour = currentTime.getHours();
-      const currentMinute = currentTime.getMinutes();
-
-      // Đặt giờ mở cửa và giờ đóng cửa
-      const openHour1 = 7;
-      const openMinute1 = 30;
-      const closeHour1 = 11;
-      const closeMinute1 = 0;
-
-      const openHour2 = 18;
-      const openMinute2 = 0;
-      const closeHour2 = 22;
-      const closeMinute2 = 30;
-
-      // Kiểm tra xem có nằm trong khung giờ mở cửa hay không
-      if (
-        (currentHour > openHour1 || (currentHour === openHour1 && currentMinute >= openMinute1)) &&
-        (currentHour < closeHour1 || (currentHour === closeHour1 && currentMinute <= closeMinute1)) ||
-        (currentHour > openHour2 || (currentHour === openHour2 && currentMinute >= openMinute2)) &&
-        (currentHour < closeHour2 || (currentHour === closeHour2 && currentMinute <= closeMinute2))
-      ) {
-        // Nếu nằm trong khung giờ mở cửa, đặt cho thẻ p thành 'ĐANG MỞ CỬA'
-        $("#status").removeClass('text-danger');
-        $("#status").addClass('text-success');
-        $("#status").text("ĐANG MỞ CỬA✅");
-      } else {
-        // Nếu không nằm trong khung giờ mở cửa, đặt cho thẻ p thành 'ĐÓNG CỬA'
-        $("#status").removeClass('text-success');
-        $("#status").addClass('text-danger');
-        $("#status").text("ĐÓNG CỬA ❌");
-      }
-    }
-    getOpeningStatus();
-    setInterval(getOpeningStatus, 1000);
   </script>
 </html>

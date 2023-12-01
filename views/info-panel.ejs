@@ -52,13 +52,13 @@
     <div class="mt-4 text-center text-white p-1" id="membership">
       <img src="./images/steve-head.png" alt="steve-head" width="40" height="40" />
       <br>
-      <span><span class="fw-bold text-decoration-underline">00</span> thành viên</span>
+      <span><span class="fw-bold text-decoration-underline"><%= String(payload.serverStatus.members).padStart(2, '0') %></span> thành viên</span>
       <br>
       <span>đã tham gia</span>
       <hr class="text-white">
       <div class="text-start borrow fw-bolder">
         <i class="fa-solid fa-earth-asia text-bg-light text-success"></i>
-        &emsp;IP:&emsp;<span>MYSERVER.COM</span>
+        &emsp;IP:&emsp;<span class="text-uppercase"><%= process.env.SERVER_IP %></span>
       </div>
       <hr class="text-white">
       <div class="text-start borrow fw-bolder">
@@ -121,18 +121,11 @@
         <i class="fa-solid fa-scroll"></i>
       </div>
       <ul class="nav flex-column">
-        <li class="nav-item border-bottom border-dark crs">
-          <a class="nav-link text-light fw-bolder" href="#">Sự kiện Black Friday giảm giá 49% tất cả máy chủ.</a>
-        </li>
-        <li class="nav-item border-bottom border-dark crs">
-          <a class="nav-link text-light fw-bolder" href="#">Hóa trang Halloween Dracula, Wibu, { CHO KẸO HAY BỊ ĐẬP BẦM DẬP }</a>
-        </li>
-        <li class="nav-item border-bottom border-dark crs">
-          <a class="nav-link text-light fw-bolder" href="#">Cập nhật danh sách member lỏ trong server.</a>
-        </li>
-        <li class="nav-item border-bottom border-dark crs">
-          <a class="nav-link text-light fw-bolder" href="#">PIRATES - SERVER MỚI CHÍNH THỨC RA MẮT T9</a>
-        </li>
+        <% for(let i=0; i<payload.eventTitles.length; i++) { %>
+          <li class="nav-item border-bottom border-dark crs">
+            <a class="nav-link text-light fw-bolder" href="/postings"><%= payload.eventTitles[i] %></a>
+          </li>
+        <% } %>
       </ul>
     </div>
 </div>

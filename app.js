@@ -52,21 +52,38 @@ const server = https.createServer(options, app)
 const io = socketIO(server)
 
 // Rountings
-app.get('/', (req, res) => {
+app.get('/bbh', (req, res) => {
   const payload = req.session.user;
-  return res.render('index', { payload });
+  return res.render('bbh', { payload });
 })
 
-app.get('/theme1', async (req, res) => {
+app.get('/', async (req, res) => {
+  /**
+   * 00. userData
+   * 01. serverMetrics
+   * 02. serverStatus
+   * 03. eventTitles
+   */
+  const userData = req.session.user;
+  let payload = { userData };
   const queryResult = await pool.query('SELECT * FROM server_metrics');
   const queryRow = queryResult.rows[0];
-  let payload = { serverMetrics: queryRow };
-  const serverStatusResponse = await axios.get('https://api.mcstatus.io/v2/status/java/play.hypixel.net:25565');
+  payload['serverMetrics'] = queryRow;
+  const queryMembersResult = await pool.query('SELECT COUNT(*) FROM users WHERE is_verified = TRUE');
+  const members = queryMembersResult.rows[0].count;
+  const serverUrl = `https://api.mcstatus.io/v2/status/java/${process.env.SERVER_IPV4}:${process.env.SERVER_PORT}`
+  const serverStatusResponse = await axios.get(serverUrl);
   const onlinePlayers = serverStatusResponse.data.players.online;
   const maxPlayers = serverStatusResponse.data.players.max; 
-  const serverStatus = { onlinePlayers, maxPlayers };
+  const serverStatus = { onlinePlayers, maxPlayers, members };
   payload['serverStatus'] = serverStatus;
-  return res.render('theme1', { payload });
+  const queryTitlesResult = await pool.query('SELECT title FROM posts ORDER BY created_at DESC');
+  const tiles = queryTitlesResult.rows;
+  const eventTitles = tiles.map(e => {
+    return e.title;
+  });
+  payload['eventTitles'] = eventTitles;
+  return res.render('index', { payload });
 })
 
 app.get('/dashboard', authenticateToken, async (req, res) => {

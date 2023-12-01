@@ -1,27 +1,25 @@
 <!-- The Modal -->
-<% if (payload && payload.email) { %>
+<% if(payload.userData) { %>
 <div class="modal fade" id="profileBox">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-  
         <!-- Modal body -->
         <div class="modal-body" style="background-color: #1A233A;">
+            <div class="text-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-4 border border-dark text-white m-2 pt-2 small position-relative" style="background-color: #272E48;">
                         <div class="mb-3 text-center">
                             <div class="position-relative">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar" class="img-thumbnail" width="100px" />
+                                <img src="<%= payload.userData.avatar %>" alt="avatar" width="100px" />
                                 <div class="position-absolute end-0 bottom-0 crs lime rounded-1" onclick="uploadAvatar();">
                                     <i class="fa-regular fa-images"></i>
                                 </div>
                             </div>
-                            <h5 id="iFullName"><%= payload.fullname %></h5>
-                            <span>Khách hàng <span class="text-primary">#<%= payload.profileId %></span></span>
+                            <h5 id="iFullName"><%=  payload.userData.fullname %></h5>
+                            <span>Khách hàng <span class="text-primary">#<%=  payload.userData.profileId %></span></span>
                         </div>
                         <div class="mb-3">
                             <p class="text-primary">Giao dịch gần đây: (0)</p>
@@ -37,13 +35,13 @@
                             <div>
                                 <div class="mb-3 mt-3">
                                     <label for="fullname" class="form-label">Họ và tên:</label>
-                                    <input type="text" class="form-control text-white" id="fullname" placeholder="Enter fullname" value="<%= payload.fullname %>" name="fullname" style="background-color: #1A233A;" />
+                                    <input type="text" class="form-control text-white" id="fullname" placeholder="Enter fullname" value="<%=  payload.userData.fullname %>" name="fullname" style="background-color: #1A233A;" />
                                 </div>
                             </div>
                             <div>
                                 <div class="mb-3 mt-3">
                                     <label for="email" class="form-label">Email:</label>
-                                    <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%= payload.email %>" name="email" style="background-color: #1A233A;" readonly />
+                                    <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%=  payload.userData.email %>" name="email" style="background-color: #1A233A;" readonly />
                                 </div>
                             </div>
                             <div>
@@ -52,12 +50,12 @@
                                     <select name="country" id="country">
                                         <option value="+84">+84</option>
                                     </select>
-                                    <input type="text" class="form-control text-white" id="sdt" placeholder="Enter sdt" value="<%= payload.sdt %>" name="sdt" style="background-color: #1A233A;" />
+                                    <input type="text" class="form-control text-white" id="sdt" placeholder="Enter sdt" value="<%=  payload.userData.sdt %>" name="sdt" style="background-color: #1A233A;" />
                                 </div>
                             </div>
                         </div>
                         <h5 class="text-primary">Địa chỉ</h5>
-                        <textarea class="form-control text-white" rows="5" id="address" name="address" style="background-color: #1A233A;"><%= payload.address %></textarea>
+                        <textarea class="form-control text-white" rows="5" id="address" name="address" style="background-color: #1A233A;"><%=  payload.userData.address %></textarea>
                         <div class="w-100 mt-3 mb-3 text-end">
                             <button class="btn btn-primary w-25" onclick="saveProfile();">Cập nhật</button>
                         </div>
@@ -69,7 +67,7 @@
     </div>
 </div>
 <% } %>
-  <script>
+<script>
     $("#toFullName").val();
     function saveProfile() {
         const fullname = $("#fullname").val();
@@ -120,5 +118,5 @@
             }
         });
     }
-  </script>
+</script>
   

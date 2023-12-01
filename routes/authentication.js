@@ -163,7 +163,8 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
         const address = profileRow.address;
         const fullname = profileRow.fullname;
         const balance = profileRow.balance;
-        const payload = { userId, email, profileId, sdt, country, address, fullname, balance };
+        const avatar = profileRow.avatar;
+        const payload = { userId, email, profileId, sdt, country, address, fullname, balance, avatar };
         const token = jwt.sign(payload, 'concavang', {
           expiresIn: '1d',
         })
@@ -259,7 +260,8 @@ router.post('/login/email', async (req, res) => {
     const address = row.address;
     const fullname = row.fullname;
     const balance = row.balance;
-    const payload = { userId, email, profileId, sdt, country, address, fullname, balance };
+    const avatar = row.avatar;
+    const payload = { userId, email, profileId, sdt, country, address, fullname, balance, avatar };
     const token = jwt.sign(payload, 'concavang', { expiresIn: '1d' }); 
     res.cookie("token", token, {
       httpOnly: true,

@@ -27,8 +27,9 @@ async function authenticateToken(req, res, next) {
     const country = profileRow.country;
     const address = profileRow.address;
     const balance = profileRow.balance;
+    const avatar = profileRow.avatar;
     const profileId = profileRow.profile_id;
-    const newPayload = { ...payload, fullname, sdt, country, address, balance, profileId };
+    const newPayload = { ...payload, fullname, sdt, country, address, balance, avatar, profileId };
     req.session.user = newPayload
     return next()
   } catch (error) {

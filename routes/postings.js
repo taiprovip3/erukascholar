@@ -1,26 +1,36 @@
 const { default: axios } = require('axios');
 const express = require('express');
 const pool = require('../utils/db');
-const calculateTimeAgo = require('../utils/calculate-time-ago');
+const helper = require('../utils/calculate-timestamp');
 const router = express.Router();
 
 router.get('/postings', async (req, res) => {
-    const queryResult = await pool.query('SELECT * FROM server_metrics');
-    const queryRow = queryResult.rows[0];
-    // serverMetrics
-    let payload = { serverMetrics: queryRow };
-    // serverStatus
-    const serverStatusResponse = await axios.get('https://api.mcstatus.io/v2/status/java/play.hypixel.net:25565');
-    const onlinePlayers = serverStatusResponse.data.players.online;
-    const maxPlayers = serverStatusResponse.data.players.max; 
-    const serverStatus = { onlinePlayers, maxPlayers };
-    payload['serverStatus'] = serverStatus;
-    // posts
-    const queryPostsResult = await pool.query('SELECT * FROM posts ORDER BY post_id DESC');
-    const posts = queryPostsResult.rows;
-    payload['posts'] = posts;
-    // method caltimeago
-    return res.render('postings', { payload, helper: calculateTimeAgo  });
+  const userData = req.session.user;
+  let payload = { userData };
+  const queryResult = await pool.query('SELECT * FROM server_metrics');
+  const queryRow = queryResult.rows[0];
+  // serverMetrics
+  payload['serverMetrics'] = queryRow;
+  // serverStatus
+  const queryMembersResult = await pool.query('SELECT COUNT(*) FROM users WHERE is_verified = TRUE');
+  const members = queryMembersResult.rows[0].count;
+  const serverStatusResponse = await axios.get('https://api.mcstatus.io/v2/status/java/play.hypixel.net:25565');
+  const onlinePlayers = serverStatusResponse.data.players.online;
+  const maxPlayers = serverStatusResponse.data.players.max; 
+  const serverStatus = { onlinePlayers, maxPlayers, members };
+  payload['serverStatus'] = serverStatus; 
+  const queryTitlesResult = await pool.query('SELECT title FROM posts ORDER BY created_at DESC');
+  const tiles = queryTitlesResult.rows;
+  const eventTitles = tiles.map(e => {
+    return e.title;
+  });
+  payload['eventTitles'] = eventTitles;
+  // posts
+  const queryPostsResult = await pool.query('SELECT * FROM posts ORDER BY post_id DESC');
+  const posts = queryPostsResult.rows;
+  payload['posts'] = posts;
+  // method caltimeago
+  return res.render('postings', { payload, helper });
 });
 
 router.post('/postings', async (req, res) => {
