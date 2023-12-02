@@ -87,7 +87,7 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/dashboard', authenticateToken, async (req, res) => {
-  console.log('payload=', req.session.user);
+  // console.log('payload=', req.session.user);
   // return res.send(`Hello world, ${req.session.user.email}!`)
   return res.redirect("/");
 })  
@@ -97,6 +97,7 @@ app.use(require('./routes/user.js'));
 app.use(require('./routes/rating-stars.js'));
 app.use(require('./routes/report.js'));
 app.use(require('./routes/postings.js'));
+app.use(require('./routes/recharge.js'));
 
 const schedule = require('node-schedule');
 const pool = require('./utils/db.js')
