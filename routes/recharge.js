@@ -5,6 +5,7 @@ const moment = require('moment');
 const crypto = require('crypto');
 const Transaction = require('../models/transaction');
 const logger = require('../utils/logger');
+const pool = require('../utils/db');
 
 router.post('/vnp/ibanking/create_payment_url', async (req, res) => {
     /**
@@ -299,6 +300,10 @@ router.post('/tst/callback', async (req, res) => {
             { $set: newTransactionDataField },
         );
         console.log('Hook callback success. Let"s update userData');
+        const userId = transaction.userId;
+        const client = await pool.connect();
+        await client.query('UPDATE profile SET balance = balance + $1 WHERE usersId = $2', [realAmount, userId]);
+        client.release();
         return res.status(200).send();
     } catch (error) {
         console.error('/tst/callback=', error);

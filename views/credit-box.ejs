@@ -1,29 +1,34 @@
 <!-- The Modal -->
 <% if(payload.userData) { %>
+    <style>
+        #creditBox .modal-body{
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDDRea_pvtfV0Olm5dWbOrjcpCodlP47Vo-wICKQQWsxAwCl33-SBg1JJSLDs5GSkZIdU&usqp=CAU ');
+        }
+    </style>
     <div class="modal fade" id="creditBox">
         <div class="modal-dialog modal-xl modal-dialog-centered">
           <div class="modal-content">
             <!-- Modal body -->
-            <div class="modal-body" style="background-color: #1A233A;">
+            <div class="modal-body">
                 <div class="text-end">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="container">
-                    <div class="row" style="background-color: #272E48;">
+                    <div class="row">
                         <div class="col-12 text-white">
                             <p><i class="fa-solid fa-skull-crossbones text-warning"></i> Vui lòng lưu ý một vài điều sau trước khi nạp thẻ:</p>
                             <ol class="list-group list-group-numbered">
                                 <li class="list-group-item">Sau khi nạp thẻ thành công, xu sẽ được cộng vào tài khoản website, chưa cộng xu vào trong game. Cần thêm 1 thao tác chuyển xu (🥮) vào server mới có xu trong game.</li>
                                 <li class="list-group-item">Đối với nạp thẻ. Không được phép chọn sai <b>MỆNH GIÁ THẺ</b> & <b>LOẠI THẺ</b> để tránh bị nuốt thẻ (không thể hỗ trợ).</li>
-                                <li class="list-group-item">Khuyến khích nạp bằng [CHUYỂN KHOẢN CHAY] ngân hàng hoặc momo cho admin. Tuy chậm mà chắc mà còn không bị chiết khấu.</li>
+                                <li class="list-group-item">Khuyến khích nạp bằng [CHUYỂN KHOẢN CHAY] ngân hàng hoặc momo cho admin. Tuy chậm mà chắc, an toàn mà còn không bị chiết khấu.</li>
                             </ol>
                         </div>
                     </div>
-                    <div class="row pt-2 mt-3" style="background-color: #272E48;">
+                    <div class="row pt-2 mt-3">
                         <div class="col-12 text-white">
                             <ul class="mb-3 nav nav-tabs">
                                 <li class="nav-item" onclick="showCardForm();">
-                                  <a class="nav-link fw-bolder borrow active" href="javascript:void(0);" id="tab-card">Nạp thẻ</a>
+                                  <a class="nav-link fw-bolder active" href="javascript:void(0);" id="tab-card">Nạp thẻ</a>
                                 </li>
                                 <li class="nav-item" onclick="showIBankingForm();">
                                     <a class="nav-link fw-bolder" href="javascript:void(0);" id="tab-ibanking">Internet Banking</a>
@@ -70,7 +75,6 @@
                                 <div class="mb-3">
                                     <label for="ibanking_bankcode">Chọn ngân hàng</label>
                                     <select name="ibanking_bankcode" id="ibanking_bankcode" class="form-select bg-dark text-white">
-                                        <!-- <option value="" selected>Không chọn</option> -->
                                         <option value="MOMO">Momo</option>
                                         <option value="VCB">Ngân hàng VCB</option>
                                         <option value="BIDV">Ngân hàng BIDV</option>
