@@ -1,0 +1,1 @@
+{"code":1,"message":"Success","redirectLink":"https:\/\/chart.googleapis.com\/chart?cht=qr&chs=300x300&chl=2|99|0878313429|0878313429|0878313429|0|0|100000|oene4b3|transfer_myqr","bank":"MOMO","bankname":"TRI\u1ec6U TH\u1eca KH\u1edeI","banknumber":"","phonenumber":"0878313429","content":"oene4b3"}

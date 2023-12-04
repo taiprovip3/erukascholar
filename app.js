@@ -17,6 +17,9 @@ require('./middleware')
 // const nodemailer = require('nodemailer');
 const { authenticateToken } = require('./utils/oauth-middleware')
 const { default: axios } = require('axios')
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const rfs = require('rotating-file-stream');
 
 // App settings
 const app = express()
@@ -39,6 +42,12 @@ app.use(cookieParser('concavang'))
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
 
+const accessLogStream = rfs.createStream('access.log', {
+  interval: '1d', // rotate daily
+  path: './logs',
+});
+app.use(morgan('combined', { stream: accessLogStream }));
+
 // Certificates
 const options = {
   key: fs.readFileSync('./certificates/erukascholar.live/key.pem'),
@@ -50,6 +59,11 @@ const options = {
 // };
 const server = https.createServer(options, app)
 const io = socketIO(server)
+
+// Mongooes
+mongoose.connect('mongodb://sa:sapassword@localhost:27017/admin')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('Error connecting to MongoDB:', err));
 
 // Rountings
 app.get('/bbh', (req, res) => {

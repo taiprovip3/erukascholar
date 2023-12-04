@@ -15,7 +15,7 @@
                             <ol class="list-group list-group-numbered">
                                 <li class="list-group-item">Sau khi nạp thẻ thành công, xu sẽ được cộng vào tài khoản website, chưa cộng xu vào trong game. Cần thêm 1 thao tác chuyển xu (🥮) vào server mới có xu trong game.</li>
                                 <li class="list-group-item">Đối với nạp thẻ. Không được phép chọn sai <b>MỆNH GIÁ THẺ</b> & <b>LOẠI THẺ</b> để tránh bị nuốt thẻ (không thể hỗ trợ).</li>
-                                <li class="list-group-item">Khuyến khích nạp bằng [iBanking] hoặc [CHUYỂN KHOẢN CHAY] ngân hàng hoặc momo cho admin. Tuy chậm mà chắc mà còn không bị chiết khấu.</li>
+                                <li class="list-group-item">Khuyến khích nạp bằng [CHUYỂN KHOẢN CHAY] ngân hàng hoặc momo cho admin. Tuy chậm mà chắc mà còn không bị chiết khấu.</li>
                             </ol>
                         </div>
                     </div>
@@ -26,10 +26,10 @@
                                   <a class="nav-link fw-bolder borrow active" href="javascript:void(0);" id="tab-card">Nạp thẻ</a>
                                 </li>
                                 <li class="nav-item" onclick="showIBankingForm();">
-                                    <a class="nav-link" href="javascript:void(0);" id="tab-ibanking">Internet Banking</a>
+                                    <a class="nav-link fw-bolder" href="javascript:void(0);" id="tab-ibanking">Internet Banking</a>
                                   </li>
                                 <li class="nav-item" onclick="showBankTransferForm();">
-                                  <a class="nav-link" href="javascript:void(0);" id="tab-bank-transfer">Chuyển khoản</a>
+                                  <a class="nav-link fw-bolder" href="javascript:void(0);" id="tab-bank-transfer">Chuyển khoản</a>
                                 </li>
                             </ul>
                             <form method="post" id="card-form">
@@ -39,25 +39,11 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="credit_box_provider">Nhà mạng</label>
-                                    <select name="credit_box_provider" id="credit_box_provider" class="form-select bg-dark text-white">
-                                        <option value="VIETTEL">Viettel</option>
-                                        <option value="MOBIFONE">Mobifone</option>
-                                        <option value="VINAPHONE">Vinaphone</option>
-                                        <option value="GATE">Gate</option>
-                                        <option value="VCOIN">Vcoint</option>
-                                    </select>
+                                    <select name="credit_box_provider" id="credit_box_provider" class="form-select bg-dark text-white" onchange="onProviderChange(this);"></select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="credit_box_value">Mệnh giá</label>
-                                    <select name="credit_box_value" id="credit_box_value" class="form-select bg-dark text-white">
-                                        <option value="10000">10.000 đ (100 🥮)</option>
-                                        <option value="20000">20.000 đ (200 🥮)</option>
-                                        <option value="50000">50.000 đ (500 🥮)</option>
-                                        <option value="100000">100.000 đ (1.000 🥮)</option>
-                                        <option value="200000">200.000 đ (2.000 🥮)</option>
-                                        <option value="500000">500.000 đ (5.000 🥮)</option>
-                                        <option value="1000000" selected>1.000.000 đ (10.000 🥮)</option>
-                                    </select>
+                                    <label for="credit_box_value">Mệnh giá <span class="crs" data-bs-toggle="tooltip" title="Nên nạp bằng chuyển khoản cho Admin tuy lâu nhưng sẽ nhận 100% giá trị. Nhắn tin facebook cho admin ngay khi chuyển khoản.">💡</span></label>
+                                    <select name="credit_box_value" id="credit_box_value" class="form-select bg-dark text-white"></select>
                                 </div>
                                 <div class="mb-3">
                                     <label for="credit_box_seri">Số seri</label>
@@ -76,15 +62,18 @@
                                     display: none;
                                 }
                             </style>
-                            <form method="post" action="/ibanking/create_payment_url" id="ibanking-form">
+                            <form id="ibanking-form">
                                 <div class="mb-3">
                                     <label for="ibanking_value">Số tiền muốn nạp</label>
-                                    <input type="number" name="ibanking_value" id="ibanking_value" class="form-control bg-dark text-white" placeholder="Nhập số tiền.." required />
+                                    <input type="number" name="ibanking_value" id="ibanking_value" class="form-control bg-dark text-white" placeholder="Nhập số tiền.." max="3000000" required />
                                 </div>
                                 <div class="mb-3">
                                     <label for="ibanking_bankcode">Chọn ngân hàng</label>
                                     <select name="ibanking_bankcode" id="ibanking_bankcode" class="form-select bg-dark text-white">
-                                        <option value="" selected>Không chọn</option>
+                                        <!-- <option value="" selected>Không chọn</option> -->
+                                        <option value="MOMO">Momo</option>
+                                        <option value="VCB">Ngân hàng VCB</option>
+                                        <option value="BIDV">Ngân hàng BIDV</option>
                                     </select>
                                 </div>
                                 <div class="mb-3 text-end">
@@ -123,27 +112,139 @@
           </div>
         </div>
     </div>
+    <div class="modal fade" id="qrBox">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+          <div class="modal-content">
+            <!-- Modal body -->
+            <div class="modal-body" style="background-color: #1A233A;">
+                <div class="text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="container">
+                    <div class="row" style="background-color: #272E48;">
+                        <div class="col-12 text-white text-center" id="qrContent"></div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
     <% } %>
     <script>
-        $.ajax({
-            url: '/get-vnp-banks',
-            method: 'GET',
-            success: function(response) {
-                // Xử lý kết quả thành công từ API
-                console.log('banks=',response);
-                if(response) {
-                    renderBankList(response);
-                }
-            },
-            error: function(error) {
-                // Xử lý lỗi từ API
-                console.error('Error:', error);
+
+        let listTstProviderPopup = [];
+        initSkeleton();
+
+        async function initSkeleton() {
+            listTstProviderPopup = await getTSTProviders();
+            setCardProviders();
+            setCardValues();
+        }
+
+        async function getTSTProviders() {
+            return $.ajax({
+                url: '/tst/get-providers',
+                method: 'GET',
+                contentType: 'application/json',
+            }).then(data => data);
+        }
+
+        function setCardProviders() {
+            const selectBox = $("#credit_box_provider");
+            $.each(listTstProviderPopup, function(index, obj) {
+                const option = $("<option>").text(obj.card_type).val(obj.card_type);
+                selectBox.append(option);
+            });
+        }
+
+        function setCardValues(provider) {
+            if(!provider) {
+                provider = listTstProviderPopup[0].card_type; // Lấy ra loại thẻ đầu tiên
             }
+            const foundProvider = listTstProviderPopup.find(function(obj) {
+                return obj.card_type === provider;
+            });
+            const selectBox = $("#credit_box_value");
+            selectBox.empty();
+            const discountObject = foundProvider.discount;
+            for(const key in discountObject) {
+                const priceKey = Number(key);
+                const lossDiscount = Number(discountObject[key]);
+                const willEarn = priceKey - (priceKey * (lossDiscount/100));
+                const optionTextDisplay = `${key} đ (${willEarn/100} 🥮) -> Bị chiết khấu ${lossDiscount}%`;
+                const option = $("<option>").text(optionTextDisplay).val(priceKey);
+                selectBox.append(option);
+            }
+        }
+
+
+
+
+        $("#ibanking-form").on("submit", (e) => {
+            e.preventDefault();
+            let formDataObject = {};
+            const inputArray = $("#ibanking-form").serializeArray();
+            $.each(inputArray, function(i, field) {
+                formDataObject[field.name] = field.value;
+            });
+            console.log('formDataObject=',formDataObject);
+            $.ajax({
+                url: '/gb/ibanking/create-payment',
+                method: 'POST',
+                data: formDataObject,
+                success: function(response) {
+                    // Xử lý kết quả thành công từ API
+                    $("#creditBox").modal('toggle');
+                    if(response.code == 1) {
+                        const htmlContent = `
+                            <div class="text-danger">❗ Vui lòng không tắt hộp thoại này khi chưa làm xong thao tác. Hộp thoại sẽ tự đóng khi giao dịch hoàn tất.</div>
+                            <div class="my-1"><img src="${response.redirectLink}" alt="qrcode"></div>
+                            <div>${response.bank}</div>
+                            <div>${response.bankname}</div>
+                            <div>${response.phonenumber}</div>
+                            <div>Nội dung chuyển khoản: ${response.content}</div>
+                        `;
+                        $("#qrContent").html(htmlContent);
+                        $("#qrBox").modal('toggle');
+                    } else {
+                        toastr.error(`Giao dịch tới Third Party đã bị từ lỗi. Mã lỗi: ${response.code}`, 'Lỗi');
+                    }
+                },
+                error: function(error) {
+                    // Xử lý lỗi từ API
+                    console.error('Error:', error);
+                }
+            });
         });
         $("#card-form").on("submit", (e) => {
             e.preventDefault();
             toastr.info('Đang tiến hành nạp thẻ', 'Vui lòng chờ');
+            let formDataObject = {};
+            const inputArray = $("#card-form").serializeArray();
+            $.each(inputArray, function(i, field) {
+                formDataObject[field.name] = field.value;
+            });
+            console.log('formDataObject=',formDataObject);
+            $.ajax({
+                url: '/tst/recharge',
+                method: 'POST',
+                data: formDataObject,
+                success: (sweetResponse) => {
+                    swal({
+                        title: sweetResponse.title,
+                        text: sweetResponse.text,
+                        icon: sweetResponse.icon
+                    });
+                }, error: (error) => {
+                    console.error('error=', error);
+                    toastr.error(`${error.statusText}`, 'Lỗi');
+                }
+            })
         });
+        function onProviderChange(obj) {
+            const provider = obj.value;
+            setCardValues(provider);
+        }
         function showCardForm() {
             $("#tab-bank-transfer").removeClass('active');
             $("#tab-ibanking").removeClass('active');
@@ -171,7 +272,7 @@
             $("#bank-transfer-form").hide();
             $("#ibanking-form").show();
         }
-        function renderBankList(banks) {
+        function renderVNPBankList(banks) {
             const selectBank = $('#ibanking_bankcode');
             selectBank.empty();
             selectBank.append('<option value="" selected>Không chọn</option>');
