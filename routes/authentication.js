@@ -6,55 +6,60 @@ const jwt = require('jsonwebtoken')
 const bycrypt = require('bcryptjs')
 const sendEmail = require('../utils/send-mail')
 const { authenticateGoogleOAuth } = require('../utils/oauth-middleware')
+const hashPasswordSHA256 = require('../utils/encrypt-password.js')
 
-router.post('/register/email', async (req, res) => {
+router.post('/register', async (req, res) => {
   /**
-   * case1: có tồn tại email trong csdl
-   *      -- email đã xác thực -> báo lỗi tài khoản exist
+   * case1: có tồn tại username trong csdl
+   *      -- username đã xác thực -> báo lỗi tài khoản exist
    *      -- chưa xác thức -> gửi link đăng ký
-   * case2: không tồn tại email trong csdl -> gửi link đăng ký
+   * case2: không tồn tại username trong csdl -> gửi link đăng ký
    */
   try {
-    const { email, password } = req.body
+    const { username, email, password } = req.body
     // Kiểm tra xem email đã tồn tại trong CSDL hay chưa
-    const checkMailQuery = await pool.query('SELECT * FROM users WHERE email = $1', [email])
+    const checkMailQuery = await pool.query('SELECT * FROM authme WHERE username = $1', [username])
     if (checkMailQuery.rowCount > 0) {
-      // Có tồn tại email register dưới csdl
-      const isEmailVerified = checkMailQuery.rows[0].is_verified
-      if (isEmailVerified) {
-        // Email đã xác thực -> báo lỗi tài khoản exist
-        const sweetResponse = {
-          title: `LỖI`,
-          text: `Tài khoản email ${email} này đã được sử dụng. Nếu bạn quên mật khẩu hãy chọn nút Quên Mật Khẩu ở hộp đăng nhập!`,
+      // Có tồn tại username register dưới csdl
+      const sweetResponse = {
+        title: `LỖI`,
+        text: `Tài khoản ${username} này đã được sử dụng. Nếu bạn quên mật khẩu hãy chọn nút Quên Mật Khẩu ở hộp đăng nhập!`,
+        icon: 'error',
+      }
+      return res.json(sweetResponse)
+    } else {
+      // Không tồn tại username trong csdl -> đăng ký
+      const clientQuery = await pool.connect();
+      const addUserQuery = await clientQuery.query(`INSERT INTO authme
+      (id, username, realname, "password", ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp)
+      VALUES(nextval('authme_id_seq'::regclass), $1, $1, $2, '', 0, 0, '', '0'::double precision, '0'::double precision, '0'::double precision, 'world'::character varying, 0, 0, $3, '0'::smallint, '0'::smallint, '') RETURNING *`, [
+        username,
+        password,
+        email
+      ])
+      if(addUserQuery.rowCount <= 0) {
+        sweetResponse = {
+          title: 'LỖI',
+          text: 'ĐÃ CÓ LỖI XẢY RA KHI THÊM TÀI KHOẢN MỚI VÀO CƠ SỞ DỮ LIỆU. Vui lòng báo lỗi gấp cho Admin bằng cách dùng nút [REPORT] trên trang!',
           icon: 'error',
         }
-        return res.json(sweetResponse)
-      } else {
-        // Email chưa xác thực
-        const userId = checkMailQuery.rows[0].id
-        await pool.query('UPDATE users SET password = $1 WHERE id = $2', [password, userId])
-        const sweetResponse = {
-          title: `CẦN XÁC THỰC EMAIL`,
-          text:
-            sendEmail(userId, email) +
-            `. Tài khoản của bạn chưa được đăng ký. Chúng tôi đã gửi một đường link xác thực tới email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để tiếp tục.`,
-          icon: 'info',
-        }
-        return res.json(sweetResponse)
+        return res.json(sweetResponse);
       }
-    } else {
-      // Không tồn tại email trong csdl
-      const result = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id', [
-        email,
-        password,
-      ])
-      const userId = result.rows[0].id
-      const sweetResponse = {
-        title: `ĐÃ GỬI LINK XÁC THỰC`,
-        text:
-          sendEmail(userId, email) +
-          `. Tài khoản của bạn chưa được đăng ký. Chúng tôi đã gửi một đường link xác thực tới email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để tiếp tục.`,
-        icon: 'info',
+      clientQuery.release();
+      let sweetResponse = {};
+      if(email) {
+        sendEmail(username, email);
+        sweetResponse = {
+          title: 'ĐĂNG KÝ THÀNH CÔNG',
+          text: `Tài khoản của bạn đã được đăng ký vào hệ thống thành viên. Để bảo mật tài khoản và toàn vẹn chức năng. Chúng tôi khuyến khích bạn cần thêm một bước xác thực email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để xác thực. Tránh rủi ro sau này!`,
+          icon: 'success',
+        }
+      } else {
+        sweetResponse = {
+          title: 'ĐĂNG KÝ THÀNH CÔNG',
+          text: 'Vui lòng đăng nhập. Tài khoản của bạn chưa thêm email xác thực nên bạn chưa thêm sử dụng đầy đủ chức năng của máy chủ cũng như rủi ro bảo mật có thể xảy ra. Chúng tôi khuyến khích bạn nên xác thực email ngay tại hộp thoại [Thông Tin Cá Nhân]',
+          icon: 'success',
+        }
       }
       return res.json(sweetResponse)
     }
@@ -71,8 +76,13 @@ router.post('/register/email', async (req, res) => {
 
 router.get('/register/verify', async (req, res) => {
   /**
-   * case1: cố tình bug url thiếu param token
-   * case2: catch token không hợp lệ
+   * case 01: cố tình bug url thiếu param token
+   * case 02: catch token không hợp lệ
+   * **** Các công việc cần làm sau khi user tạo acc
+   * th01: tài khoản ko tồn tài trong hệ thống
+   * th02: tài khoản đã xác thực
+   * th03: email muốn xác thực đã có user nào đó dùng
+   * th04: xac thuc thanh cong, đặt is_verified = true
    */
   const token = req.query.token
   if (!token) {
@@ -83,18 +93,12 @@ router.get('/register/verify', async (req, res) => {
     }
     return res.render('temp-page', { sweetResponse })
   }
-  /**
-   * Các công việc cần làm sau khi user tạo acc
-   * 01. Kiểm tra acc đã verify hay chưa
-   * 02. Set is_verified thành true
-   * 03. Thêm record profile mới cho user
-   */
   const clientQuery = await pool.connect();
   try {
     const payload = jwt.verify(token, 'concavang')
-    const userId = payload.userId
+    const username = payload.username
     const email = payload.email;
-    const queryResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const queryResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     if(queryResult.rowCount <= 0) {
       const sweetResponse = {
         title: 'LỖI TÀI KHOẢN KHÔNG TỒN TẠI TRONG HỆ THỐNG',
@@ -105,26 +109,33 @@ router.get('/register/verify', async (req, res) => {
     }
     const rowQuery = queryResult.rows[0];
     const isVerified = rowQuery.is_verified;
-    if(isVerified) {
+    if(isVerified) {// TH tài khoản đã được xác thực
+      const existedEmailVerified = rowQuery.email;
       const sweetResponse = {
         title: 'TÀI KHOẢN ĐÃ ĐƯỢC XÁC THỰC',
-        text: `Tài khoản email ${email} đã được xác thực trước đó. Không thể xác thực lại lần nữa. Vui lòng truy cập trang Đăng nhập để sử dụng hệ thống!`,
+        text: `Tài khoản user ${username} đã xác thực với email mang tên ${existedEmailVerified}. Không thể xác thực lại lần nữa!`,
         icon: 'error',
       }
       return res.render('temp-page', { sweetResponse });
     }
-    await clientQuery.query('BEGIN');
-    await clientQuery.query('UPDATE users SET is_verified = true WHERE id = $1', [userId])
-    await clientQuery.query('INSERT INTO profiles (users_id) VALUES ($1)', [userId]);
-    console.log('Transaction successful');
-    await clientQuery.query('COMMIT');
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 86400,
-      signed: true,
-    })
-    return res.redirect('/dashboard')
+    // TH email đang xác thực trùng với email đã liên kết với 1 tài khoản khác.
+    const verifiedEmailUsedQuery = await clientQuery.query('SELECT * FROM users WHERE email = $1 AND is_verified = TRUE', [email]);
+    if(verifiedEmailUsedQuery.rowCount > 0) {
+      const usernameUsedThisEmail = verifiedEmailUsedQuery.rows[0].username;
+      const sweetResponse = {
+        title: 'XÁC THỰC THẤT BẠI',
+        text: `Tài khoản gmail google ${email} đã được liên kết với một user tên là ${usernameUsedThisEmail} trước đó. Không thể đùng lại cho user của bạn!`,
+        icon: 'error',
+      }
+      return res.render('temp-page', { sweetResponse });
+    }
+    await clientQuery.query('UPDATE users SET is_verified = true WHERE username = $1', [username])
+    const sweetResponse = {
+      title: 'XÁC THỰC THÀNH CÔNG',
+      text: `Tài khoản của bạn đã sẵn sàng. Đăng nhập ngay!`,
+      icon: 'success',
+    }
+    return res.render('temp-page', { sweetResponse });
   } catch (error) {
     console.error('Lỗi khi xác thực token:', error)
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
@@ -145,17 +156,19 @@ router.get(
 ) 
 
 router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) => {
+  const clientQuery = await pool.connect();
   try {
     const email = req.user.email
-    const password = ''
-    const resultQuery = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const resultQuery = await clientQuery.query('SELECT * FROM users WHERE email = $1', [email]);
     if (resultQuery.rowCount > 0) {
       const rowQuery = resultQuery.rows[0];
-      const userId = rowQuery.id
-      const isEmailVerified = rowQuery.is_verified
-      if (isEmailVerified) {
+      const isVerified = rowQuery.is_verified
+      if (isVerified) {// email đã xác thực -> cho login
         // là login
-        const profileQuery = await pool.query('SELECT * FROM profiles WHERE users_id = $1', [userId]);
+        const userId = rowQuery.id;
+        const username = rowQuery.username;
+
+        const profileQuery = await clientQuery.query('SELECT * FROM profiles WHERE users_id = $1', [userId]);
         const profileRow = profileQuery.rows[0];
         const profileId = profileRow.profile_id;
         const sdt = profileRow.sdt;
@@ -164,7 +177,7 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
         const fullname = profileRow.fullname;
         const balance = profileRow.balance;
         const avatar = profileRow.avatar;
-        const payload = { userId, email, profileId, sdt, country, address, fullname, balance, avatar };
+        const payload = { userId, username, email, isVerified, profileId, sdt, country, address, fullname, balance, avatar };
         const token = jwt.sign(payload, 'concavang', {
           expiresIn: '1d',
         })
@@ -176,30 +189,20 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
         })
         return res.redirect('/dashboard')
       } else {
-        // là resent register
-        await pool.query('UPDATE users SET password = $1 WHERE id = $2', [password, userId])
+        // email chưa liên kết với account nào
         const sweetResponse = {
-          title: 'ĐÃ GỬI LINK XÁC THỰC',
-          text:
-            sendEmail(userId, email) +
-            `. Tài khoản của bạn chưa được đăng ký. Chúng tôi đã gửi một đường link xác thực tới email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để tiếp tục.`,
+          title: 'TÀI KHOẢN GOOGLE NÀY CHƯA XÁC THỰC',
+          text: `Tài khoản ${email} này chưa được xác thực bởi bất kì user nào. Đăng nhập với google chỉ hiệu quả với tài khoản đã xác thực email liên kết. Vui lòng đăng nhập bằng tên đăng nhập và mật khẩu`,
           icon: 'info',
         }
         return res.render('temp-page', { sweetResponse })
       }
     } else {
-      // là register lần đầu, có tồn tại email trong csdl nhưng chưa verified.
-      const result = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id', [
-        email,
-        password,
-      ])
-      const userId = result.rows[0].id
+      // là register lần đầu
       const sweetResponse = {
-        title: 'ĐÃ GỬI LINK XÁC THỰC',
-        text:
-          sendEmail(userId, email) +
-          `. Tài khoản của bạn chưa được đăng ký. Chúng tôi đã gửi một đường link xác thực tới email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để tiếp tục.`,
-        icon: 'info',
+        title: 'TÀI KHOẢN GOOGLE NÀY CHƯA ĐƯỢC ĐĂNG KÝ',
+        text: `Tài khoản của bạn ${email} chưa được đăng ký. Vui lòng mở hộp thoại [Đăng Ký] tài khoản ngay!`,
+        icon: 'error',
       }
       return res.render('temp-page', { sweetResponse })
     }
@@ -211,6 +214,8 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
       icon: 'info',
     }
     return res.render('temp-page', { sweetResponse })
+  } finally {
+    clientQuery.release();
   }
 })
 
@@ -223,37 +228,45 @@ router.get('/oauth/google/failure', (req, res) => {
   return res.render('temp-page', { sweetResponse })
 })
 
-router.post('/login/email', async (req, res) => {
+router.post('/login', async (req, res) => {
+  /**
+   * case1: account ko tồn tại
+   * case2: account sai mật khẩu
+   * case3: exception
+   */
+  const clientQuery = await pool.connect();
   try {
-    const { email, password, is_remember } = req.body;
-    // const queryUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    const queryUser = await pool.query('SELECT users.*, profiles.* FROM users INNER JOIN profiles ON users.id = profiles.users_id WHERE users.email = $1', [email]);
-    /**
-     * case1: account ko tồn tại
-     * case2: account tồn tại nhưng chưa verified,
-     * cast3: account sai mật khẩu
-     */
-    if(queryUser.rowCount <= 0 || queryUser.rows[0].is_verified != true) {
+    const { username, password, is_remember } = req.body;
+    const queryUser = await clientQuery.query('SELECT users.*, profiles.* FROM users INNER JOIN profiles ON users.id = profiles.users_id WHERE users.username = $1', [username]);
+    if(queryUser.rowCount <= 0) {
       const sweetResponse = {
         title: 'TÀI KHOẢN KHÔNG TỒN TẠI',
-        text: `Tài khoản email ${email} này chưa được đăng ký`,
+        text: `Tài khoản user ${username} này chưa được đăng ký`,
         icon: 'error'
       };
       return res.json(sweetResponse);
     }
     const storedPassword = queryUser.rows[0].password;
-    const equalPassword = bycrypt.compareSync(password, storedPassword);
-    if(!equalPassword) {
+    const match = storedPassword.match(/\$SHA\$(.*?)\$/);
+    const salt = match[1];
+    const userPasswordHash1 = hashPasswordSHA256(password);
+    const userPasswordHash2 = hashPasswordSHA256(userPasswordHash1 + salt);
+    const userPasswordHash = `$SHA$${salt}$${userPasswordHash2}`;
+
+    if(userPasswordHash !== storedPassword) {
       const sweetResponse = {
         title: 'SAI MẬT KHẨU',
-        text: `Mật khẩu không đúng`,
+        text: 'Mật khẩu không đúng',
         icon: 'error'
       };
       return res.json(sweetResponse);
     }
+
     const rows = queryUser.rows;
     const row = rows[0];
     const userId = row.id;
+    const email = row.email;
+    const isVerified = row.is_verified;
     const profileId = row.profile_id;
     const sdt = row.sdt;
     const country = row.country;
@@ -261,7 +274,9 @@ router.post('/login/email', async (req, res) => {
     const fullname = row.fullname;
     const balance = row.balance;
     const avatar = row.avatar;
-    const payload = { userId, email, profileId, sdt, country, address, fullname, balance, avatar };
+    const createdAt = row.createdAt;
+    
+    const payload = { userId, username, email, isVerified, profileId, sdt, country, address, fullname, balance, avatar, createdAt };
     const token = jwt.sign(payload, 'concavang', { expiresIn: '1d' }); 
     res.cookie("token", token, {
       httpOnly: true,
@@ -271,13 +286,15 @@ router.post('/login/email', async (req, res) => {
     });
     const sweetResponse = {
       title: 'ĐĂNG NHẬP THÀNH CÔNG',
-      text: `Chúng tôi sẽ điều hướng bạn trong giây lát!`,
+      text: 'Chúng tôi sẽ điều hướng bạn trong giây lát!',
       icon: 'success'
     };
     return res.json(sweetResponse);
   } catch (error) {
     console.log('error=', error.message);
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.');
+  } finally {
+    clientQuery.release();
   }
 });
 

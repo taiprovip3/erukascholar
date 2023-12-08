@@ -10,7 +10,7 @@
       background-repeat: no-repeat;
       background-size: cover;
       z-index: 1;
-      width: 100%;
+      width: 250px;
     }
     #block-profile:hover > #detail-profile {
       display: block;
@@ -21,10 +21,11 @@
     <div class="d-flex align-items-center bg-light text-dark fw-bold p-2 crs position-relative" id="block-profile">
         <div data-bs-toggle="modal" data-bs-target="#profileBox">
         <img src="https://bolt-gcdn.sc-cdn.net/3/tTgShVkMFR00WHsatVvx0?bo=EhgaABoAMgF9OgEEQgYIne_ioAZIAlASYAE%3D&uc=18" alt="avatar" width="20" height="20" class="rounded-circle m-1" />
-        <span class="text-decoration-underline">taiproduaxe@gmail.com</span>
+        <span class="text-decoration-underline"><%= payload.userData.username %></span>
         </div>
         <div id="detail-profile" class="position-absolute top-100 start-0 p-2">
         <span class="d-block">Thành viên: <span class="text-primary">#<%= payload.userData.profileId %></span></span>
+        <span class="d-block">Trạng thái: <%= payload.userData.isVerified %></span>
         <span>Số dư: <u class="violet fw-bold"><%= payload.userData.balance %></u> 🥮 <b><i class="fa-solid fa-plus text-success crs" data-bs-toggle="modal" data-bs-target="#creditBox"></i></b></span>
         <div class="text-end">
             <a href="/logout" class="borrow text-decoration-underline">Đăng xuất</a>

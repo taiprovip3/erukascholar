@@ -14,19 +14,19 @@
       <div class="modal-body">
         <form onsubmit="onRegisterBoxSubmit(event);">
           <div class="mb-3 mt-3">
-            <label for="email" class="form-label">Email:</label>
+            <label for="register-username" class="form-label">Tên người dùng (<span class="text-danger fw-bold">*</span>):</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
-              id="register-email"
-              placeholder="Nhập địa chỉ email"
-              name="register-email"
+              id="register-username"
+              placeholder="Nhập tên đăng nhập mong muốn"
+              name="register-username"
               required
               maxlength="255"
             />
           </div>
           <div class="mb-3">
-            <label for="pwd" class="form-label">Password:</label>
+            <label for="pwd" class="form-label">Password (<span class="text-danger fw-bold">*</span>):</label>
             <input
               type="password"
               class="form-control"
@@ -38,7 +38,7 @@
             />
           </div>
           <div class="mb-3">
-            <label for="pwd" class="form-label">Nhập lại Password:</label>
+            <label for="pwd" class="form-label">Nhập lại Password (<span class="text-danger fw-bold">*</span>):</label>
             <input
               type="password"
               class="form-control"
@@ -49,7 +49,24 @@
               maxlength="255"
             />
           </div>
-          <div class="my-3 small text-info"><i class="fa-solid fa-reply-all"></i> Chúng tui sẽ gửi link xác thực tới email của bạn!</div>
+          <div class="mb-3 mt-3">
+            <label for="email" class="form-label">Email (có thể bỏ qua):</label>
+            <input
+              type="email"
+              class="form-control"
+              id="register-email"
+              placeholder="Nhập địa chỉ email"
+              name="register-email"
+              maxlength="255"
+            />
+          </div>
+          <div class="my-3 small text-info text-center">
+            <div><i class="fa-solid fa-reply-all"></i> Chúng tui sẽ gửi link xác thực tới email của bạn.</div>
+            <div>
+              <span class="d-block">Khuyến Khích Xác Thực <span class="crs" data-bs-toggle="tooltip" title="Xác thưc email ngay bước đăng ký này giúp bảo vệ tài khoản của bạn khỏi rủi ro bảo mật và toàn vẹn chức năng người dùng">🤚</span></span>
+            </div>
+          </div>
+          
           <button type="submit" class="btn btn-primary">Đăng ký</button>
         </form>
         <hr />
@@ -63,17 +80,6 @@
           />
           Đã có tài khoản?
         </button>
-        <br />
-        <a class="btn btn-light border my-1" href="/oauth/google">
-          <img
-            src="https://i.pinimg.com/originals/84/c7/00/84c7007eb6ac4374f77394d1e4954a96.png"
-            alt="Google Icon"
-            width="20"
-            height="20"
-            class="me-2"
-          />
-          Đăng nhập với Google
-        </a>
       </div>
       <!-- Modal footer -->
       <div class="modal-footer">
@@ -88,34 +94,49 @@
     $('#loginBox').modal('toggle')
   }
 
-  function onRegisterBoxSubmit(e) {
+  async function onRegisterBoxSubmit(e) {
     e.preventDefault()
 
+    const username = document.getElementById('register-username').value
     const email = document.getElementById('register-email').value
     const pwd = document.getElementById('register-pwd').value
     const repwd = document.getElementById('register-repwd').value
 
     // Validation
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-    if (!emailRegex.test(email)) {
-      toastr.error('Email sai định dạng.', 'Lỗi!')
-      document.getElementById('register-email').focus()
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/
+    if(!usernameRegex.test(username)) {
+      toastr.error('Tên đăng nhập chưa hợp lệ.', 'Lỗi!')
+      document.getElementById('register-username').focus()
       return false
     }
+    if(email) {
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+      if (!emailRegex.test(email)) {
+        toastr.error('Email sai định dạng.', 'Lỗi!')
+        document.getElementById('register-email').focus()
+        return false
+      }
+    }
+
     if (repwd !== pwd) {
       toastr.error('Mật khẩu nhập lại chưa giống nhau.', 'Lỗi!')
       document.getElementById('register-repwd').focus()
       return false
     }
 
+    const encryptedPassword = await window.encryptPasswordSHA256(pwd);
+
     const data = {
       // json data
+      username: username,
       email: email,
-      password: window.encryptPassword(pwd),
+      password: encryptedPassword,
     }
 
+    console.log('data=',data);
+
     $.ajax({
-      url: '/register/email',
+      url: '/register',
       method: 'POST',
       data: data,
       success: function (response) {

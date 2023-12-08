@@ -9,18 +9,17 @@
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-
       <!-- Modal body -->
       <div class="modal-body">
         <form onsubmit="onLoginBoxSubmit(event);">
           <div class="mb-3 mt-3">
-            <label for="email" class="form-label">Email:</label>
+            <label for="login-username" class="form-label">Username:</label>
             <input
-              type="email"
+              type="text"
               class="form-control"
-              id="login-email"
-              placeholder="Nhập địa chỉ email"
-              name="login-email"
+              id="login-username"
+              placeholder="Nhập tên người dùng"
+              name="login-username"
               required
               maxlength="255"
             />
@@ -45,6 +44,16 @@
           <button type="submit" class="btn btn-primary">Đăng nhập</button>
         </form>
         <br />
+        <a class="btn btn-light border my-1" href="/oauth/google">
+          <img
+            src="https://i.pinimg.com/originals/84/c7/00/84c7007eb6ac4374f77394d1e4954a96.png"
+            alt="Google Icon"
+            width="20"
+            height="20"
+            class="me-2"
+          />
+          Đăng nhập với Google
+        </a>
         <button class="btn btn-light border my-1" type="button" onclick="showRegisterBox();">
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL1jmY-Wp0yjfP3lH1kZVwoO-XP97haYw4aQ&usqp=CAU"
@@ -55,7 +64,6 @@
           />
           Chưa có tài khoản?
         </button>
-        <br />
         <button class="btn btn-light border my-1" type="button" onclick="showRegisterBox();">
           <img
             src="https://cdn3.iconfinder.com/data/icons/business-2-43/34/164-512.png"
@@ -67,7 +75,6 @@
           Quên mật khẩu?
         </button>
       </div>
-
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
@@ -84,16 +91,16 @@
   function onLoginBoxSubmit(e) {
     e.preventDefault()
 
-    const email = $("#login-email").val();
+    const username = $("#login-username").val();
     const pwd = $("#login-pwd").val();
     const remember = $("#remember").is(':checked') ? 1 : 0;
     const data = {// json data
-      email: email,
+      username: username,
       password: pwd,
       is_remember: remember,
     };
     $.ajax({
-      url: '/login/email',
+      url: '/login',
       method: 'POST',
       data: data,
       success: function(sweetResponse) {

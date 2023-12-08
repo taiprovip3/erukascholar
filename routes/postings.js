@@ -42,7 +42,7 @@ router.post('/postings', async (req, res) => {
         const { author, title, content } = req.body;
         const result = await pool.query(
           'INSERT INTO posts (title, content, users_id) VALUES ($1, $2, $3) RETURNING *',
-          [title, content, 13]
+          [title, content, 1]
         );
     
         console.log('Post added:', result.rows[0]);

@@ -1,5 +1,6 @@
 window.letRate = function (numberOfStar) {
-    console.log('Let"s rate ', numberOfStar);
+    // Thực thi animation loading
+    
     const data = {
         numberOfStar,
     };

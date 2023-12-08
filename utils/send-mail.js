@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 
-function sendEmail(userId, toEmail) {
+function sendEmail(username, toEmail) {
   try {
-    const token = jwt.sign({ userId: userId, email: toEmail }, 'concavang', {
+    const token = jwt.sign({ username: username, email: toEmail }, 'concavang', {
       expiresIn: '1d',
     })
     const transporter = nodemailer.createTransport({
@@ -16,8 +16,8 @@ function sendEmail(userId, toEmail) {
     const mailOptions = {
       from: 'taito1doraemon@gmail.com',
       to: toEmail,
-      subject: 'Bún Bò Huế Bảng Đen',
-      text: `Nhấp vào đường link sau để xác thực tài khoản: https://erukascholar.live/register/verify?token=${token}`,
+      subject: 'nhinguyenmc',
+      text: `Tài khoản ${username} vừa đăng ký email này tại trang web minecraft chúng tôi. Nhấp vào đường link sau để xác thực tài khoản: https://erukascholar.live/register/verify?token=${token}`,
     }
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {

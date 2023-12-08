@@ -111,7 +111,7 @@
               </div>
               <div class="text-center small mb-3">
                 <%
-                  const stars = payload.serverMetrics.stars;
+                  const stars = Number(payload.serverMetrics.stars);
                   for(let i=1; i<=5; i++) {
                     if(stars >= i) {
                       if((stars - i < 1) && (stars - i > 0)) { %>
@@ -125,7 +125,7 @@
                       <i class="fa-solid fa-star crs" onclick="letRate('<%= i %>')"></i> <!-- ngôi sao trắng -->
                     <% }
                   } %>
-                <span> <%= payload.serverMetrics.stars.toFixed(2) %> / 5 (<%= payload.serverMetrics.rates %> bình chọn)</span>
+                <span> <%= stars.toFixed(2) %> / 5 (<%= payload.serverMetrics.rates %> bình chọn)</span>
               </div>
               <div>
                 <p class="float-start"><img src="https://24hstore.vn/upload_images/images/2020/03/04/minecraft-pe.jpg" alt="minecraft" width="128" height="64" class="float-start me-1 img-thumbnail" /> MINECRAFT là trò chơi điện tử sandbox được phát triển và phát hành bởi Mojang Studio. Trò chơi được tạo bởi Markus "Notch" Persson bằng ngôn ngữ lập trình Java. Sau khi thử nghiệm một số phiên bản riêng tư ban đầu, trò chơi được công khai rộng rãi lần đầu tiên vào tháng 5 năm 2009 trước khi phát hành đầy đủ vào tháng 11 năm 2011 với việc Notch từ chức và Jens "Jeb" Bergensten tiếp quản công việc phát triển. Kể từ đó Minecraft được chuyển sang một số nền tảng khác và trở thành trò chơi điện tử bán chạy nhất mọi thời đại với hơn 238 triệu bản được bán ra và gần 140 triệu người dùng hoạt động hằng tháng tính đến năm 2021. Để thưởng thức trò chơi này hãy tải ngay minecraft phiên bản mới nhất và tham gia vào server <a href="#" class="text-warning fw-bold"><%= process.env.SERVER_IP %></a> cùng những người bạn để trải nghiệm các thể loại hay nhất.</p>
@@ -194,11 +194,25 @@
     </div>
     
     <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('credit-box.ejs') %>
+    <div id="loadingDiv">
+      <div class="text-center">
+        <img src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b3/Compass_JE3_BE3.gif" alt="Loading..." width="50" />
+        <br>
+        <span class="text-white fw-bold">Loading...</span>
+      </div>
+    </div>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>
+  <script src="/javascripts/toggle-loading-box.js"></script>
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
   <script>
+    $(document).ready(function () {
+      window.showLoadingBox();
+    });
+    $(window).on('load', function() {
+      window.hideLoadingBox();
+    });
     var socket = io.connect('wss://erukascholar.live')
     socket.on('connect', function () {
       console.log('Connected to server')
