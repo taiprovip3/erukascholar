@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer')
 function sendEmail(username, toEmail) {
   try {
     const token = jwt.sign({ username: username, email: toEmail }, 'concavang', {
-      expiresIn: '1d',
+      expiresIn: '15m',
     })
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
@@ -17,7 +17,7 @@ function sendEmail(username, toEmail) {
       from: 'taito1doraemon@gmail.com',
       to: toEmail,
       subject: 'nhinguyenmc',
-      text: `Tài khoản ${username} vừa đăng ký email này tại trang web minecraft chúng tôi. Nhấp vào đường link sau để xác thực tài khoản: https://erukascholar.live/register/verify?token=${token}`,
+      text: `Tài khoản ${username} vừa đăng ký email này tại trang web minecraft chúng tôi. Nhấp vào đường link sau để xác thực tài khoản: https://erukascholar.live/register/verify?token=${token}. Link sẽ bị vô hiệu sau 15 phút.`,
     }
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {

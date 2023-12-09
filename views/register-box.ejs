@@ -95,6 +95,7 @@
   }
 
   async function onRegisterBoxSubmit(e) {
+    window.showLoadingBox();
     e.preventDefault()
 
     const username = document.getElementById('register-username').value
@@ -133,14 +134,11 @@
       password: encryptedPassword,
     }
 
-    console.log('data=',data);
-
     $.ajax({
       url: '/register',
       method: 'POST',
       data: data,
       success: function (response) {
-        console.log('Phản hồi từ máy chủ:', response)
         swal({
           title: response.title,
           text: response.text,
@@ -150,7 +148,9 @@
       error: function (error) {
         console.error('Lỗi:', error)
         toastr.error(error.message, 'Lỗi');
-      },
+      }, complete: function() {
+        window.hideLoadingBox();
+      }
     })
     return false
   }

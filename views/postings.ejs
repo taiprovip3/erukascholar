@@ -154,7 +154,7 @@
                           &ensp;
                           <i class="fa-regular fa-thumbs-down crs" onclick="dislikePost();"></i>
                         </div>
-                        <div class="position-absolute bottom-0 end-0 small me-2">
+                        <div class="position-absolute bottom-0 end-0 me-2" style="font-size: x-small;">
                           (<%= helper.calculateTimeAgo(post.created_at) %>)
                         </div>
                       </div>
@@ -174,12 +174,19 @@
         </div>
       </div>
     </div>
-    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('ckeditor-box.ejs') %> <%- include('credit-box.ejs') %>
+    <%- include('loading-box.ejs') %> <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('ckeditor-box.ejs') %> <%- include('credit-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>
+  <script src="/javascripts/toggle-loading-box.js"></script>
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
   <script>
+    $(document).ready(function () {
+      window.showLoadingBox();
+    });
+    $(window).on('load', function() {
+      window.hideLoadingBox();
+    }); 
     var socket = io.connect('wss://erukascholar.live')
     socket.on('connect', function () {
       console.log('Connected to server')
@@ -188,9 +195,7 @@
       console.log('client emitter=', data)
     })
     function sortPosting(selectObject) {
-        console.log('selectObject=', selectObject.value);
-
-        const postsContainer = document.getElementById('posts');
+          const postsContainer = document.getElementById('posts');
         const postDivs = Array.from(postsContainer.querySelectorAll('.childpost')); // Lấy tất cả các div post con
 
         if (selectObject.value === 'NEWEST') {

@@ -29,6 +29,7 @@
     });
 
     function postEvent() {
+      window.showLoadingBox();
       const content = tinymce.get('ck_content').getContent();
       const title = $("#ck_title").val();
       const formData = { userId: '<%= payload.userId %>', title, content };
@@ -46,6 +47,8 @@
           });
         }, error: (error) => {
           console.error('error=', error.message);
+        }, complete: () => {
+          window.hideLoadingBox();
         }
       }) 
     }

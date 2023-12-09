@@ -89,6 +89,7 @@
     $('#registerBox').modal('toggle')
   }
   function onLoginBoxSubmit(e) {
+    window.showLoadingBox();
     e.preventDefault()
 
     const username = $("#login-username").val();
@@ -104,26 +105,28 @@
       method: 'POST',
       data: data,
       success: function(sweetResponse) {
-        console.log("Phản hồi từ máy chủ:", sweetResponse);// Có trả về jwt token
         if(sweetResponse.icon === "success") {
           // redirect sang route login with jwt token
+          $("#loginBox").modal('toggle');
           toastr.success(sweetResponse.text, sweetResponse.title);
           setTimeout(() => {
+            window.hideLoadingBox();
             window.location.href = "/dashboard";
-          }, 1000);
+          }, 2000);
         } else {
           swal({
             title: sweetResponse.title,
             text: sweetResponse.text,
             icon: sweetResponse.icon,
           }).then(() => {
+            window.hideLoadingBox();
             $("#login-pwd").val("");
             $("#login-pwd").focus();
           });
         }
-      }, error: function(error) {
-        console.error("Lỗi:", error);
-      }
+        }, error: function(error) {
+          console.error("Lỗi:", error);
+        }
     });
   }
 </script>

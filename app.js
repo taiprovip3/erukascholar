@@ -20,6 +20,7 @@ const { default: axios } = require('axios')
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const rfs = require('rotating-file-stream');
+const helper = require('./utils/calculate-timestamp');
 
 // App settings
 const app = express()
@@ -79,6 +80,7 @@ app.get('/', async (req, res) => {
    * 03. eventTitles
    */
   const userData = req.session.user;
+  console.log('userDataeeeee=',userData);
   let payload = { userData };
   const queryResult = await pool.query('SELECT * FROM server_metrics');
   const queryRow = queryResult.rows[0];
@@ -97,7 +99,7 @@ app.get('/', async (req, res) => {
     return e.title;
   });
   payload['eventTitles'] = eventTitles;
-  return res.render('index', { payload });
+  return res.render('index', { payload, helper });
 })
 
 app.get('/dashboard', authenticateToken, async (req, res) => {

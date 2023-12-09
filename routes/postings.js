@@ -35,14 +35,10 @@ router.get('/postings', async (req, res) => {
 
 router.post('/postings', async (req, res) => {
     try {
-        console.log('req.body=', req.body);
-        // if(!req.body || !req.body.author) {
-        //     throw new Error('No author session found!');
-        // }
         const { author, title, content } = req.body;
         const result = await pool.query(
           'INSERT INTO posts (title, content, users_id) VALUES ($1, $2, $3) RETURNING *',
-          [title, content, 1]
+          [title, content, 14 ]
         );
     
         console.log('Post added:', result.rows[0]);

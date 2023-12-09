@@ -38,14 +38,27 @@
                                 </div>
                             </div>
                             <h5><%= payload.userData.username %></h5>
-                            <div class="d-flex align-items-center">
+                            <span class="d-block">Đã tham gia: <span class="borrow fw-bold"><%= helper.calculateTimeAgo(payload.userData.createdAt) %></span></span>
+                            <!-- <div class="d-flex align-items-center">
                                 <div class="progress flex-fill">
                                     <div class="progress-bar bg-success" style="width:99%"></div>
                                     99🌿
                                 </div>
                                 <div class="small">100🌿</div>
+                            </div> -->
+                            <span>Thành viên thứ <span class="text-primary">#<%=  payload.userData.profileId %></span></span>
+                            <br>
+                            <br>
+                            <div class="form-check form-switch">
+                                <% if(payload.userData.isVerified) { %>
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="yes" checked onclick="return;" />
+                                    ✅
+                                <% } else { %>
+                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="no" onclick="letVerifyAccount();" />
+                                    ⭕
+                                <% } %>
+                                <label class="form-check-label" for="mySwitch">Xác thực Tài khoản</label>
                             </div>
-                            <span>Khách hàng <span class="text-primary">#<%=  payload.userData.profileId %></span></span>
                         </div>
                         <div class="position-absolute bottom-0 w-100 text-center mb-3">
                             <a class="btn btn-danger" type="button" href="/logout">Đăng xuất</a>
@@ -56,19 +69,23 @@
                         <div class="d-flex flex-wrap justify-content-between">
                             <div>
                                 <div class="mb-3 mt-3">
-                                    <label for="fullname" class="form-label">Họ và tên:</label>
+                                    <label for="fullname" class="form-label">Họ và tên</label>
                                     <input type="text" class="form-control text-white" id="fullname" placeholder="Enter fullname" value="<%=  payload.userData.fullname %>" name="fullname" style="background-color: #1A233A;" />
                                 </div>
                             </div>
                             <div>
                                 <div class="mb-3 mt-3">
-                                    <label for="email" class="form-label">Email:</label>
-                                    <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%=  payload.userData.email %>" name="email" style="background-color: #1A233A;" readonly />
+                                    <label for="email" class="form-label">Email</label>
+                                    <% if(payload.userData.isVerified) { %>
+                                        <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%=  payload.userData.email %>" name="email" style="background-color: #1A233A;" readonly />
+                                    <% } else { %>
+                                        <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%=  payload.userData.email %>" name="email" style="background-color: #1A233A;" />
+                                    <% } %>
                                 </div>
                             </div>
                             <div>
                                 <div class="mb-3 mt-3">
-                                    <label for="sdt" class="form-label">Số điện thoại:</label>
+                                    <label for="sdt" class="form-label">Số điện thoại</label>
                                     <select name="country" id="country">
                                         <option value="+84">+84</option>
                                     </select>
@@ -135,6 +152,50 @@
 </div>
 <% } %>
 <script>
+    function letVerifyAccount() {
+        swal({
+            title: 'GỬI XÁC THỰC TỚI EMAIL?',
+            text: 'Chúng tôi sẽ gửi một đường dẫn xác thực tài khoản tới email của bạn. Một khi tài khoản đã xác thực thì sẽ không thể thay đổi email mới và email đó sẽ vĩnh viễn là chủ nhân của tài khoản này. Không thể hoàn tác. Bạn đã chắc chắn chứ?',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true
+        }).then((intend) => {
+            if(intend) {
+                // Kiểm tra email hơp lệ
+                const email = $("#email").val();
+                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+                if (!emailRegex.test(email)) {
+                    toastr.error('Email cần xác minh sai định dạng.', 'Lỗi!')
+                    $("#email").focus()
+                    $("#mySwitch").prop('checked', false);
+                    return false;
+                }
+                const data = { email };
+                $.ajax({
+                    url: '/profile/verify',
+                    method: 'POST',
+                    data: data,
+                    success: (sweetResponse) => {
+                        swal({
+                            title: sweetResponse.title,
+                            text: sweetResponse.text,
+                            icon: sweetResponse.icon
+                        }).then(() => {
+                            $("#profileBox").modal('toggle');
+                        });
+                    }, error(error) {
+                        swal({
+                            title: 'Lỗi',
+                            text: error.statusText,
+                            icon: 'error'
+                        });
+                        console.error('error=', error);
+                    }
+                })
+            }
+            $("#mySwitch").prop('checked', false);
+        });
+    }
 
     function changeRowDisplay(obj) {
         const arrayRows = ['info-li', 'transfer-coin-li', 'history-li'];

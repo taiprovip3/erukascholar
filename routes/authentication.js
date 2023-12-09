@@ -177,7 +177,8 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
         const fullname = profileRow.fullname;
         const balance = profileRow.balance;
         const avatar = profileRow.avatar;
-        const payload = { userId, username, email, isVerified, profileId, sdt, country, address, fullname, balance, avatar };
+        const createdAt = profileRow.created_at;
+        const payload = { userId, username, email, isVerified, profileId, sdt, country, address, fullname, balance, avatar, createdAt };
         const token = jwt.sign(payload, 'concavang', {
           expiresIn: '1d',
         })
@@ -274,7 +275,7 @@ router.post('/login', async (req, res) => {
     const fullname = row.fullname;
     const balance = row.balance;
     const avatar = row.avatar;
-    const createdAt = row.createdAt;
+    const createdAt = row.created_at;
     
     const payload = { userId, username, email, isVerified, profileId, sdt, country, address, fullname, balance, avatar, createdAt };
     const token = jwt.sign(payload, 'concavang', { expiresIn: '1d' }); 

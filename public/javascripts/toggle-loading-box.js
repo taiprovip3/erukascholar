@@ -1,9 +1,9 @@
 window.showLoadingBox = function() {
     $("body").append('<div class="background-overlay"></div>'); 
-    $('#loadingDiv').fadeIn();
+    $('#loadingBox').fadeIn();
 }
 
 window.hideLoadingBox = function() {
-    $('#loadingDiv').fadeOut();
+    $('#loadingBox').fadeOut();
     $(".background-overlay").remove(); 
 }
