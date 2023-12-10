@@ -1,12 +1,13 @@
 const { Pool } = require('pg')
+require('dotenv').config()
 
 // Tạo pool
 const pool = new Pool({
-  user: 'taiproduaxe',
-  host: 'dpg-clol3f146foc73c7mhr0-a.singapore-postgres.render.com',
-  database: 'qlsv_rev7',
-  password: 'rPdUw2HfOwDxz0ahNIMbGHc2205tHwg9',
-  port: 5432,
+  user: process.env.POSTGRESQL_USER,
+  host: process.env.POSTGRESQL_HOST,
+  database: process.env.POSTGRESQL_DATABASE,
+  password: process.env.POSTGRESQL_PASSWORD,
+  port: process.env.POSTGRESQL_PORT,
   ssl: true,
 })
 

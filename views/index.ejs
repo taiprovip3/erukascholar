@@ -153,11 +153,7 @@
                 <i class="fa-solid fa-star crs" onclick="letRate('<%= i %>')"></i>
                 <!-- ngôi sao trắng -->
                 <% } } %>
-                <span>
-                  <%= stars.toFixed(2) %>
-                  / 5 (<%= payload.serverMetrics.rates %>
-                  bình chọn)</span
-                >
+                <span> <%= stars.toFixed(2) %> / 5 (<%= payload.serverMetrics.rates %> bình chọn)</span>
               </div>
               <div>
                 <p class="float-start">
@@ -341,13 +337,8 @@
         </div>
       </div>
     </div>
-    <%- include('loading-box.ejs') %>
-    <%- include('login-box.ejs') %>
-    <%- include('register-box.ejs') %>
-    <%-
-    include('profile-box.ejs') %>
-    <%- include('report-box.ejs') %>
-    <%- include('credit-box.ejs') %>
+    <%- include('loading-box.ejs') %> <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%-
+    include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('credit-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>

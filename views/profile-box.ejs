@@ -59,9 +59,10 @@
             >
               <div class="mb-3 text-center">
                 <div class="position-relative">
-                  <img src="<%= payload.userData.avatar %>" alt="avatar" width="100px" />
-                  <div class="position-absolute end-0 bottom-0 crs violet rounded-1" onclick="uploadAvatar();">
-                    <i class="fa-regular fa-images"></i>
+                  <img src="<%= payload.userData.avatar %>" alt="avatar" width="100px" id="avatar" />
+                  <div class="position-absolute end-0 bottom-0 violet rounded-1">
+                    <input type="file" id="avatarInput" name="avatarInput" accept="image/*" required class="invisible" onchange="uploadAvatar();" />
+                    <label for="avatarInput" class="crs"><i class="fa-regular fa-images"></i></label>
                   </div>
                 </div>
                 <h5><%= payload.userData.username %></h5>
@@ -76,9 +77,7 @@
                                 </div>
                                 <div class="small">100🌿</div>
                             </div> -->
-                <span
-                  >Thành viên thứ <span class="text-primary">#<%= payload.userData.profileId %></span></span
-                >
+                <span>Thành viên thứ <span class="text-primary">#<%= payload.userData.profileId %></span></span>
                 <br />
                 <br />
                 <div class="form-check form-switch">
@@ -92,8 +91,7 @@
                     checked
                     onchange="this.checked = !this.checked"
                   />
-                  ✅
-                  <% } else { %>
+                  ✅ <% } else { %>
                   <input
                     class="form-check-input"
                     type="checkbox"
@@ -102,8 +100,7 @@
                     value="no"
                     onclick="letVerifyAccount();"
                   />
-                  ⭕
-                  <% } %>
+                  ⭕ <% } %>
                   <label class="form-check-label" for="mySwitch">Xác thực Tài khoản</label>
                 </div>
               </div>
@@ -185,9 +182,7 @@
                 id="address"
                 name="address"
                 style="background-color: #1a233a"
-              >
-<!=  payload.userData.address !></textarea
-              >
+              ><%=  payload.userData.address %></textarea>
               <div class="w-100 mt-3 mb-3 text-end">
                 <button class="btn btn-primary w-25" onclick="saveProfile();">Cập nhật</button>
               </div>
@@ -225,12 +220,12 @@
               </ul>
             </div>
             <div
-              class="col-10 pt-2 small position-relative"
+              class="col-10 p-2 small position-relative"
               style="
                 background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
               "
             >
-              <div>Số xu đang có: 0 🥮</div>
+              <div>Số xu đang có: <%= payload.userData.balance %> 🥮</div>
               <div>
                 <span>Chuyển vào server:</span>
                 <select name="" id="">
@@ -402,5 +397,42 @@
         window.hideLoadingBox()
       },
     })
+  }
+
+  function uploadAvatar() {
+    alert('Please wait');
+    const fileInput = document.getElementById('avatarInput');
+    const file = fileInput.files[0];
+    if(file) {
+      if (file.size > 2 * 1024 * 1024) {
+        swal({
+          title: 'KÍCH THƯỚC ẢNH QUÁ LỚN',
+          text: 'Tập tin đã vượt quá 2MB. Vui lòng chọn tập tin kích thước nhỏ hơn.',
+          icon: 'warning'
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        var base64Image = reader.result.split(',')[1];
+        var formData = new FormData();
+        formData.append('avatar', base64Image);
+        $.ajax({
+          url: '/profile/upload-avatar',
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            $("#avatar").attr("src",response);
+          }, error: function(error) {
+            console.error(error);
+          }
+        });
+      }
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please choose a file.');
+    }
   }
 </script>

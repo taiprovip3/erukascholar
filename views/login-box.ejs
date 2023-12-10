@@ -22,6 +22,7 @@
               name="login-username"
               required
               maxlength="255"
+              value="phannhi"
             />
           </div>
           <div class="mb-3">
@@ -34,6 +35,7 @@
               name="login-pwd"
               required
               maxlength="255"
+              value="123123az"
             />
           </div>
           <div class="form-check mb-3 float-end">
@@ -113,7 +115,7 @@
           setTimeout(() => {
             window.hideLoadingBox()
             window.location.href = '/dashboard'
-          }, 2000)
+          }, 500)
         } else {
           swal({
             title: sweetResponse.title,

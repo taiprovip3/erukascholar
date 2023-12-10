@@ -12,15 +12,14 @@ const fs = require('fs')
 require('dotenv').config()
 const session = require('express-session')
 require('./middleware')
-// const { Pool } = require('pg');
-// const jwt = require('jsonwebtoken');
-// const nodemailer = require('nodemailer');
 const { authenticateToken } = require('./utils/oauth-middleware')
 const { default: axios } = require('axios')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const rfs = require('rotating-file-stream')
 const helper = require('./utils/calculate-timestamp')
+const pool = require('./utils/db.js')
+const poolMysql = require('./utils/mysqldb.js')
 
 // App settings
 const app = express()
@@ -81,7 +80,6 @@ app.get('/', async (req, res) => {
    * 03. eventTitles
    */
   const userData = req.session.user
-  console.log('userDataeeeee=', userData)
   let payload = { userData }
   const queryResult = await pool.query('SELECT * FROM server_metrics')
   const queryRow = queryResult.rows[0]
@@ -117,7 +115,6 @@ app.use(require('./routes/postings.js'))
 app.use(require('./routes/recharge.js'))
 
 const schedule = require('node-schedule')
-const pool = require('./utils/db.js')
 
 const cronExpress = '0 45 10 * * *'
 const j = schedule.scheduleJob(cronExpress, function (fireDate) {

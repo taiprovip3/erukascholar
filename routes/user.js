@@ -4,7 +4,9 @@ const pool = require('../utils/db')
 const { authenticateToken } = require('../utils/oauth-middleware')
 const sendEmail = require('../utils/send-mail')
 const NodeCache = require('node-cache')
-const temporaryResentMailCache = new NodeCache({ stdTTL: 60 })
+const temporaryResentMailCache = new NodeCache({ stdTTL: 60 });
+const multer = require('multer');
+const upload = multer();
 
 router.put('/profile/update', authenticateToken, async (req, res) => {
   /**
@@ -88,6 +90,22 @@ router.post('/profile/verify', authenticateToken, async (req, res) => {
   } finally {
     clientQuery.release()
   }
-})
+});
+
+router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken, async (req, res) => {
+  const clientQuery = await pool.connect();
+  try {
+    const userId = req.session.user.userId;
+    const base64Image = req.body.avatar;
+    const imageBuffer = Buffer.from(base64Image, 'base64');
+    const avatarPath = `data:image/png;base64,${base64Image}`;
+
+    await clientQuery.query('UPDATE profiles SET avatar = $1 WHERE users_id = $2', [avatarPath, userId]);
+    return res.send(avatarPath);
+  } catch (error) {
+    console.log('error=', error );
+    return res.status(500).send(error);
+  }
+});
 
 module.exports = router
