@@ -17,10 +17,10 @@ require('./middleware')
 // const nodemailer = require('nodemailer');
 const { authenticateToken } = require('./utils/oauth-middleware')
 const { default: axios } = require('axios')
-const mongoose = require('mongoose');
-const morgan = require('morgan');
-const rfs = require('rotating-file-stream');
-const helper = require('./utils/calculate-timestamp');
+const mongoose = require('mongoose')
+const morgan = require('morgan')
+const rfs = require('rotating-file-stream')
+const helper = require('./utils/calculate-timestamp')
 
 // App settings
 const app = express()
@@ -46,8 +46,8 @@ app.set('views', __dirname + '/views')
 const accessLogStream = rfs.createStream('access.log', {
   interval: '1d', // rotate daily
   path: './logs',
-});
-app.use(morgan('combined', { stream: accessLogStream }));
+})
+app.use(morgan('combined', { stream: accessLogStream }))
 
 // Certificates
 const options = {
@@ -62,14 +62,15 @@ const server = https.createServer(options, app)
 const io = socketIO(server)
 
 // Mongooes
-mongoose.connect('mongodb://sa:sapassword@localhost:27017/admin')
+mongoose
+  .connect('mongodb://sa:sapassword@localhost:27017/admin')
   .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Error connecting to MongoDB:', err));
+  .catch((err) => console.error('Error connecting to MongoDB:', err))
 
 // Rountings
 app.get('/bbh', (req, res) => {
-  const payload = req.session.user;
-  return res.render('bbh', { payload });
+  const payload = req.session.user
+  return res.render('bbh', { payload })
 })
 
 app.get('/', async (req, res) => {
@@ -79,52 +80,52 @@ app.get('/', async (req, res) => {
    * 02. serverStatus
    * 03. eventTitles
    */
-  const userData = req.session.user;
-  console.log('userDataeeeee=',userData);
-  let payload = { userData };
-  const queryResult = await pool.query('SELECT * FROM server_metrics');
-  const queryRow = queryResult.rows[0];
-  payload['serverMetrics'] = queryRow;
-  const queryMembersResult = await pool.query('SELECT COUNT(*) FROM users WHERE is_verified = TRUE');
-  const members = queryMembersResult.rows[0].count;
+  const userData = req.session.user
+  console.log('userDataeeeee=', userData)
+  let payload = { userData }
+  const queryResult = await pool.query('SELECT * FROM server_metrics')
+  const queryRow = queryResult.rows[0]
+  payload['serverMetrics'] = queryRow
+  const queryMembersResult = await pool.query('SELECT COUNT(*) FROM users WHERE is_verified = TRUE')
+  const members = queryMembersResult.rows[0].count
   const serverUrl = `https://api.mcstatus.io/v2/status/java/${process.env.SERVER_IPV4}:${process.env.SERVER_PORT}`
-  const serverStatusResponse = await axios.get(serverUrl);
-  const onlinePlayers = serverStatusResponse.data.players.online;
-  const maxPlayers = serverStatusResponse.data.players.max; 
-  const serverStatus = { onlinePlayers, maxPlayers, members };
-  payload['serverStatus'] = serverStatus;
-  const queryTitlesResult = await pool.query('SELECT title FROM posts ORDER BY created_at DESC');
-  const tiles = queryTitlesResult.rows;
-  const eventTitles = tiles.map(e => {
-    return e.title;
-  });
-  payload['eventTitles'] = eventTitles;
-  return res.render('index', { payload, helper });
+  const serverStatusResponse = await axios.get(serverUrl)
+  const onlinePlayers = serverStatusResponse.data.players.online
+  const maxPlayers = serverStatusResponse.data.players.max
+  const serverStatus = { onlinePlayers, maxPlayers, members }
+  payload['serverStatus'] = serverStatus
+  const queryTitlesResult = await pool.query('SELECT title FROM posts ORDER BY created_at DESC')
+  const tiles = queryTitlesResult.rows
+  const eventTitles = tiles.map((e) => {
+    return e.title
+  })
+  payload['eventTitles'] = eventTitles
+  return res.render('index', { payload, helper })
 })
 
 app.get('/dashboard', authenticateToken, async (req, res) => {
   // console.log('payload=', req.session.user);
   // return res.send(`Hello world, ${req.session.user.email}!`)
-  return res.redirect("/");
-})  
+  return res.redirect('/')
+})
 
 app.use(require('./routes/authentication.js'))
-app.use(require('./routes/user.js'));
-app.use(require('./routes/rating-stars.js'));
-app.use(require('./routes/report.js'));
-app.use(require('./routes/postings.js'));
-app.use(require('./routes/recharge.js'));
+app.use(require('./routes/user.js'))
+app.use(require('./routes/rating-stars.js'))
+app.use(require('./routes/report.js'))
+app.use(require('./routes/postings.js'))
+app.use(require('./routes/recharge.js'))
 
-const schedule = require('node-schedule');
+const schedule = require('node-schedule')
 const pool = require('./utils/db.js')
 
-const cronExpress = '0 45 10 * * *';
-const j = schedule.scheduleJob(cronExpress, function(fireDate) {
-  console.log('running job!');
-  console.log(fireDate);
-  const message = 'OPENING';
-  io.emit('emitter', message);
-});
+const cronExpress = '0 45 10 * * *'
+const j = schedule.scheduleJob(cronExpress, function (fireDate) {
+  console.log('running job!')
+  console.log(fireDate)
+  const message = 'OPENING'
+  io.emit('emitter', message)
+})
 
 // Khởi động server
 const port = process.env.PORT

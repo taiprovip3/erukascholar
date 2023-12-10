@@ -14,7 +14,9 @@
       <div class="modal-body">
         <form onsubmit="onRegisterBoxSubmit(event);">
           <div class="mb-3 mt-3">
-            <label for="register-username" class="form-label">Tên người dùng (<span class="text-danger fw-bold">*</span>):</label>
+            <label for="register-username" class="form-label"
+              >Tên người dùng (<span class="text-danger fw-bold">*</span>):</label
+            >
             <input
               type="text"
               class="form-control"
@@ -63,10 +65,18 @@
           <div class="my-3 small text-info text-center">
             <div><i class="fa-solid fa-reply-all"></i> Chúng tui sẽ gửi link xác thực tới email của bạn.</div>
             <div>
-              <span class="d-block">Khuyến Khích Xác Thực <span class="crs" data-bs-toggle="tooltip" title="Xác thưc email ngay bước đăng ký này giúp bảo vệ tài khoản của bạn khỏi rủi ro bảo mật và toàn vẹn chức năng người dùng">🤚</span></span>
+              <span class="d-block"
+                >Khuyến Khích Xác Thực
+                <span
+                  class="crs"
+                  data-bs-toggle="tooltip"
+                  title="Xác thưc email ngay bước đăng ký này giúp bảo vệ tài khoản của bạn khỏi rủi ro bảo mật và toàn vẹn chức năng người dùng"
+                  >🤚</span
+                ></span
+              >
             </div>
           </div>
-          
+
           <button type="submit" class="btn btn-primary">Đăng ký</button>
         </form>
         <hr />
@@ -95,7 +105,7 @@
   }
 
   async function onRegisterBoxSubmit(e) {
-    window.showLoadingBox();
+    window.showLoadingBox()
     e.preventDefault()
 
     const username = document.getElementById('register-username').value
@@ -105,12 +115,12 @@
 
     // Validation
     const usernameRegex = /^[a-zA-Z0-9_-]{3,16}$/
-    if(!usernameRegex.test(username)) {
+    if (!usernameRegex.test(username)) {
       toastr.error('Tên đăng nhập chưa hợp lệ.', 'Lỗi!')
       document.getElementById('register-username').focus()
       return false
     }
-    if(email) {
+    if (email) {
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
       if (!emailRegex.test(email)) {
         toastr.error('Email sai định dạng.', 'Lỗi!')
@@ -125,7 +135,7 @@
       return false
     }
 
-    const encryptedPassword = await window.encryptPasswordSHA256(pwd);
+    const encryptedPassword = await window.encryptPasswordSHA256(pwd)
 
     const data = {
       // json data
@@ -147,10 +157,11 @@
       },
       error: function (error) {
         console.error('Lỗi:', error)
-        toastr.error(error.message, 'Lỗi');
-      }, complete: function() {
-        window.hideLoadingBox();
-      }
+        toastr.error(error.message, 'Lỗi')
+      },
+      complete: function () {
+        window.hideLoadingBox()
+      },
     })
     return false
   }

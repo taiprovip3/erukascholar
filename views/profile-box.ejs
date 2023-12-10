@@ -1,265 +1,406 @@
 <!-- The Modal -->
 <% if(payload.userData) { %>
 <style>
-    #profileBox .modal-body {
-        background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn6K94GJRJhQSBE9QYCuZLuMTNi7fL8EllzSE1I3CVvC86mJLQDWUzgjGvWv9CalGIYqA&usqp=CAU');
-        box-shadow: rgb(85, 91, 255) 0px 0px 0px 3px, rgb(31, 193, 27) 0px 0px 0px 6px, rgb(255, 217, 19) 0px 0px 0px 9px, rgb(255, 156, 85) 0px 0px 0px 12px, rgb(255, 85, 85) 0px 0px 0px 15px;
-    }
+  #profileBox .modal-body {
+    background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRn6K94GJRJhQSBE9QYCuZLuMTNi7fL8EllzSE1I3CVvC86mJLQDWUzgjGvWv9CalGIYqA&usqp=CAU');
+    box-shadow:
+      rgb(85, 91, 255) 0px 0px 0px 3px,
+      rgb(31, 193, 27) 0px 0px 0px 6px,
+      rgb(255, 217, 19) 0px 0px 0px 9px,
+      rgb(255, 156, 85) 0px 0px 0px 12px,
+      rgb(255, 85, 85) 0px 0px 0px 15px;
+  }
 </style>
 <div class="modal fade" id="profileBox">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <!-- Modal body -->
-        <div class="modal-body">
-            <div class="text-end">
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="text-end">
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="container">
+          <div class="row d-flex justify-content-center" id="info-row">
+            <div
+              class="col-2 pt-2 border-end border-dark"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU');
+              "
+            >
+              <ul class="nav nav-tabs flex-column">
+                <li class="nav-item">
+                  <a class="nav-link fw-bolder active" href="javascript:void(0);">Thông tin</a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="transfer-coin-li"
+                    onclick="changeRowDisplay(this);"
+                    >Chuyển xu vào Server</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="history-li"
+                    onclick="changeRowDisplay(this);"
+                    >Lịch sử giao dịch</a
+                  >
+                </li>
+              </ul>
             </div>
-            <div class="container">
-                <div class="row d-flex justify-content-center" id="info-row">
-                    <div class="col-2 pt-2 border-end border-dark" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU')">
-                        <ul class="nav nav-tabs flex-column">
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder active" href="javascript:void(0);">Thông tin</a>
-                            </li>
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="transfer-coin-li" onclick="changeRowDisplay(this);">Chuyển xu vào Server</a>
-                            </li>
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="history-li" onclick="changeRowDisplay(this);">Lịch sử giao dịch</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-4 pt-2 small position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');">
-                        <div class="mb-3 text-center">
-                            <div class="position-relative">
-                                <img src="<%= payload.userData.avatar %>" alt="avatar" width="100px" />
-                                <div class="position-absolute end-0 bottom-0 crs violet rounded-1" onclick="uploadAvatar();">
-                                    <i class="fa-regular fa-images"></i>
-                                </div>
-                            </div>
-                            <h5><%= payload.userData.username %></h5>
-                            <span class="d-block">Đã tham gia: <span class="borrow fw-bold"><%= helper.calculateTimeAgo(payload.userData.createdAt) %></span></span>
-                            <!-- <div class="d-flex align-items-center">
+            <div
+              class="col-4 pt-2 small position-relative"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
+              "
+            >
+              <div class="mb-3 text-center">
+                <div class="position-relative">
+                  <img src="<%= payload.userData.avatar %>" alt="avatar" width="100px" />
+                  <div class="position-absolute end-0 bottom-0 crs violet rounded-1" onclick="uploadAvatar();">
+                    <i class="fa-regular fa-images"></i>
+                  </div>
+                </div>
+                <h5><%= payload.userData.username %></h5>
+                <span class="d-block"
+                  >Đã tham gia:
+                  <span class="borrow fw-bold"><%= helper.calculateTimeAgo(payload.userData.createdAt) %></span></span
+                >
+                <!-- <div class="d-flex align-items-center">
                                 <div class="progress flex-fill">
                                     <div class="progress-bar bg-success" style="width:99%"></div>
                                     99🌿
                                 </div>
                                 <div class="small">100🌿</div>
                             </div> -->
-                            <span>Thành viên thứ <span class="text-primary">#<%=  payload.userData.profileId %></span></span>
-                            <br>
-                            <br>
-                            <div class="form-check form-switch">
-                                <% if(payload.userData.isVerified) { %>
-                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="yes" checked onclick="return;" />
-                                    ✅
-                                <% } else { %>
-                                    <input class="form-check-input" type="checkbox" id="mySwitch" name="darkmode" value="no" onclick="letVerifyAccount();" />
-                                    ⭕
-                                <% } %>
-                                <label class="form-check-label" for="mySwitch">Xác thực Tài khoản</label>
-                            </div>
-                        </div>
-                        <div class="position-absolute bottom-0 w-100 text-center mb-3">
-                            <a class="btn btn-danger" type="button" href="/logout">Đăng xuất</a>
-                        </div>
-                    </div>
-                    <div class="col-6 pt-2 small" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU')">
-                        <h5 class="borrow fw-bold">Thông tin</h5>
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <div>
-                                <div class="mb-3 mt-3">
-                                    <label for="fullname" class="form-label">Họ và tên</label>
-                                    <input type="text" class="form-control text-white" id="fullname" placeholder="Enter fullname" value="<%=  payload.userData.fullname %>" name="fullname" style="background-color: #1A233A;" />
-                                </div>
-                            </div>
-                            <div>
-                                <div class="mb-3 mt-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <% if(payload.userData.isVerified) { %>
-                                        <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%=  payload.userData.email %>" name="email" style="background-color: #1A233A;" readonly />
-                                    <% } else { %>
-                                        <input type="email" class="form-control text-white" id="email" placeholder="Enter email" value="<%=  payload.userData.email %>" name="email" style="background-color: #1A233A;" />
-                                    <% } %>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="mb-3 mt-3">
-                                    <label for="sdt" class="form-label">Số điện thoại</label>
-                                    <select name="country" id="country">
-                                        <option value="+84">+84</option>
-                                    </select>
-                                    <input type="text" class="form-control text-white" id="sdt" placeholder="Enter sdt" value="<%=  payload.userData.sdt %>" name="sdt" style="background-color: #1A233A;" />
-                                </div>
-                            </div>
-                        </div>
-                        <h5 class="borrow fw-bold">Địa chỉ</h5>
-                        <textarea class="form-control text-white" rows="5" id="address" name="address" style="background-color: #1A233A;"><%=  payload.userData.address %></textarea>
-                        <div class="w-100 mt-3 mb-3 text-end">
-                            <button class="btn btn-primary w-25" onclick="saveProfile();">Cập nhật</button>
-                        </div>
-                    </div>
+                <span
+                  >Thành viên thứ <span class="text-primary">#<%= payload.userData.profileId %></span></span
+                >
+                <br />
+                <br />
+                <div class="form-check form-switch">
+                  <% if(payload.userData.isVerified) { %>
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="mySwitch"
+                    name="darkmode"
+                    value="yes"
+                    checked
+                    onchange="this.checked = !this.checked"
+                  />
+                  ✅
+                  <% } else { %>
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="mySwitch"
+                    name="darkmode"
+                    value="no"
+                    onclick="letVerifyAccount();"
+                  />
+                  ⭕
+                  <% } %>
+                  <label class="form-check-label" for="mySwitch">Xác thực Tài khoản</label>
                 </div>
-                <div class="d-none justify-content-center" id="transfer-coin-row">
-                    <div class="col-2 pt-2 border-end border-dark" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU')">
-                        <ul class="nav nav-tabs flex-column">
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="info-li" onclick="changeRowDisplay(this);">Thông tin</a>
-                            </li>
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder active" href="javascript:void(0);">Chuyển xu vào Server</a>
-                            </li>
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="history-li" onclick="changeRowDisplay(this);">Lịch sử giao dịch</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-10 pt-2 small position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');">
-                        <div>Số xu đang có: 0 🥮</div>
-                        <div>
-                            <span>Chuyển vào server:</span>
-                            <select name="" id="">
-                                <option value="">Vui lòng chọn server chuyển vào</option>
-                                <option value="">Skyblock</option>
-                                <option value="">Prison</option>
-                                <option value="">Towny</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-none justify-content-center" id="history-row">
-                    <div class="col-2 pt-2 border-end border-dark" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU')">
-                        <ul class="nav nav-tabs flex-column">
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="info-li" onclick="changeRowDisplay(this);">Thông tin</a>
-                            </li>
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="transfer-coin-li" onclick="changeRowDisplay(this);">Chuyển xu vào Server</a>
-                            </li>
-                            <li class="nav-item">
-                              <a class="nav-link fw-bolder active" href="javascript:void(0);">Lịch sử giao dịch</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-10 pt-2 small position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');">
-                        HISTORY
-                    </div>
-                </div>
+              </div>
+              <div class="position-absolute bottom-0 w-100 text-center mb-3">
+                <a class="btn btn-danger" type="button" href="/logout">Đăng xuất</a>
+              </div>
             </div>
+            <div
+              class="col-6 pt-2 small"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
+              "
+            >
+              <h5 class="borrow fw-bold">Thông tin</h5>
+              <div class="d-flex flex-wrap justify-content-between">
+                <div>
+                  <div class="mb-3 mt-3">
+                    <label for="fullname" class="form-label">Họ và tên</label>
+                    <input
+                      type="text"
+                      class="form-control text-white"
+                      id="fullname"
+                      placeholder="Enter fullname"
+                      value="<%=  payload.userData.fullname %>"
+                      name="fullname"
+                      style="background-color: #1a233a"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div class="mb-3 mt-3">
+                    <label for="email" class="form-label">Email</label>
+                    <% if(payload.userData.isVerified) { %>
+                    <input
+                      type="email"
+                      class="form-control text-white"
+                      id="email"
+                      placeholder="Enter email"
+                      value="<%=  payload.userData.email %>"
+                      name="email"
+                      style="background-color: #1a233a"
+                      readonly
+                    />
+                    <% } else { %>
+                    <input
+                      type="email"
+                      class="form-control text-white"
+                      id="email"
+                      placeholder="Enter email"
+                      value="<%=  payload.userData.email %>"
+                      name="email"
+                      style="background-color: #1a233a"
+                    />
+                    <% } %>
+                  </div>
+                </div>
+                <div>
+                  <div class="mb-3 mt-3">
+                    <label for="sdt" class="form-label">Số điện thoại</label>
+                    <select name="country" id="country">
+                      <option value="+84">+84</option>
+                    </select>
+                    <input
+                      type="text"
+                      class="form-control text-white"
+                      id="sdt"
+                      placeholder="Enter sdt"
+                      value="<%=  payload.userData.sdt %>"
+                      name="sdt"
+                      style="background-color: #1a233a"
+                    />
+                  </div>
+                </div>
+              </div>
+              <h5 class="borrow fw-bold">Địa chỉ</h5>
+              <textarea
+                class="form-control text-white"
+                rows="5"
+                id="address"
+                name="address"
+                style="background-color: #1a233a"
+              >
+<!=  payload.userData.address !></textarea
+              >
+              <div class="w-100 mt-3 mb-3 text-end">
+                <button class="btn btn-primary w-25" onclick="saveProfile();">Cập nhật</button>
+              </div>
+            </div>
+          </div>
+          <div class="d-none justify-content-center" id="transfer-coin-row">
+            <div
+              class="col-2 pt-2 border-end border-dark"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU');
+              "
+            >
+              <ul class="nav nav-tabs flex-column">
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="info-li"
+                    onclick="changeRowDisplay(this);"
+                    >Thông tin</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link fw-bolder active" href="javascript:void(0);">Chuyển xu vào Server</a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="history-li"
+                    onclick="changeRowDisplay(this);"
+                    >Lịch sử giao dịch</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div
+              class="col-10 pt-2 small position-relative"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
+              "
+            >
+              <div>Số xu đang có: 0 🥮</div>
+              <div>
+                <span>Chuyển vào server:</span>
+                <select name="" id="">
+                  <option value="">Vui lòng chọn server chuyển vào</option>
+                  <option value="">Skyblock</option>
+                  <option value="">Prison</option>
+                  <option value="">Towny</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="d-none justify-content-center" id="history-row">
+            <div
+              class="col-2 pt-2 border-end border-dark"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU');
+              "
+            >
+              <ul class="nav nav-tabs flex-column">
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="info-li"
+                    onclick="changeRowDisplay(this);"
+                    >Thông tin</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="transfer-coin-li"
+                    onclick="changeRowDisplay(this);"
+                    >Chuyển xu vào Server</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link fw-bolder active" href="javascript:void(0);">Lịch sử giao dịch</a>
+                </li>
+              </ul>
+            </div>
+            <div
+              class="col-10 pt-2 small position-relative"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
+              "
+            >
+              HISTORY
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 </div>
 <% } %>
 <script>
-    function letVerifyAccount() {
-        swal({
-            title: 'GỬI XÁC THỰC TỚI EMAIL?',
-            text: 'Chúng tôi sẽ gửi một đường dẫn xác thực tài khoản tới email của bạn. Một khi tài khoản đã xác thực thì sẽ không thể thay đổi email mới và email đó sẽ vĩnh viễn là chủ nhân của tài khoản này. Không thể hoàn tác. Bạn đã chắc chắn chứ?',
-            icon: 'warning',
-            buttons: true,
-            dangerMode: true
-        }).then((intend) => {
-            if(intend) {
-                // Kiểm tra email hơp lệ
-                const email = $("#email").val();
-                const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-                if (!emailRegex.test(email)) {
-                    toastr.error('Email cần xác minh sai định dạng.', 'Lỗi!')
-                    $("#email").focus()
-                    $("#mySwitch").prop('checked', false);
-                    return false;
-                }
-                const data = { email };
-                $.ajax({
-                    url: '/profile/verify',
-                    method: 'POST',
-                    data: data,
-                    success: (sweetResponse) => {
-                        swal({
-                            title: sweetResponse.title,
-                            text: sweetResponse.text,
-                            icon: sweetResponse.icon
-                        }).then(() => {
-                            $("#profileBox").modal('toggle');
-                        });
-                    }, error(error) {
-                        swal({
-                            title: 'Lỗi',
-                            text: error.statusText,
-                            icon: 'error'
-                        });
-                        console.error('error=', error);
-                    }
-                })
-            }
-            $("#mySwitch").prop('checked', false);
-        });
-    }
-
-    function changeRowDisplay(obj) {
-        const arrayRows = ['info-li', 'transfer-coin-li', 'history-li'];
-        for(let i=0; i<arrayRows.length; i++) {
-            const element = arrayRows[i];
-            if(element !== obj.id) {
-                const newElement = element.replace("li", "row");
-                const hideRow = $("#" + newElement);
-                hideRow.removeClass('d-flex');
-                hideRow.addClass('d-none');
-            }
+  function letVerifyAccount() {
+    swal({
+      title: 'GỬI XÁC THỰC TỚI EMAIL?',
+      text: 'Chúng tôi sẽ gửi một đường dẫn xác thực tài khoản tới email của bạn. Một khi tài khoản đã xác thực thì sẽ không thể thay đổi email mới và email đó sẽ vĩnh viễn là chủ nhân của tài khoản này. Không thể hoàn tác. Bạn đã chắc chắn chứ?',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then((intend) => {
+      if (intend) {
+        // Kiểm tra email hơp lệ
+        const email = $('#email').val()
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+        if (!emailRegex.test(email)) {
+          toastr.error('Email cần xác minh sai định dạng.', 'Lỗi!')
+          $('#email').focus()
+          $('#mySwitch').prop('checked', false)
+          return false
         }
-        const newObj = obj.id.replace("li", "row");
-        const mainRow = $("#" + newObj);
-        mainRow.removeClass('d-none');
-        mainRow.addClass('d-flex');
-    }
-
-    function saveProfile() {
-        const fullname = $("#fullname").val();
-        const sdt = $("#sdt").val();
-        const country = $("#country").val();
-        const address = $("#address").val();
-        const data = {
-            fullname,
-            sdt,
-            country,
-            address
-        };
-        if(!fullname) {
-            toastr.error('Họ và tên chưa hợp lệ!', 'Lỗi');
-            return;
-        }
-        const phoneNumberRegex = /^(0[1-9])+([0-9]{8,9})\b/;
-        if(!phoneNumberRegex.test(sdt)) {
-            toastr.error('Số điện thoại chưa hợp lệ!', 'Lỗi');
-            return;
-        }
-        if(!address) {
-            toastr.error('Địa chỉ chưa hợp lệ!', 'Lỗi');
-            return;
-        }
+        const data = { email }
         $.ajax({
-            url: '/profile/update',
-            method: 'PUT',
-            data: data,
-            success: function(sweetResponse) {
-                console.log('response=', sweetResponse);
-                if(sweetResponse.icon === "success") {
-                    swal({
-                        title: sweetResponse.title,
-                        text: sweetResponse.text,
-                        icon: sweetResponse.icon
-                    }).then(() => {
-                        $("#fullname").val(fullname);
-                        $("#sdt").val(sdt);
-                        $("#address").val(address);
-                    });
-                }
-            }, error: function(e) {
-                console.error('Lỗi:', e);
-                toastr.error(e.message, 'Lỗi');
-            }
-        });
+          url: '/profile/verify',
+          method: 'POST',
+          data: data,
+          success: (sweetResponse) => {
+            swal({
+              title: sweetResponse.title,
+              text: sweetResponse.text,
+              icon: sweetResponse.icon,
+            }).then(() => {
+              $('#profileBox').modal('toggle')
+            })
+          },
+          error(error) {
+            swal({
+              title: 'Lỗi',
+              text: error.statusText,
+              icon: 'error',
+            })
+            console.error('error=', error)
+          },
+        })
+      }
+      $('#mySwitch').prop('checked', false)
+    })
+  }
+
+  function changeRowDisplay(obj) {
+    const arrayRows = ['info-li', 'transfer-coin-li', 'history-li']
+    for (let i = 0; i < arrayRows.length; i++) {
+      const element = arrayRows[i]
+      if (element !== obj.id) {
+        const newElement = element.replace('li', 'row')
+        const hideRow = $('#' + newElement)
+        hideRow.removeClass('d-flex')
+        hideRow.addClass('d-none')
+      }
     }
+    const newObj = obj.id.replace('li', 'row')
+    const mainRow = $('#' + newObj)
+    mainRow.removeClass('d-none')
+    mainRow.addClass('d-flex')
+  }
+
+  function saveProfile() {
+    window.showLoadingBox()
+    const fullname = $('#fullname').val()
+    const sdt = $('#sdt').val()
+    const country = $('#country').val()
+    const address = $('#address').val()
+    const data = {
+      fullname,
+      sdt,
+      country,
+      address,
+    }
+    if (!fullname) {
+      toastr.error('Họ và tên chưa hợp lệ!', 'Lỗi')
+      return
+    }
+    const phoneNumberRegex = /^(0[1-9])+([0-9]{8,9})\b/
+    if (!phoneNumberRegex.test(sdt)) {
+      toastr.error('Số điện thoại chưa hợp lệ!', 'Lỗi')
+      return
+    }
+    if (!address) {
+      toastr.error('Địa chỉ chưa hợp lệ!', 'Lỗi')
+      return
+    }
+    $.ajax({
+      url: '/profile/update',
+      method: 'PUT',
+      data: data,
+      success: function (sweetResponse) {
+        if (sweetResponse.icon === 'success') {
+          swal({
+            title: sweetResponse.title,
+            text: sweetResponse.text,
+            icon: sweetResponse.icon,
+          }).then(() => {
+            $('#fullname').val(fullname)
+            $('#sdt').val(sdt)
+            $('#address').val(address)
+          })
+        }
+      },
+      error: function (e) {
+        console.error('Lỗi:', e)
+        toastr.error(e.message, 'Lỗi')
+      },
+      complete: function () {
+        window.hideLoadingBox()
+      },
+    })
+  }
 </script>
-  

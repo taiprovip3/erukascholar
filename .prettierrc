@@ -3,12 +3,5 @@
   "singleQuote": true,
   "printWidth": 120,
   "tabWidth": 2,
-  "overrides": [
-    {
-      "files": ["**/*.ejs"],
-      "options": {
-        "parser": "html"
-      }
-    }
-  ]
+  "plugins": ["prettier-plugin-ejs"]
 }

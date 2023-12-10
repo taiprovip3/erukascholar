@@ -1,84 +1,127 @@
 <div class="modal fade" id="reportBox">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body">
-                <form id="reportBugForm">
-                    <div class="text-end">
-                        <button type="button" data-bs-dismiss="modal" class="bg-primary text-white px-2 border-0"><i class="fas fa-times"></i></button>
-                    </div>
-                    <div>
-                        <div class="alert alert-warning">
-                            <strong>Chúng tôi!</strong> rất lấy làm tiếc nếu hệ thống chúng tôi đang gây ra 1 vài vấn đề khó khăn cho bạn trong việc sử dụng. Rất mong bạn hãy mô tả chi tiết cụ thể vấn đề của bạn xung đột với hệ thống của chúng tôi. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!
-                        </div>
-                        <label for="objectErrorType" class="form-label">Chọn loại / đối tượng lỗi mà hệ thống / chức năng:</label>
-                        <input class="form-control" list="errors" name="objectErrorType" id="objectErrorType" placeholder="Nhấp chọn loại lỗi bạn đang gặp vấn đề..." required>
-                        <datalist id="errors">
-                            <option value="Lỗi giao diện trang web">
-                            <option value="Lỗi server minecraft">
-                            <option value="Lỗi nạp thẻ / nạp tiền">
-                            <option value="Lỗi hệ thống xử lý">
-                            <option value="Lỗi bảo mật">
-                            <option value="Lỗi kết nối">
-                            <option value="Lỗi hiệu xuát">
-                            <option value="Lỗi tương thích phiên bản">
-                            <option value="Khác">
-                        </datalist>
-                    </div>
-                    <label for="comment">Nội dung report:</label>
-                    <textarea class="form-control" rows="5" id="comment" name="noiDung" placeholder="Nhập mô tả nội dung lỗi hệ thống.." required></textarea>
-                    <span>Mức độ nghiêm trọng / ưu tiên xử lý:</span>
-                    <div class="d-flex">
-                        <div class="form-check border">
-                            <input type="radio" class="form-check-input" id="severityNormal" name="severity" value="NORMAL" required>Normal <i class="fas fa-frown-open text-secondary"></i>
-                            <label class="form-check-label" for="severityNormal"></label>
-                        </div>
-                        &emsp;
-                        <div class="form-check border">
-                            <input type="radio" class="form-check-input" id="severityUrgent" name="severity" value="URGENT" required>Urgent <i class="fas fa-tired"></i>
-                            <label class="form-check-label" for="severityUrgent"></label>
-                        </div>
-                        &emsp;
-                        <div class="form-check border">
-                            <input type="radio" class="form-check-input" id="severitySerious" name="severity" value="SERIOUS" required>Serious <i class="fas fa-angry text-danger"></i>
-                            <label class="form-check-label" for="severitySerious"></label>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="bg-primary text-white border-0 my-1 p-2">Xác nhận</button>
-                    </div>
-                </form>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form id="reportBugForm">
+          <div class="text-end">
+            <button type="button" data-bs-dismiss="modal" class="bg-primary text-white px-2 border-0">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div>
+            <div class="alert alert-warning">
+              <strong>Chúng tôi!</strong> rất lấy làm tiếc nếu hệ thống chúng tôi đang gây ra 1 vài vấn đề khó khăn cho
+              bạn trong việc sử dụng. Rất mong bạn hãy mô tả chi tiết cụ thể vấn đề của bạn xung đột với hệ thống của
+              chúng tôi. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!
             </div>
-        </div>
+            <label for="objectErrorType" class="form-label">Chọn loại / đối tượng lỗi mà hệ thống / chức năng:</label>
+            <input
+              class="form-control"
+              list="errors"
+              name="objectErrorType"
+              id="objectErrorType"
+              placeholder="Nhấp chọn loại lỗi bạn đang gặp vấn đề..."
+              required
+            />
+            <datalist id="errors">
+              <option value="Lỗi giao diện trang web"></option>
+              <option value="Lỗi server minecraft"></option>
+              <option value="Lỗi nạp thẻ / nạp tiền"></option>
+              <option value="Lỗi hệ thống xử lý"></option>
+              <option value="Lỗi bảo mật"></option>
+              <option value="Lỗi kết nối"></option>
+              <option value="Lỗi hiệu xuát"></option>
+              <option value="Lỗi tương thích phiên bản"></option>
+              <option value="Khác"></option>
+            </datalist>
+          </div>
+          <label for="comment">Nội dung report:</label>
+          <textarea
+            class="form-control"
+            rows="5"
+            id="comment"
+            name="noiDung"
+            placeholder="Nhập mô tả nội dung lỗi hệ thống.."
+            required
+          ></textarea>
+          <span>Mức độ nghiêm trọng / ưu tiên xử lý:</span>
+          <div class="d-flex">
+            <div class="form-check border">
+              <input
+                type="radio"
+                class="form-check-input"
+                id="severityNormal"
+                name="severity"
+                value="NORMAL"
+                required
+              />Normal <i class="fas fa-frown-open text-secondary"></i>
+              <label class="form-check-label" for="severityNormal"></label>
+            </div>
+            &emsp;
+            <div class="form-check border">
+              <input
+                type="radio"
+                class="form-check-input"
+                id="severityUrgent"
+                name="severity"
+                value="URGENT"
+                required
+              />Urgent <i class="fas fa-tired"></i>
+              <label class="form-check-label" for="severityUrgent"></label>
+            </div>
+            &emsp;
+            <div class="form-check border">
+              <input
+                type="radio"
+                class="form-check-input"
+                id="severitySerious"
+                name="severity"
+                value="SERIOUS"
+                required
+              />Serious <i class="fas fa-angry text-danger"></i>
+              <label class="form-check-label" for="severitySerious"></label>
+            </div>
+          </div>
+          <div class="text-end">
+            <button type="submit" class="bg-primary text-white border-0 my-1 p-2">Xác nhận</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    $('#reportBugForm').submit(function(event) {
-        event.preventDefault();
-        const inputArray = $("#reportBugForm").serializeArray();
-        let formDataObject = { reporter: '<%= payload.email %>' };
-        $.each(inputArray, function(i, field) {
-            formDataObject[field.name] = field.value;
-        });
-        $.ajax({
-            type: "POST",
-            url: "/report",
-            data: JSON.stringify(formDataObject),
-            contentType: "application/json",
-            success: (data) => {
-                toastr.success('Cám ơn bạn đã dành thời gian report cho chúng tôi. Chúng tôi sẽ cố gắng giải quyết và phản hồi lại bạn trong thời gian sớm nhất', 'Báo lỗi thành công');
-                $('input[name="objectErrorType"]').val('');
-                $('textarea[name="noiDung"]').val('');
-                $('input[name="severity"]').prop('checked', false);
-                swal({
-                    title: 'Thành công',
-                    text: 'Cám ơn bạn đã dành thời gian report cho chúng\ntôi. Chúng tôi sẽ cố gắng giải quyết và phản\nhồi lại bạn trong thời gian sớm nhất',
-                    icon: 'success',
-                });
-                $('#reportBox').modal('toggle');
-            }, error: (error) => {
-                console.error(error);
-            }
-        });
-    });
+  $('#reportBugForm').submit(function (event) {
+    event.preventDefault()
+    const inputArray = $('#reportBugForm').serializeArray()
+    let formDataObject = { reporter: '<%= payload.email %>' }
+    $.each(inputArray, function (i, field) {
+      formDataObject[field.name] = field.value
+    })
+    $.ajax({
+      type: 'POST',
+      url: '/report',
+      data: JSON.stringify(formDataObject),
+      contentType: 'application/json',
+      success: (data) => {
+        toastr.success(
+          'Cám ơn bạn đã dành thời gian report cho chúng tôi. Chúng tôi sẽ cố gắng giải quyết và phản hồi lại bạn trong thời gian sớm nhất',
+          'Báo lỗi thành công',
+        )
+        $('input[name="objectErrorType"]').val('')
+        $('textarea[name="noiDung"]').val('')
+        $('input[name="severity"]').prop('checked', false)
+        swal({
+          title: 'Thành công',
+          text: 'Cám ơn bạn đã dành thời gian report cho chúng\ntôi. Chúng tôi sẽ cố gắng giải quyết và phản\nhồi lại bạn trong thời gian sớm nhất',
+          icon: 'success',
+        })
+        $('#reportBox').modal('toggle')
+      },
+      error: (error) => {
+        console.error(error)
+      },
+    })
+  })
 </script>

@@ -28,7 +28,10 @@
     />
     <script type="text/javascript" src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="https://cdn.tiny.cloud/1/7xj5wvv9kasumgezlf02vpj9b672i5o3hax0hj8zarftbbk9/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script
+      src="https://cdn.tiny.cloud/1/7xj5wvv9kasumgezlf02vpj9b672i5o3hax0hj8zarftbbk9/tinymce/6/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
   </head>
   <body>
     <div class="container-fluid d-flex justify-content-center align-items-center overflow-auto">
@@ -48,7 +51,7 @@
             background-repeat: no-repeat;
             background-size: cover;
           }
-          .dropdown:hover > .dropdown_menu{
+          .dropdown:hover > .dropdown_menu {
             z-index: 100;
             display: block;
           }
@@ -60,7 +63,9 @@
                 <a class="nav-link fw-bold text-white" href="/">TRANG CHỦ</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold text-white disabled" href="#">HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i></a>
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i
+                ></a>
                 <ul class="nav nav-tabs dropdown_menu">
                   <li class="nav-item">
                     <a class="nav-link fw-bold text-dark" href="#">Cách tải Minecraft</a>
@@ -77,20 +82,39 @@
                 <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold text-white disabled" href="#">TÀI KHOẢN <i class="fa-solid fa-sort-down"></i></a>
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
+                ></a>
                 <ul class="nav nav-tabs dropdown_menu">
                   <li class="nav-item">
-                    <a class="nav-link fw-bold text-dark" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginBox">Đăng nhập thành viên</a>
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginBox"
+                      >Đăng nhập thành viên</a
+                    >
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link fw-bold text-dark" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#registerBox">Đăng ký tài khoản</a>
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#registerBox"
+                      >Đăng ký tài khoản</a
+                    >
                   </li>
                 </ul>
               </li>
             </ul>
           </div>
           <div>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Xf26G7yYwc9DojeXTNj4EEy30_lu_YM5kkXiXtQraRLj7u6N0RFMJRZDqjU9TRaHL6c&usqp=CAU" alt="logo" width="32px" height="32px" />
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Xf26G7yYwc9DojeXTNj4EEy30_lu_YM5kkXiXtQraRLj7u6N0RFMJRZDqjU9TRaHL6c&usqp=CAU"
+              alt="logo"
+              width="32px"
+              height="32px"
+            />
             <span>Minecraft Forum VN</span>
           </div>
           <%- include('block-profile.ejs') %>
@@ -111,7 +135,9 @@
               <div id="post-panel">
                 <!-- filter -->
                 <div class="d-flex justify-content-between p-1" id="filter">
-                  <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#ckeditorBox">Tạo sự kiện mới</button>
+                  <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#ckeditorBox">
+                    Tạo sự kiện mới
+                  </button>
                   <select class="border-0" onchange="sortPosting(this);">
                     <option value="NEWEST">Mới nhất</option>
                     <option value="OLDEST">Cũ nhất</option>
@@ -127,40 +153,50 @@
                 <div id="posts">
                   <%
                     for(let i=0; i<payload.posts.length; i++) {
-                      const post = payload.posts[i];
-                  %>
-                      <div data-post-id="<%= post.post_id %>" class="borrow py-3 px-2 mx-2 my-1 fw-bold border-top border-bottom border-dark d-flex justify-content-between align-items-center position-relative overflow-auto childpost">
+                      const post = payload.posts[i]; %>
+                  <div
+                    data-post-id="<%= post.post_id %>"
+                    class="borrow py-3 px-2 mx-2 my-1 fw-bold border-top border-bottom border-dark d-flex justify-content-between align-items-center position-relative overflow-auto childpost"
+                  >
+                    <div>
+                      <div class="d-flex align-items-center crs">
                         <div>
-                          <div class="d-flex align-items-center crs">
-                            <div>
-                            <% if(helper.isHotPost(post.created_at)) { %>
-                                <img src="https://bconsps.net/wp-content/uploads/2022/07/iconhot710_583.gif" alt="hot-news" width="24" height="24" />
-                            <% } else { %>
-                              <img src="https://i.gifer.com/origin/44/446eed82d7f9109817bade96938c576d_w200.gif" alt="hot-news" width="24" height="24" />
-                            <% } %>
-                            </div>
-                            <div data-bs-toggle="collapse" href="#collapse<%= post.post_id %>" class="mx-1">
-                              <%= post.title %>
-                            </div>
-                          </div>
-                          <div id="collapse<%= post.post_id %>" class="collapse" data-bs-parent="#posts">
-                            <div class="card-body pt-2">
-                              <%- post.content %>
-                            </div>
-                          </div>
+                          <% if(helper.isHotPost(post.created_at)) { %>
+                          <img
+                            src="https://bconsps.net/wp-content/uploads/2022/07/iconhot710_583.gif"
+                            alt="hot-news"
+                            width="24"
+                            height="24"
+                          />
+                          <% } else { %>
+                          <img
+                            src="https://i.gifer.com/origin/44/446eed82d7f9109817bade96938c576d_w200.gif"
+                            alt="hot-news"
+                            width="24"
+                            height="24"
+                          />
+                          <% } %>
                         </div>
-                        <div class="d-flex align-items-center">
-                          <i class="fa-regular fa-thumbs-up crs" onclick="likePost();"></i>
-                          &ensp;
-                          <i class="fa-regular fa-thumbs-down crs" onclick="dislikePost();"></i>
-                        </div>
-                        <div class="position-absolute bottom-0 end-0 me-2" style="font-size: x-small;">
-                          (<%= helper.calculateTimeAgo(post.created_at) %>)
+                        <div data-bs-toggle="collapse" href="#collapse<%= post.post_id %>" class="mx-1">
+                          <%= post.title %>
                         </div>
                       </div>
-                  <%
-                    }
-                  %>
+                      <div id="collapse<%= post.post_id %>" class="collapse" data-bs-parent="#posts">
+                        <div class="card-body pt-2">
+                          <%- post.content %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <i class="fa-regular fa-thumbs-up crs" onclick="likePost();"></i>
+                      &ensp;
+                      <i class="fa-regular fa-thumbs-down crs" onclick="dislikePost();"></i>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0 me-2" style="font-size: x-small">
+                      (<%= helper.calculateTimeAgo(post.created_at) %>)
+                    </div>
+                  </div>
+                  <% } %>
                 </div>
               </div>
             </div>
@@ -168,13 +204,23 @@
             <%- include('info-panel.ejs'); %>
           </div>
         </div>
-        <div class="position-absolute bottom-0 end-0 text-center m-1 text-danger crs" data-bs-toggle="modal" data-bs-target="#reportBox">
+        <div
+          class="position-absolute bottom-0 end-0 text-center m-1 text-danger crs"
+          data-bs-toggle="modal"
+          data-bs-target="#reportBox"
+        >
           <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
           <span>Report</span>
         </div>
       </div>
     </div>
-    <%- include('loading-box.ejs') %> <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('ckeditor-box.ejs') %> <%- include('credit-box.ejs') %>
+    <%- include('loading-box.ejs') %>
+    <%- include('login-box.ejs') %>
+    <%- include('register-box.ejs') %>
+    <%- include('profile-box.ejs') %>
+    <%- include('report-box.ejs') %>
+    <%- include('ckeditor-box.ejs') %>
+    <%- include('credit-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>
@@ -182,11 +228,11 @@
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
   <script>
     $(document).ready(function () {
-      window.showLoadingBox();
-    });
-    $(window).on('load', function() {
-      window.hideLoadingBox();
-    }); 
+      window.showLoadingBox()
+    })
+    $(window).on('load', function () {
+      window.hideLoadingBox()
+    })
     var socket = io.connect('wss://erukascholar.live')
     socket.on('connect', function () {
       console.log('Connected to server')
@@ -195,38 +241,38 @@
       console.log('client emitter=', data)
     })
     function sortPosting(selectObject) {
-          const postsContainer = document.getElementById('posts');
-        const postDivs = Array.from(postsContainer.querySelectorAll('.childpost')); // Lấy tất cả các div post con
+      const postsContainer = document.getElementById('posts')
+      const postDivs = Array.from(postsContainer.querySelectorAll('.childpost')) // Lấy tất cả các div post con
 
-        if (selectObject.value === 'NEWEST') {
-            // Sắp xếp mảng các div post theo id lớn nhất đến nhỏ nhất
-            postDivs.sort((a, b) => {
-              const idA = parseInt(a.getAttribute('data-post-id'));
-              const idB = parseInt(b.getAttribute('data-post-id'));
-              return idB - idA;
-            });
-        } else if (selectObject.value === 'OLDEST') {
-            // Sắp xếp mảng các div post theo id nhỏ nhất đến lớn nhất
-            postDivs.sort((a, b) => {
-              const idA = parseInt(a.getAttribute('data-post-id'));
-              const idB = parseInt(b.getAttribute('data-post-id'));
-              return idA - idB;
-            });
-        }
+      if (selectObject.value === 'NEWEST') {
+        // Sắp xếp mảng các div post theo id lớn nhất đến nhỏ nhất
+        postDivs.sort((a, b) => {
+          const idA = parseInt(a.getAttribute('data-post-id'))
+          const idB = parseInt(b.getAttribute('data-post-id'))
+          return idB - idA
+        })
+      } else if (selectObject.value === 'OLDEST') {
+        // Sắp xếp mảng các div post theo id nhỏ nhất đến lớn nhất
+        postDivs.sort((a, b) => {
+          const idA = parseInt(a.getAttribute('data-post-id'))
+          const idB = parseInt(b.getAttribute('data-post-id'))
+          return idA - idB
+        })
+      }
 
-        // Xóa nội dung cũ trong #posts
-        postsContainer.innerHTML = '';
+      // Xóa nội dung cũ trong #posts
+      postsContainer.innerHTML = ''
 
-        // Thêm lại các div post đã được sắp xếp vào #posts
-        postDivs.forEach(postDiv => {
-            postsContainer.appendChild(postDiv);
-        });
+      // Thêm lại các div post đã được sắp xếp vào #posts
+      postDivs.forEach((postDiv) => {
+        postsContainer.appendChild(postDiv)
+      })
     }
     function likePost() {
-      toastr.success('Cám ơn bạn đã thích sự kiện 🥰', 'TUYỆT QUÁ');
+      toastr.success('Cám ơn bạn đã thích sự kiện 🥰', 'TUYỆT QUÁ')
     }
     function dislikePost() {
-      toastr.error('Bruh! 😡', 'Noooooooooh 😱');
+      toastr.error('Bruh! 😡', 'Noooooooooh 😱')
     }
   </script>
 </html>
