@@ -77,31 +77,33 @@
               <li class="nav-item dropdown">
                 <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link fw-bold text-white disabled" href="#"
-                  >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
-                ></a>
-                <ul class="nav nav-tabs dropdown_menu">
-                  <li class="nav-item">
-                    <a
-                      class="nav-link fw-bold text-dark"
-                      href="javascript:void(0)"
-                      data-bs-toggle="modal"
-                      data-bs-target="#loginBox"
-                      >Đăng nhập thành viên</a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a
-                      class="nav-link fw-bold text-dark"
-                      href="javascript:void(0)"
-                      data-bs-toggle="modal"
-                      data-bs-target="#registerBox"
-                      >Đăng ký tài khoản</a
-                    >
-                  </li>
-                </ul>
-              </li>
+              <% if(!payload.userData) { %>
+                <li class="nav-item dropdown">
+                  <a class="nav-link fw-bold text-white disabled" href="#"
+                    >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
+                  ></a>
+                  <ul class="nav nav-tabs dropdown_menu">
+                    <li class="nav-item">
+                      <a
+                        class="nav-link fw-bold text-dark"
+                        href="javascript:void(0)"
+                        data-bs-toggle="modal"
+                        data-bs-target="#loginBox"
+                        >Đăng nhập thành viên</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="nav-link fw-bold text-dark"
+                        href="javascript:void(0)"
+                        data-bs-toggle="modal"
+                        data-bs-target="#registerBox"
+                        >Đăng ký tài khoản</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+              <% } %>
             </ul>
           </div>
           <div>
@@ -171,7 +173,7 @@
                   triển. Kể từ đó Minecraft được chuyển sang một số nền tảng khác và trở thành trò chơi điện tử bán chạy
                   nhất mọi thời đại với hơn 238 triệu bản được bán ra và gần 140 triệu người dùng hoạt động hằng tháng
                   tính đến năm 2021. Để thưởng thức trò chơi này hãy tải ngay minecraft phiên bản mới nhất và tham gia
-                  vào server <a href="#" class="text-warning fw-bold"><%= process.env.SERVER_IP %></a> cùng những người
+                  vào server <a href="#" class="text-warning fw-bold"><%= process.env.SERVER_DOMAIN %></a> cùng những người
                   bạn để trải nghiệm các thể loại hay nhất.
                 </p>
               </div>

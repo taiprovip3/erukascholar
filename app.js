@@ -20,6 +20,7 @@ const rfs = require('rotating-file-stream')
 const helper = require('./utils/calculate-timestamp')
 const pool = require('./utils/db.js')
 const poolMysql = require('./utils/mysqldb.js')
+const minio = require('minio');
 
 // App settings
 const app = express()
@@ -62,7 +63,7 @@ const io = socketIO(server)
 
 // Mongooes
 mongoose
-  .connect('mongodb://sa:sapassword@localhost:27017/admin')
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Error connecting to MongoDB:', err))
 
@@ -102,8 +103,6 @@ app.get('/', async (req, res) => {
 })
 
 app.get('/dashboard', authenticateToken, async (req, res) => {
-  // console.log('payload=', req.session.user);
-  // return res.send(`Hello world, ${req.session.user.email}!`)
   return res.redirect('/')
 })
 

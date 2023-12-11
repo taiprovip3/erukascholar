@@ -59,7 +59,7 @@
             >
               <div class="mb-3 text-center">
                 <div class="position-relative">
-                  <img src="<%= payload.userData.avatar %>" alt="avatar" width="100px" id="avatar" />
+                  <img src="/profile/avatar" alt="avatar" width="100px" height="100px" id="avatar" />
                   <div class="position-absolute end-0 bottom-0 violet rounded-1">
                     <input type="file" id="avatarInput" name="avatarInput" accept="image/*" required class="invisible" onchange="uploadAvatar();" />
                     <label for="avatarInput" class="crs"><i class="fa-regular fa-images"></i></label>
@@ -235,6 +235,13 @@
                   <option value="">Towny</option>
                 </select>
               </div>
+              <div class="border border-secondary p-2 my-2 text-center">
+                <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
+                <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
+              </div>
+              <div class="text-end">
+                <button class="btn btn-primary text-white fw-bolder">Chuyển xu</button>
+              </div>
             </div>
           </div>
           <div class="d-none justify-content-center" id="history-row">
@@ -400,7 +407,6 @@
   }
 
   function uploadAvatar() {
-    alert('Please wait');
     const fileInput = document.getElementById('avatarInput');
     const file = fileInput.files[0];
     if(file) {
@@ -412,25 +418,27 @@
         });
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = function() {
-        var base64Image = reader.result.split(',')[1];
-        var formData = new FormData();
-        formData.append('avatar', base64Image);
-        $.ajax({
-          url: '/profile/upload-avatar',
-          method: 'POST',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            $("#avatar").attr("src",response);
-          }, error: function(error) {
-            console.error(error);
-          }
-        });
-      }
-      reader.readAsDataURL(file);
+      var formData = new FormData();
+      formData.append('avatar', file);
+      $.ajax({
+        url: '/profile/upload-avatar',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          console.log('response=', response);
+          swal({
+            title: 'TẢI ẢNH LÊN THÀNH CÔNG',
+            text: 'Avatar của bạn sẽ được cập nhật sau ít phút nữa. Kiên nhẫn chờ đợi nhé.',
+            icon: 'success'
+          }).then(() => {
+            $("#avatar").attr("src", `/profile/avatar?randomRefresh=${Math.random()}`);
+          });
+        }, error: function(error) {
+          console.error(error);
+        }
+      });
     } else {
       alert('Please choose a file.');
     }

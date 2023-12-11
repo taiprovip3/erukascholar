@@ -182,6 +182,7 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
         const balance = profileRow.balance
         const avatar = profileRow.avatar
         const createdAt = profileRow.created_at
+        const roleId = profileRow.roles_id
         const payload = {
           userId,
           username,
@@ -195,6 +196,7 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
           balance,
           avatar,
           createdAt,
+          roleId
         }
         const token = jwt.sign(payload, 'concavang', {
           expiresIn: '1d',
@@ -252,6 +254,14 @@ router.post('/login', async (req, res) => {
    * case2: account sai mật khẩu
    * case3: exception
    */
+  if(req.session.user) {
+    const sweetResponse = {
+      title: 'BẠN ĐÃ ĐĂNG NHẬP',
+      text: `Tài khoản đang được sử dụng`,
+      icon: 'error',
+    }
+    return res.json(sweetResponse);
+  }
   const clientQuery = await pool.connect()
   try {
     const { username, password, is_remember } = req.body
@@ -296,6 +306,7 @@ router.post('/login', async (req, res) => {
     const balance = row.balance
     const avatar = row.avatar
     const createdAt = row.created_at
+    const roleId = row.roles_id
 
     const payload = {
       userId,
@@ -310,6 +321,7 @@ router.post('/login', async (req, res) => {
       balance,
       avatar,
       createdAt,
+      roleId
     }
     const token = jwt.sign(payload, 'concavang', { expiresIn: '1d' })
     res.cookie('token', token, {

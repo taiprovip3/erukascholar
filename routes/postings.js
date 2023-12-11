@@ -2,6 +2,7 @@ const { default: axios } = require('axios')
 const express = require('express')
 const pool = require('../utils/db')
 const helper = require('../utils/calculate-timestamp')
+const { authenticateToken } = require('../utils/oauth-middleware')
 const router = express.Router()
 
 router.get('/postings', async (req, res) => {
@@ -33,16 +34,15 @@ router.get('/postings', async (req, res) => {
   return res.render('postings', { payload, helper })
 })
 
-router.post('/postings', async (req, res) => {
+router.post('/postings', authenticateToken, async (req, res) => {
   try {
+    const userId = req.session.user.userId;
     const { author, title, content } = req.body
     const result = await pool.query('INSERT INTO posts (title, content, users_id) VALUES ($1, $2, $3) RETURNING *', [
       title,
       content,
-      14,
-    ])
-
-    console.log('Post added:', result.rows[0])
+      userId,
+    ]);
     const sweetResponse = {
       title: 'ĐĂNG TẢI THÀNH CÔNG',
       text: 'Nếu không nhìn thấy bài viết sự kiện mới, vui lòng bấm TẢI LẠI trang bằng ctrl + R nhé',
