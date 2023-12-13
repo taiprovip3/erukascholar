@@ -27,24 +27,37 @@ router.get('/servers/getPlayerCoins', authenticateToken, async (req, res) => {
         console.log('uuid=', uuid);
 
         const serverPool = await getConnectionPool(serverName);
-        serverPool.getConnection(function (err, conn) {
-            if(err) {
-                console.error('error=', err);
-            }
-            const playerCoinQuery = `SELECT points FROM playerpoints_points WHERE uuid = ?`;
-            conn.query(playerCoinQuery, [uuid], function (error, result) {
-                if(!result) {
-                    return res.status(500).send(`not found user ${username} with uuid ${uuid}`);
-                }
-                const playerStatResponse = {
-                    username,
-                    uuid,
-                    coins: result[0].points
-                }
-                return res.status(200).json(playerStatResponse);
-            });
-            serverPool.releaseConnection(conn);
-        })
+        const asyncServerPool = serverPool.promise();
+        const playerCoinQuery = `SELECT * FROM playerpoints_points WHERE uuid = ?`;
+        const [result] = await asyncServerPool.query(playerCoinQuery, [uuid]);
+        if(!result) {
+            return res.status(500).send(`not found user ${username} with uuid ${uuid}`);
+        }
+        const playerStatResponse = {
+            username,
+            uuid,
+            coins: result[0].points
+        }
+        return res.status(200).json(playerStatResponse);
+        // serverPool.getConnection(function (err, conn) {
+        //     if(err) {
+        //         console.error('error=', err);
+        //         return res.status(500).send('Server pool get connection error');
+        //     }
+        //     const playerCoinQuery = `SELECT points FROM playerpoints_points WHERE uuid = ?`;
+        //     conn.query(playerCoinQuery, [uuid], function (error, result) {
+        //         if(!result) {
+        //             return res.status(500).send(`not found user ${username} with uuid ${uuid}`);
+        //         }
+        //         const playerStatResponse = {
+        //             username,
+        //             uuid,
+        //             coins: result[0].points
+        //         }
+        //         return res.status(200).json(playerStatResponse);
+        //     });
+        //     serverPool.releaseConnection(conn);
+        // });
     } catch (error) {
         console.error('/servers/getPlayerCoins error', error);
         return res.status(500).send(error);

@@ -95,6 +95,7 @@ router.post('/profile/verify', authenticateToken, async (req, res) => {
 });
 
 router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken, async (req, res) => {
+  let imageUrl = "";
   const clientQuery = await pool.connect();
   try {
     const file = req.file;
@@ -104,16 +105,21 @@ router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken
     }
     const objectName = `${userId}-${Date.now()}-${file.originalname}`;
     await minioClient.putObject('avatar', objectName, file.buffer, metaData);
-    const imageUrl = minioClient.protocol + '://' + minioClient.host + ':' + minioClient.port + '/' + 'avatar' + '/' + objectName;
+    imageUrl = minioClient.protocol + '://' + minioClient.host + ':' + minioClient.port + '/' + 'avatar' + '/' + objectName;
     await clientQuery.query('UPDATE profiles SET avatar = $1 WHERE users_id = $2', [objectName, userId]);
-    const oldObjectName = req.session.user.avatar;
-    await minioClient.removeObject('avatar', oldObjectName);
-    return res.status(200).send(imageUrl);
   } catch (error) {
     console.log('error=', error );
     return res.status(500).send(error);
   } finally {
     clientQuery.release();
+  }
+
+  try {
+    const oldObjectName = req.session.user.avatar;
+    await minioClient.removeObject('avatar', oldObjectName);
+  } catch (error) {// Lỗi xóa image minio ko tồn tại cũng ko cần làm gì
+  } finally {
+    return res.status(200).send(imageUrl);
   }
 });
 

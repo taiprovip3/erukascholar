@@ -346,6 +346,7 @@
         playerServerStatsBox.html(userStatFoundContent);
       }, error: function(err) {
         console.error('error=', err);
+        toastr.info('Không tìm thấy dữ liệu', 'Chưa tham gia máy chủ này');
         const notFoundContent = `
           <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
           <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
@@ -513,6 +514,7 @@
           });
         }, error: function(error) {
           console.error(error);
+          toastr.error('Lỗi', error.responseText);
         }
       });
     } else {
