@@ -237,15 +237,15 @@
                 <input type="number" name="inputCoin" id="inputCoin" maxlength="255" value="<%= payload.userData.balance %>" />
               </div>
               <div class="border border-secondary p-2 my-2 text-center" id="playerServerStatsBox">
-                <!-- <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
-                <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" /> -->
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTehc2GkyE0vk-HRcsYS_mxqm1RuGvtCwhXKZh8Qbdg63jTmbduhXJqqRw7pQxYJs3jtS8&usqp=CAU" alt="steve-head-icon" width="64" height="64" class="img-thumbnail" />
+                <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
+                <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
+                <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTehc2GkyE0vk-HRcsYS_mxqm1RuGvtCwhXKZh8Qbdg63jTmbduhXJqqRw7pQxYJs3jtS8&usqp=CAU" alt="steve-head-icon" width="64" height="64" class="img-thumbnail" />
                 <span class="d-block"><b>Username</b>: phantanduy</span>
                 <span class="d-block"><b>UUID</b>: b3366efc-7661-30ab-9ef7-8a37e76eeb8d</span>
-                <span class="d-block"><b>Xu có sẵn</b>: 0 🥮 <span class="text-success"><i class="fa-solid fa-up-long"></i>  </span></span>
+                <span class="d-block"><b>Xu có sẵn</b>: 0 🥮 <span class="text-success"><i class="fa-solid fa-up-long"></i>  </span></span> -->
               </div>
               <div class="text-end">
-                <button class="btn btn-primary text-white fw-bolder">Chuyển xu vào</button>
+                <button class="btn btn-primary text-white fw-bolder" onclick="forwardCoins();">Chuyển xu vào</button>
               </div>
             </div>
           </div>
@@ -346,6 +346,12 @@
         playerServerStatsBox.html(userStatFoundContent);
       }, error: function(err) {
         console.error('error=', err);
+        const notFoundContent = `
+          <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
+          <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
+        `;
+        const playerServerStatsBox = $("#playerServerStatsBox");
+        playerServerStatsBox.html(notFoundContent);
       }
     });
   }

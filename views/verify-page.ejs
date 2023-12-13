@@ -115,7 +115,7 @@
             }, error: function(err) {
                 window.hideLoadingBox()
                 console.error('errror=', err);
-                toastr.error('Lỗi', err.statusText);
+                toastr.error('Lỗi', err.responseText);
             }
         });
     }

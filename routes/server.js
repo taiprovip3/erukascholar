@@ -22,18 +22,28 @@ router.get('/servers/getPlayerCoins', authenticateToken, async (req, res) => {
     const clientQuery = await pool.connect();
     try {
         const username = req.session.user.username;
-        // const uuidQuery = await clientQuery.query('SELECT uuid FROM authme WHERE username = $1', [username]);
-        // const uuid = uuidQuery.rows[0].uuid;
-        const { uuid } = await minecraftPlayer(username);
+        const uuidQuery = await clientQuery.query('SELECT uuid FROM users WHERE username = $1', [username]);
+        const uuid = uuidQuery.rows[0].uuid;
         console.log('uuid=', uuid);
 
         const serverPool = await getConnectionPool(serverName);
         serverPool.getConnection(function (err, conn) {
-            const playerCoinQuery = `SELECT points FROM playerpoints_points WHERE uuid = ${uuid}`;
-            conn.query(playerCoinQuery, function (error, result) {
-                console.log('result=', result);
+            if(err) {
+                console.error('error=', err);
+            }
+            const playerCoinQuery = `SELECT points FROM playerpoints_points WHERE uuid = ?`;
+            conn.query(playerCoinQuery, [uuid], function (error, result) {
+                if(!result) {
+                    return res.status(500).send(`not found user ${username} with uuid ${uuid}`);
+                }
+                const playerStatResponse = {
+                    username,
+                    uuid,
+                    coins: result[0].points
+                }
+                return res.status(200).json(playerStatResponse);
             });
-            poolMysql.releaseConnection(conn);
+            serverPool.releaseConnection(conn);
         })
     } catch (error) {
         console.error('/servers/getPlayerCoins error', error);

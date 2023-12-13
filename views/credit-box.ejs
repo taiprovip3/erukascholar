@@ -322,7 +322,7 @@
       },
       error: (error) => {
         console.error('error=', error)
-        toastr.error(`${error.statusText}`, 'Lỗi')
+        toastr.error(`${error.responseText}`, 'Lỗi')
       },
     })
   })
