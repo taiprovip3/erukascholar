@@ -228,19 +228,24 @@
               <div>Số xu đang có: <%= payload.userData.balance %> 🥮</div>
               <div>
                 <span>Chuyển vào server:</span>
-                <select name="" id="">
+                <select name="serverSelection" id="serverSelection" onchange="onServerSelectionChange(this);">
                   <option value="">Vui lòng chọn server chuyển vào</option>
-                  <option value="">Skyblock</option>
-                  <option value="">Prison</option>
-                  <option value="">Towny</option>
                 </select>
               </div>
-              <div class="border border-secondary p-2 my-2 text-center">
-                <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
-                <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
+              <div class="">
+                <span>Số xu muốn chuyển:</span>
+                <input type="number" name="inputCoin" id="inputCoin" maxlength="255" value="<%= payload.userData.balance %>" />
+              </div>
+              <div class="border border-secondary p-2 my-2 text-center" id="playerServerStatsBox">
+                <!-- <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
+                <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" /> -->
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTehc2GkyE0vk-HRcsYS_mxqm1RuGvtCwhXKZh8Qbdg63jTmbduhXJqqRw7pQxYJs3jtS8&usqp=CAU" alt="steve-head-icon" width="64" height="64" class="img-thumbnail" />
+                <span class="d-block"><b>Username</b>: phantanduy</span>
+                <span class="d-block"><b>UUID</b>: b3366efc-7661-30ab-9ef7-8a37e76eeb8d</span>
+                <span class="d-block"><b>Xu có sẵn</b>: 0 🥮 <span class="text-success"><i class="fa-solid fa-up-long"></i>  </span></span>
               </div>
               <div class="text-end">
-                <button class="btn btn-primary text-white fw-bolder">Chuyển xu</button>
+                <button class="btn btn-primary text-white fw-bolder">Chuyển xu vào</button>
               </div>
             </div>
           </div>
@@ -291,6 +296,68 @@
 </div>
 <% } %>
 <script>
+
+  initSkeleton();
+
+  async function initSkeleton() {
+    const servers = await getServers();
+    setServerSelection(servers);
+  }
+
+  function setServerSelection(servers) {
+    const selectBox = $('#serverSelection');
+    $.each(servers, function (index, obj) {
+      const optionText = obj.charAt(0).toUpperCase() + obj.slice(1)
+      const option = $('<option>').text(optionText).val(obj)
+      selectBox.append(option)
+    });
+  }
+
+  function onServerSelectionChange(object) {
+    const selectedIndex = object.selectedIndex;
+    const selectedValue = object.options[selectedIndex].value;
+    const playerServerStatsBox = $("#playerServerStatsBox");
+    if(!selectedValue) {
+      const notFoundContent = `
+        <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
+        <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
+      `;
+      playerServerStatsBox.html(notFoundContent);
+      return;
+    }
+    $.ajax({
+      url: `/servers/getPlayerCoins?server=${selectedValue}`,
+      method: 'GET',
+      success: function(response) {
+        /*
+          expected result:      
+          {
+            username: xxx,
+            uuid: xxx,
+            coins: xxx,
+          }
+        */
+        const userStatFoundContent = `
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTehc2GkyE0vk-HRcsYS_mxqm1RuGvtCwhXKZh8Qbdg63jTmbduhXJqqRw7pQxYJs3jtS8&usqp=CAU" alt="steve-head-icon" width="64" height="64" class="img-thumbnail" />
+          <span class="d-block"><b>Username</b>: ${response.username}</span>
+          <span class="d-block"><b>UUID</b>: ${response.uuid}</span>
+          <span class="d-block"><b>Xu có sẵn</b>: ${response.coins} 🥮 <span class="text-success"><i class="fa-solid fa-up-long"></i></span></span>
+        `;
+        playerServerStatsBox.html(userStatFoundContent);
+      }, error: function(err) {
+        console.error('error=', err);
+      }
+    });
+  }
+
+  async function getServers() {
+    return $.ajax({
+      url: '/servers',
+      method: 'GET',
+      contentType: 'application/json',
+    }).then((data) => data);
+  }
+
   function letVerifyAccount() {
     swal({
       title: 'GỬI XÁC THỰC TỚI EMAIL?',
@@ -367,15 +434,18 @@
       address,
     }
     if (!fullname) {
+      window.hideLoadingBox()
       toastr.error('Họ và tên chưa hợp lệ!', 'Lỗi')
       return
     }
     const phoneNumberRegex = /^(0[1-9])+([0-9]{8,9})\b/
     if (!phoneNumberRegex.test(sdt)) {
+      window.hideLoadingBox()
       toastr.error('Số điện thoại chưa hợp lệ!', 'Lỗi')
       return
     }
     if (!address) {
+      window.hideLoadingBox()
       toastr.error('Địa chỉ chưa hợp lệ!', 'Lỗi')
       return
     }

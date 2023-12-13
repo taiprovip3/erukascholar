@@ -1,4 +1,5 @@
 const Minio = require('minio');
+require('dotenv').config()
 
 const minioClient = new Minio.Client({
     endPoint: process.env.MINIO_ENDPOINT,

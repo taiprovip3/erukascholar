@@ -7,17 +7,18 @@ const bycrypt = require('bcryptjs')
 const sendEmail = require('../utils/send-mail')
 const { authenticateGoogleOAuth } = require('../utils/oauth-middleware')
 const hashPasswordSHA256 = require('../utils/encrypt-password.js')
+const { getConnectionPool } = require('../utils/mysql-factory-db.js')
 
 router.post('/register', async (req, res) => {
   /**
-   * case1: có tồn tại username trong csdl
+   * case01: có tồn tại username trong csdl
    *      -- username đã xác thực -> báo lỗi tài khoản exist
    *      -- chưa xác thức -> gửi link đăng ký
-   * case2: không tồn tại username trong csdl -> gửi link đăng ký
+   * case02: không tồn tại username trong csdl -> gửi link đăng ký
    */
   try {
     const { username, email, password } = req.body
-    // Kiểm tra xem email đã tồn tại trong CSDL hay chưa
+    // Kiểm tra xem username đã tồn tại trong CSDL hay chưa
     const checkMailQuery = await pool.query('SELECT * FROM authme WHERE username = $1', [username])
     if (checkMailQuery.rowCount > 0) {
       // Có tồn tại username register dưới csdl
@@ -32,8 +33,8 @@ router.post('/register', async (req, res) => {
       const clientQuery = await pool.connect()
       const addUserQuery = await clientQuery.query(
         `INSERT INTO authme
-      (id, username, realname, "password", ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp)
-      VALUES(nextval('authme_id_seq'::regclass), $1, $1, $2, '', 0, 0, '', '0'::double precision, '0'::double precision, '0'::double precision, 'world'::character varying, 0, 0, $3, '0'::smallint, '0'::smallint, '') RETURNING *`,
+      (id, username, realname, "password", ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp, uuid)
+      VALUES(nextval('authme_id_seq'::regclass), $1, $1, $2, '', 0, 0, '', '0'::double precision, '0'::double precision, '0'::double precision, 'world'::character varying, 0, 0, $3, '0'::smallint, '0'::smallint, '', '') RETURNING *`,
         [username, password, email],
       )
       if (addUserQuery.rowCount <= 0) {
@@ -77,11 +78,7 @@ router.get('/register/verify', async (req, res) => {
   /**
    * case 01: cố tình bug url thiếu param token
    * case 02: catch token không hợp lệ
-   * **** Các công việc cần làm sau khi user tạo acc
-   * th01: tài khoản ko tồn tài trong hệ thống
-   * th02: tài khoản đã xác thực
-   * th03: email muốn xác thực đã có user nào đó dùng
-   * th04: xac thuc thanh cong, đặt is_verified = true
+   * 
    */
   const token = req.query.token
   if (!token) {
@@ -92,9 +89,44 @@ router.get('/register/verify', async (req, res) => {
     }
     return res.render('temp-page', { sweetResponse })
   }
+  try {
+    const payload = jwt.verify(token, 'concavang');
+    req.session.verifying = payload;
+    return res.render('verify-page', { payload });
+  } catch (error) {
+    console.error('Lỗi khi xác thực token:', error)
+    return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
+  }
+});
+
+router.post('/register/verify', async (req, res) => {
+  /**
+   * case 01: ko có session verifying
+   * **** Các công việc cần làm sau khi user tạo acc
+   * th01: tài khoản ko tồn tài trong hệ thống
+   * th02: tài khoản đã xác thực
+   * th03: email muốn xác thực đã có user nào đó dùng
+   * th04: xac thuc thanh cong, đặt is_verified = true
+   */
+  if(!req.body.uuid || !req.body.serverName) {
+    const sweetResponse = {
+      title: 'THIẾU THAM SỐ',
+      text: 'Đã bỏ lỡ uuid và serverName',
+      icon: 'error',
+    }
+    return res.json(sweetResponse);
+  }
+  const payload = req.session.verifying;
+  if(!payload) {
+    const sweetResponse = {
+      title: 'KHÔNG TÌM THẤY PHIÊN XÁC THỰC',
+      text: 'Có vẽ bạn đang vô tình / cố tình gặp phải sự cố này. Máy chủ không thấy phiên làm việc "xác thực". Đấy là bug chăng?',
+      icon: 'error',
+    }
+    return res.json(sweetResponse);
+  }
   const clientQuery = await pool.connect()
   try {
-    const payload = jwt.verify(token, 'concavang')
     const username = payload.username
     const email = payload.email
     const queryResult = await pool.query('SELECT * FROM users WHERE username = $1', [username])
@@ -104,19 +136,20 @@ router.get('/register/verify', async (req, res) => {
         text: `Tài khoản email ${email} không thể tìm thấy trong hệ thống chúng tôi. Có vẽ đã xảy ra bugs. Vui lòng liên hệ Admin để được hỗ trợ!`,
         icon: 'error',
       }
-      return res.render('temp-page', { sweetResponse })
+      return res.json(sweetResponse);
     }
     const rowQuery = queryResult.rows[0]
     const isVerified = rowQuery.is_verified
-    if (isVerified) {
+    const userUuid = rowQuery.uuid;
+    if (isVerified && userUuid) {
       // TH tài khoản đã được xác thực
-      const existedEmailVerified = rowQuery.email
+      const existedEmailVerified = rowQuery.email;
       const sweetResponse = {
         title: 'TÀI KHOẢN ĐÃ ĐƯỢC XÁC THỰC',
         text: `Tài khoản user ${username} đã xác thực với email mang tên ${existedEmailVerified}. Không thể xác thực lại lần nữa!`,
         icon: 'error',
       }
-      return res.render('temp-page', { sweetResponse })
+      return res.json(sweetResponse);
     }
     // TH email đang xác thực trùng với email đã liên kết với 1 tài khoản khác.
     const verifiedEmailUsedQuery = await clientQuery.query(
@@ -130,15 +163,35 @@ router.get('/register/verify', async (req, res) => {
         text: `Tài khoản gmail google ${email} đã được liên kết với một user tên là ${usernameUsedThisEmail} trước đó. Không thể đùng lại cho user của bạn!`,
         icon: 'error',
       }
-      return res.render('temp-page', { sweetResponse })
+      return res.json(sweetResponse);
     }
-    await clientQuery.query('UPDATE users SET is_verified = true WHERE username = $1', [username])
-    const sweetResponse = {
-      title: 'XÁC THỰC THÀNH CÔNG',
-      text: `Tài khoản của bạn đã sẵn sàng. Đăng nhập ngay!`,
-      icon: 'success',
-    }
-    return res.render('temp-page', { sweetResponse })
+    
+    const uuid = req.body.uuid;
+    const serverName = req.body.serverName;
+
+    const serverPool = await getConnectionPool(serverName);
+    serverPool.getConnection(function (err, conn) {
+        const playerCoinQuery = `SELECT * FROM playerpoints_points WHERE uuid = '${uuid}'`;
+        conn.query(playerCoinQuery, async function (error, result) {
+          if(!result) {// 
+            const sweetResponse = {
+              title: 'Xác thực thất bại',
+              text: `Không tìm thấy UUID trong máy chủ ${serverName} của chúng tôi. Vui lòng kiểm tra lại thông tin chính xác chưa!`,
+              icon: 'error'
+            }
+            return res.json(sweetResponse);
+          }
+          await clientQuery.query('UPDATE users SET email = $1, is_verified = $2, uuid = $3 WHERE username = $4', [email, true, uuid, username])
+          const sweetResponse = {
+            title: 'XÁC THỰC THÀNH CÔNG',
+            text: `Tài khoản của bạn đã sẵn sàng. Đăng nhập ngay!`,
+            icon: 'success',
+          }
+          return res.json(sweetResponse);
+        });
+        serverPool.releaseConnection(conn);
+    })
+
   } catch (error) {
     console.error('Lỗi khi xác thực token:', error)
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
