@@ -9,6 +9,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const minioClient = require('../utils/minio-client');
+const Transaction = require('../models/transaction')
 
 router.put('/profile/update', authenticateToken, async (req, res) => {
   /**
@@ -138,6 +139,16 @@ router.get('/profile/avatar', authenticateToken, async (req, res) => {
   } finally {
     clientQuery.release();
   }
+});
+
+router.get('/histories', async (req, res) => {
+  try {
+    const transactions = await Transaction.find();
+    return res.json(transactions);
+  } catch (error) {
+    console.error('/histories error=', error);
+    return res.status(500).send(error);
+  } 
 });
 
 module.exports = router

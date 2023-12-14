@@ -15,7 +15,7 @@
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <!-- Modal body -->
-      <div class="modal-body">
+      <div class="modal-body" style="max-height: 80vh; overflow: auto;">
         <div class="text-end">
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
@@ -277,12 +277,27 @@
               </ul>
             </div>
             <div
-              class="col-10 pt-2 small position-relative"
+              class="col-10 p-3 small position-relative"
               style="
                 background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
               "
             >
-              HISTORY
+              <div class="table-responsive">
+                <table border="1">
+                  <thead style="background-image: url('https://lh3.googleusercontent.com/A9-BYyZa2yRTJRP3vrg7cG_UTqX9hGEUMEMLJOzhwFH3534nKOpUFLEX3qEn6-3v7HvEzKrQRWN_yPS0KOt6Pij-th3Hp1bmIA=s400');">
+                    <tr class="fw-bolder">
+                      <td>#</td>
+                      <td>Mã giao dịch</td>
+                      <td>Vận hành</td>
+                      <td>Số tiền</td>
+                      <td>Vào lúc</td>
+                      <td>Lời nhắn</td>
+                      <td>Trạng thái</td>
+                    </tr>
+                  </thead>
+                  <tbody id="historyBody" class="text-white" style="background-image: url('https://huggingface.co/TechieCrow/minecraft-log-textures/resolve/main/sample_images/minecraft_log_side_textures_(7).jpg');"></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -298,6 +313,7 @@
   async function initSkeleton() {
     const servers = await getServers();
     setServerSelection(servers);
+    setHistories();
   }
 
   function setServerSelection(servers) {
@@ -350,6 +366,33 @@
     return $.ajax({
       url: '/servers',
       method: 'GET',
+      contentType: 'application/json',
+    }).then((data) => data);
+  }
+
+  async function setHistories() {
+    const transactions = await getHistories();
+    const tbody = $('#historyBody');
+    transactions.forEach(function(transaction, index) {
+      const formattedTime = moment(transaction.created_at).format('YYYY-MM-DD HH:mm:ss');
+      const formattedAmount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(transaction.amount);
+      const row = `<tr>
+                      <td>${index + 1}</td>
+                      <td>${transaction.transId}</td>
+                      <td>${transaction.bankCode}</td>
+                      <td>${formattedAmount}</td>
+                      <td class="text-nowrap">${formattedTime}</td>
+                      <td>${transaction.message}</td>
+                      <td>${transaction.status ? transaction.status : " "}</td>
+                    </tr>`;
+      tbody.append(row);
+    });
+  }
+
+  async function getHistories() {
+    return $.ajax({
+      url: '/histories',
+      type: 'GET',
       contentType: 'application/json',
     }).then((data) => data);
   }

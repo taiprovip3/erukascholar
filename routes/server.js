@@ -98,7 +98,7 @@ router.post('/servers/forwardCoins', authenticateToken ,async (req, res) => {
             const newTransaction = new Transaction({
                 userId,
                 transId: generateRandomString2(32),
-                balanceToForward,
+                amount: balanceToForward,
                 bankCode: process.env.SERVER_NAME,
                 message: `CHUYEN THANH CONG ${balanceToForward} 🥮 XU VAO SERVER ${serverName}. SO DU CON LAI: ${balanceLeft}`,
                 status: 'SUCCESS',
