@@ -65,7 +65,7 @@
                 ></a>
                 <ul class="nav nav-tabs dropdown_menu">
                   <li class="nav-item">
-                    <a class="nav-link fw-bold text-dark" href="#">Cách tải Minecraft</a>
+                    <a class="nav-link fw-bold text-dark" href="/instruct/download">Cách tải Minecraft</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link fw-bold text-dark" href="#">Nạp tiền vào tài khoản </a>
@@ -76,7 +76,7 @@
                 <a class="nav-link fw-bold text-white" href="/postings">SỰ KIỆN</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
+                <a class="nav-link fw-bold text-white" href="/shop">CỬA HÀNG</a>
               </li>
               <% if(!payload.userData) { %>
               <li class="nav-item dropdown">
@@ -118,7 +118,7 @@
           </div>
           <%- include('block-profile.ejs') %>
         </div>
-        <!-- content Math.floor(payload.serverMetrics.stars); -->
+        <!-- content -->
         <div id="content" class="container-fluid">
           <div class="row">
             <!-- pleft -->
@@ -347,8 +347,7 @@
     <%- include('loading-box.ejs') %>
     <%- include('login-box.ejs') %>
     <%- include('register-box.ejs') %>
-    <%-
-    include('profile-box.ejs') %>
+    <%- include('profile-box.ejs') %>
     <%- include('report-box.ejs') %>
     <%- include('credit-box.ejs') %>
   </body>

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minecraft Forum Việt Nam</title>
+    <script src="https://kit.fontawesome.com/ad778f42b3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/css/comma.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script type="text/javascript" src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script
+      src="https://cdn.tiny.cloud/1/7xj5wvv9kasumgezlf02vpj9b672i5o3hax0hj8zarftbbk9/tinymce/6/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid d-flex justify-content-center align-items-center overflow-auto">
+      <div class="w-75 my-5 position-relative">
+        <!-- nav -->
+        <style>
+          .dropdown {
+            position: relative;
+          }
+          .dropdown_menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: calc(100% - 1px);
+            width: 200px;
+            background-image: url('https://mineblocks.com/1/wiki/images/a/a7/Sand.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+          .dropdown:hover > .dropdown_menu {
+            z-index: 100;
+            display: block;
+          }
+        </style>
+        <div id="nav" class="d-flex align-items-center justify-content-between text-white p-2">
+          <div>
+            <ul class="nav nav-tabs">
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="/">TRANG CHỦ</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold active" href="#"
+                  >HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i
+                ></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold disabled" href="#">Cách tải Minecraft</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="#">Nạp tiền vào tài khoản </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="/postings">SỰ KIỆN</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
+              </li>
+              <% if(!payload.userData) { %>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
+                ></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginBox"
+                      >Đăng nhập thành viên</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#registerBox"
+                      >Đăng ký tài khoản</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+          <div>
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Xf26G7yYwc9DojeXTNj4EEy30_lu_YM5kkXiXtQraRLj7u6N0RFMJRZDqjU9TRaHL6c&usqp=CAU"
+              alt="logo"
+              width="32px"
+              height="32px"
+            />
+            <span>Minecraft Forum VN</span>
+          </div>
+          <%- include('block-profile.ejs') %>
+        </div>
+        <!-- content -->
+        <div id="content" class="container-fluid">
+          <div class="row">
+            <!-- pleft -->
+            <div class="col-9 p-3 border" id="pleft">
+              <style>
+                #guide-steps {
+                  background-image: url('https://i.pinimg.com/474x/52/ae/1d/52ae1d1a17f72c634f8b15549ed3959c--seamless-background-background-images.jpg');
+                }
+              </style>
+              <div>
+                <div><p class="display-6 fw-bolder">Hướng Dẫn Tải Minecraft Miễn Phí Đơn Giản</p></div>
+                <p>Có 3 cách để tải minecraft miễn phí phổ biến. Hãy chọn làm theo 1 trong 3 cách:</p>
+                <ol class="list-group list-group-numbered mb-2">
+                  <li class="list-group-item">Sử dụng TLauncher</li>
+                  <li class="list-group-item">Sử dụng Titan Minecraft Launcher</li>
+                  <li class="list-group-item">Sử dụng Shiginima Launcher</li>
+                </ol>
+                <p class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Trước khi cài đặt minecraft, cần đảm bảo bạn cài đặt JRE (môi trường để minecraft có thể chạy) trước nhé. <a href="https://www.java.com/en/download/manual.jsp" target="_blank">Link download</a></p>
+                <div class="my-2"><h3 class="borrow fw-bold">Sử dụng TLauncher</h3></div>
+                <div id="guide-steps" class="px-4 text-dark">
+                  <span>1. Truy cập đường dẫn: <a href="https://tlauncher.org/en/" target="_blank" class="fw-bold">https://tlauncher.org/en/</a></span>
+                  <br>
+                  <img src="/images/tlauncher-org.png" alt="tlauncher-org" width="100%" height="600" />
+                  <br>
+                  <span>2. Chọn download bản cho windows:</span>
+                  <br>
+                  <img src="/images/tlauncher-org-2.png" alt="tlauncher-org" />
+                  <br>
+                  <span>3. Cài đặt bấm next như bình thường:</span>
+                  <br>
+                  <img src="/images/tlauncher-org-3.png" alt="tlauncher-org" />
+                  <br>
+                  <span>4. Vào game:</span>
+                  <br>
+                  <img src="/images/tlauncher-org-4.png" alt="tlauncher-org" width="100%" />
+                </div>
+                <div class="my-2"><h3 class="borrow fw-bold">Sử dụng Titan Minecraft Launcher</h3></div>
+                <div id="guide-steps" class="px-4 text-dark">
+                  <span>1. Truy cập đường dẫn: <a href="https://titan.mythicmc.org/" target="_blank" class="fw-bold">https://titan.mythicmc.org/</a></span>
+                  <br>
+                  <span>2. Chọn download bản cho windows:</span>
+                  <br>
+                  <img src="/images/titan-launcher.png" alt="titan-launcher" width="100%" height="600" />
+                  <br>
+                  <span>3. Mở lên tệp vừa tải cài đặt như bình thường:</span>
+                  <br>
+                  <img src="/images/titan-launcher-2.png" alt="titan-launcher" />
+                  <br>
+                  <span>4. Vào game:</span>
+                </div>
+                <div class="my-2"><h3 class="borrow fw-bold">Sử dụng Shiginima</h3></div>
+                <div id="guide-steps" class="px-4 text-dark">
+                  <span>1. Truy cập đường dẫn: <a href="https://mega.nz/file/IexkXDqY#VS9PE6Mm0xQQWNh46GBxANEUIH9v_akjSd-tnRmAcjc" target="_blank" class="fw-bold">https://www.launchershiginima.com/en/shiginima-launcher/</a></span>
+                  <br>
+                  <img src="/images/Shiginima-launcher.png" alt="titan-launcher" width="100%" height="600" />
+                  <br>
+                  <span>2. Chọn download bản cho PC (bản mới nhất hiện tại là v4.400):</span>
+                  <br>
+                  <img src="/images/shiginima-launcher-2.png" alt="titan-launcher" width="100%" height="600" />
+                  <br>
+                  <span>3. Giải nén thư mục:</span>
+                  <br>
+                  <img src="/images/shiginima-launcher-3.png" alt="tlauncher-org" />
+                  <br>
+                  <span>4. Vào game:</span>
+                  <br>
+                  <img src="/images/shiginima-launcher-4.png" alt="tlauncher-org" width="100%" />
+                </div>
+              </div>
+            </div>
+            <!-- pright -->
+            <%- include('info-panel.ejs'); %>
+          </div>
+        </div>
+        <div
+          class="position-absolute bottom-0 end-0 text-center m-1 text-danger crs"
+          data-bs-toggle="modal"
+          data-bs-target="#reportBox"
+        >
+          <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+          <span>Report</span>
+        </div>
+      </div>
+    </div>
+    <%- include('loading-box.ejs') %>
+    <%- include('login-box.ejs') %>
+    <%- include('register-box.ejs') %>
+    <%- include('profile-box.ejs') %>
+    <%- include('report-box.ejs') %>
+    <%- include('credit-box.ejs') %>
+  </body>
+  <script src="/javascripts/rating-stars.js"></script>
+  <script src="/javascripts/toggle-loading-box.js"></script>
+  <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
+  <script>
+    $(document).ready(function () {
+      window.showLoadingBox()
+    })
+    $(window).on('load', function () {
+      window.hideLoadingBox()
+    })
+    var socket = io.connect('wss://erukascholar.live')
+    socket.on('connect', function () {
+      console.log('Connected to server')
+    })
+    socket.on('emitter', function (data) {
+      console.log('client emitter=', data)
+    })
+  </script>
+</html>

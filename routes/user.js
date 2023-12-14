@@ -145,12 +145,38 @@ router.get('/profile/avatar', authenticateToken, async (req, res) => {
 
 router.get('/histories', authenticateToken, async (req, res) => {
   try {
-    const transactions = await Transaction.find()
+    const transactions = await Transaction.find().sort({ created_at: -1 });
     return res.json(transactions)
   } catch (error) {
     console.error('/histories error=', error)
     return res.status(500).send(error)
   }
 })
+
+router.post('/checkins', authenticateToken, async (req, res) => {
+  const clientQuery = await pool.connect()
+  try {
+    const userId = req.session.user.userId;
+    const result = await clientQuery.query('SELECT * FROM checkins WHERE users_id = $1 AND checkin_date = CURRENT_DATE', [userId]);
+    if (result.rowCount > 0) {
+      // Đã điểm danh hôm nay
+      const sweetReponse = { title: 'ĐÃ ĐIỂM DANH', text: 'Hôm nay đã điểm danh rồi :(', icon: 'error' };
+      return res.json(sweetReponse);
+    }
+    // Đã tồn tại nhưng ngày bé hơn hoặc ko tồn tại
+    await clientQuery.query('BEGIN');
+    await clientQuery.query('INSERT INTO checkins (users_id) VALUES ($1) ON CONFLICT (users_id) DO UPDATE SET checkin_count = checkins.checkin_count + 1, checkin_date = CURRENT_DATE', [userId]);
+    await clientQuery.query('UPDATE profiles SET balance = balance + 1 WHERE users_id = $1', [userId]);
+    await clientQuery.query('COMMIT');
+    const sweetReponse = {title: 'THÀNH CÔNG', text: 'Xin chúc mừng bạn nhận được 1🥮 hôm nay.', icon: 'success'};
+      return res.json(sweetReponse);
+  } catch (error) {
+    await clientQuery.query('ROLLBACK');
+    console.error('/checkins error=', error)
+    return res.status(500).send(error)
+  } finally {
+    clientQuery.release()
+  }
+});
 
 module.exports = router

@@ -111,6 +111,8 @@ app.use(require('./routes/user.js'))
 app.use(require('./routes/rating-stars.js'))
 app.use(require('./routes/report.js'))
 app.use(require('./routes/postings.js'))
+app.use(require('./routes/instruct.js'))
+app.use(require('./routes/shop.js'))
 app.use(require('./routes/recharge.js'))
 app.use(require('./routes/server.js'))
 

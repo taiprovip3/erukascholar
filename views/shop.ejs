@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minecraft Forum Việt Nam</title>
+    <script src="https://kit.fontawesome.com/ad778f42b3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/css/comma.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
+      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
+      integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script type="text/javascript" src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script
+      src="https://cdn.tiny.cloud/1/7xj5wvv9kasumgezlf02vpj9b672i5o3hax0hj8zarftbbk9/tinymce/6/tinymce.min.js"
+      referrerpolicy="origin"
+    ></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid d-flex justify-content-center align-items-center overflow-auto">
+      <div class="w-75 my-5 position-relative">
+        <!-- nav -->
+        <style>
+          .dropdown {
+            position: relative;
+          }
+          .dropdown_menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: calc(100% - 1px);
+            width: 200px;
+            background-image: url('https://mineblocks.com/1/wiki/images/a/a7/Sand.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+          .dropdown:hover > .dropdown_menu {
+            z-index: 100;
+            display: block;
+          }
+        </style>
+        <div id="nav" class="d-flex align-items-center justify-content-between text-white p-2">
+          <div>
+            <ul class="nav nav-tabs">
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="/">TRANG CHỦ</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i
+                ></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="/instruct/downlad">Cách tải Minecraft</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link fw-bold text-dark" href="#">Nạp tiền vào tài khoản </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white" href="/postings">SỰ KIỆN</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold active" href="#">CỬA HÀNG</a>
+              </li>
+              <% if(!payload.userData) { %>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
+                ></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginBox"
+                      >Đăng nhập thành viên</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#registerBox"
+                      >Đăng ký tài khoản</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+          <div>
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Xf26G7yYwc9DojeXTNj4EEy30_lu_YM5kkXiXtQraRLj7u6N0RFMJRZDqjU9TRaHL6c&usqp=CAU"
+              alt="logo"
+              width="32px"
+              height="32px"
+            />
+            <span>Minecraft Forum VN</span>
+          </div>
+          <%- include('block-profile.ejs') %>
+        </div>
+        <!-- content -->
+        <div id="content" class="container-fluid">
+          <div class="row">
+            <!-- pleft -->
+            <div class="col-9 p-3 border" id="pleft">
+                <style>
+                    
+                </style>
+                <div></div>
+            </div>
+            <!-- pright -->
+            <%- include('info-panel.ejs'); %>
+          </div>
+        </div>
+        <div
+          class="position-absolute bottom-0 end-0 text-center m-1 text-danger crs"
+          data-bs-toggle="modal"
+          data-bs-target="#reportBox"
+        >
+          <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+          <span>Report</span>
+        </div>
+      </div>
+    </div>
+    <%- include('loading-box.ejs') %>
+    <%- include('login-box.ejs') %>
+    <%- include('register-box.ejs') %>
+    <%- include('profile-box.ejs') %>
+    <%- include('report-box.ejs') %>
+    <%- include('credit-box.ejs') %>
+  </body>
+  <script src="/javascripts/rating-stars.js"></script>
+  <script src="/javascripts/toggle-loading-box.js"></script>
+  <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
+  <script>
+    $(document).ready(function () {
+      window.showLoadingBox()
+    })
+    $(window).on('load', function () {
+      window.hideLoadingBox()
+    })
+    var socket = io.connect('wss://erukascholar.live')
+    socket.on('connect', function () {
+      console.log('Connected to server')
+    })
+    socket.on('emitter', function (data) {
+      console.log('client emitter=', data)
+    })
+  </script>
+</html>

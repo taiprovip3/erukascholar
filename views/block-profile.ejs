@@ -18,6 +18,10 @@
 </style>
 <% if(payload.userData) { %>
 <div class="d-flex align-items-center bg-light text-dark fw-bold p-2 crs position-relative" id="block-profile">
+  <div class="position-absolute crs" style="left: -50px;" id="checkinDiv">
+    <img src="https://sassymouthdippowder.com/cdn/shop/products/image_1200x1200.gif" alt="diemdanh" width="48" height="48 " onclick="checkIn();" />
+    <!-- <img src="https://cdn-icons-png.flaticon.com/512/5526/5526779.png" alt="unbox" width="30" height="30" style="background: lime;" onclick="alert('suprise mother facker!')" /> -->
+  </div>
   <div data-bs-toggle="modal" data-bs-target="#profileBox">
     <img
       src="https://bolt-gcdn.sc-cdn.net/3/tTgShVkMFR00WHsatVvx0?bo=EhgaABoAMgF9OgEEQgYIne_ioAZIAlASYAE%3D&uc=18"
@@ -56,4 +60,29 @@
     </div>
   </div>
 </div>
+<script>
+  function checkIn() {
+    $.ajax({
+      url: '/checkins',
+      method: 'POST',
+      success: function(sweetResponse) {
+        swal({
+          title: sweetResponse.title,
+          text: sweetResponse.text,
+          icon: sweetResponse.icon
+        }).then(() => {
+          if(sweetResponse.icon === 'success') {
+            const unboxContent = `
+              <img src="https://cdn-icons-png.flaticon.com/512/5526/5526779.png" alt="unbox" width="30" height="30" style="background: lime;" onclick="swal({ title: 'ĐÃ ĐIỂM DANH', text: 'Đã điểm danh hôm nay rồi', icon: 'error' });" />
+            `;
+            $("#checkinDiv").html(unboxContent);
+          }
+        });
+      }, error: function(err) {
+        console.error('error=', err);
+        toastr.error(error.responseText, 'Lỗi');
+      }
+    });
+  }
+</script>
 <% } %>
