@@ -6,6 +6,7 @@ const crypto = require('crypto')
 const Transaction = require('../models/transaction')
 const logger = require('../utils/logger')
 const pool = require('../utils/db')
+const generateRandomString2 = require('../utils/generate-random-string')
 
 router.post('/vnp/ibanking/create_payment_url', async (req, res) => {
   /**
@@ -340,14 +341,6 @@ function generateRandomString(length) {
   const timestamp = new Date().getTime().toString()
   const hash = crypto.createHash('md5').update(timestamp).digest('hex')
   return hash.substring(0, length)
-}
-
-function generateRandomString2(length) {
-  // Sinh ngẫu nhiên một buffer với độ dài là length / 2 (vì mỗi byte tạo ra 2 ký tự hex)
-  const randomBytes = crypto.randomBytes(length / 2)
-  // Chuyển buffer thành chuỗi hex
-  const randomString = randomBytes.toString('hex')
-  return randomString
 }
 
 function convertVietnameseString(inputString) {
