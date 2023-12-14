@@ -4,11 +4,11 @@ const pool = require('../utils/db')
 const { authenticateToken } = require('../utils/oauth-middleware')
 const sendEmail = require('../utils/send-mail')
 const NodeCache = require('node-cache')
-const temporaryResentMailCache = new NodeCache({ stdTTL: 60 });
-const multer = require('multer');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-const minioClient = require('../utils/minio-client');
+const temporaryResentMailCache = new NodeCache({ stdTTL: 60 })
+const multer = require('multer')
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+const minioClient = require('../utils/minio-client')
 const Transaction = require('../models/transaction')
 
 router.put('/profile/update', authenticateToken, async (req, res) => {
@@ -93,62 +93,64 @@ router.post('/profile/verify', authenticateToken, async (req, res) => {
   } finally {
     clientQuery.release()
   }
-});
+})
 
 router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken, async (req, res) => {
-  let imageUrl = "";
-  const clientQuery = await pool.connect();
+  let imageUrl = ''
+  const clientQuery = await pool.connect()
   try {
-    const file = req.file;
-    const userId = req.session.user.userId;
+    const file = req.file
+    const userId = req.session.user.userId
     const metaData = {
       'Content-Type': file.mimetype,
     }
-    const objectName = `${userId}-${Date.now()}-${file.originalname}`;
-    await minioClient.putObject('avatar', objectName, file.buffer, metaData);
-    imageUrl = minioClient.protocol + '://' + minioClient.host + ':' + minioClient.port + '/' + 'avatar' + '/' + objectName;
-    await clientQuery.query('UPDATE profiles SET avatar = $1 WHERE users_id = $2', [objectName, userId]);
+    const objectName = `${userId}-${Date.now()}-${file.originalname}`
+    await minioClient.putObject('avatar', objectName, file.buffer, metaData)
+    imageUrl =
+      minioClient.protocol + '://' + minioClient.host + ':' + minioClient.port + '/' + 'avatar' + '/' + objectName
+    await clientQuery.query('UPDATE profiles SET avatar = $1 WHERE users_id = $2', [objectName, userId])
   } catch (error) {
-    console.log('error=', error );
-    return res.status(500).send(error);
+    console.log('error=', error)
+    return res.status(500).send(error)
   } finally {
-    clientQuery.release();
+    clientQuery.release()
   }
 
   try {
-    const oldObjectName = req.session.user.avatar;
-    await minioClient.removeObject('avatar', oldObjectName);
-  } catch (error) {// Lỗi xóa image minio ko tồn tại cũng ko cần làm gì
+    const oldObjectName = req.session.user.avatar
+    await minioClient.removeObject('avatar', oldObjectName)
+  } catch (error) {
+    // Lỗi xóa image minio ko tồn tại cũng ko cần làm gì
   } finally {
-    return res.status(200).send(imageUrl);
+    return res.status(200).send(imageUrl)
   }
-});
+})
 
 router.get('/profile/avatar', authenticateToken, async (req, res) => {
-  const clientQuery = await pool.connect();
+  const clientQuery = await pool.connect()
   try {
-    const userId = req.session.user.userId;
-    const getAvatarQuery = await clientQuery.query('SELECT avatar FROM profiles WHERE users_id = $1', [userId]);
-    const objectName = getAvatarQuery.rows[0].avatar;
-    const dataStream = await minioClient.getObject('avatar', objectName);
-    res.setHeader('Content-Type', 'image/jpeg');
-    dataStream.pipe(res);
+    const userId = req.session.user.userId
+    const getAvatarQuery = await clientQuery.query('SELECT avatar FROM profiles WHERE users_id = $1', [userId])
+    const objectName = getAvatarQuery.rows[0].avatar
+    const dataStream = await minioClient.getObject('avatar', objectName)
+    res.setHeader('Content-Type', 'image/jpeg')
+    dataStream.pipe(res)
   } catch (error) {
-    console.log('error=', error );
-    return res.status(500).send(error);
+    console.error('error=', error)
+    return res.status(500).send(error)
   } finally {
-    clientQuery.release();
+    clientQuery.release()
   }
-});
+})
 
-router.get('/histories', async (req, res) => {
+router.get('/histories', authenticateToken, async (req, res) => {
   try {
-    const transactions = await Transaction.find();
-    return res.json(transactions);
+    const transactions = await Transaction.find()
+    return res.json(transactions)
   } catch (error) {
-    console.error('/histories error=', error);
-    return res.status(500).send(error);
-  } 
-});
+    console.error('/histories error=', error)
+    return res.status(500).send(error)
+  }
+})
 
 module.exports = router

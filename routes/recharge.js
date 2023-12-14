@@ -9,8 +9,7 @@ const pool = require('../utils/db')
 const generateRandomString2 = require('../utils/generate-random-string')
 
 router.post('/vnp/ibanking/create_payment_url', async (req, res) => {
-  /**
-     * req= [Object: null prototype] {
+  /** * req= [Object: null prototype] {
         ibanking_value: '10000',
         ibanking_bankcode: ''
       }
@@ -341,14 +340,6 @@ function generateRandomString(length) {
   const timestamp = new Date().getTime().toString()
   const hash = crypto.createHash('md5').update(timestamp).digest('hex')
   return hash.substring(0, length)
-}
-
-function convertVietnameseString(inputString) {
-  // Chuyển đổi tiếng Việt có dấu thành không dấu
-  const withoutDiacritics = inputString.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-  // Loại bỏ kí tự đặc biệt và chỉ giữ lại chữ cái và số
-  const sanitizedString = withoutDiacritics.replace(/[^\w\s]/gi, '')
-  return sanitizedString
 }
 
 function verifyWebhook(username, password, amount, tran_id, errorcode, messages, signature) {

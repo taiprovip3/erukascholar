@@ -79,31 +79,31 @@
                 <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
               </li>
               <% if(!payload.userData) { %>
-                <li class="nav-item dropdown">
-                  <a class="nav-link fw-bold text-white disabled" href="#"
-                    >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
-                  ></a>
-                  <ul class="nav nav-tabs dropdown_menu">
-                    <li class="nav-item">
-                      <a
-                        class="nav-link fw-bold text-dark"
-                        href="javascript:void(0)"
-                        data-bs-toggle="modal"
-                        data-bs-target="#loginBox"
-                        >Đăng nhập thành viên</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link fw-bold text-dark"
-                        href="javascript:void(0)"
-                        data-bs-toggle="modal"
-                        data-bs-target="#registerBox"
-                        >Đăng ký tài khoản</a
-                      >
-                    </li>
-                  </ul>
-                </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
+                ></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginBox"
+                      >Đăng nhập thành viên</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#registerBox"
+                      >Đăng ký tài khoản</a
+                    >
+                  </li>
+                </ul>
+              </li>
               <% } %>
             </ul>
           </div>
@@ -156,7 +156,11 @@
                 <i class="fa-solid fa-star crs" onclick="letRate('<%= i %>')"></i>
                 <!-- ngôi sao trắng -->
                 <% } } %>
-                <span> <%= stars.toFixed(2) %> / 5 (<%= payload.serverMetrics.rates %> bình chọn)</span>
+                <span>
+                  <%= stars.toFixed(2) %>
+                  / 5 (<%= payload.serverMetrics.rates %>
+                  bình chọn)</span
+                >
               </div>
               <div>
                 <p class="float-start">
@@ -174,8 +178,8 @@
                   triển. Kể từ đó Minecraft được chuyển sang một số nền tảng khác và trở thành trò chơi điện tử bán chạy
                   nhất mọi thời đại với hơn 238 triệu bản được bán ra và gần 140 triệu người dùng hoạt động hằng tháng
                   tính đến năm 2021. Để thưởng thức trò chơi này hãy tải ngay minecraft phiên bản mới nhất và tham gia
-                  vào server <a href="#" class="text-warning fw-bold"><%= process.env.SERVER_DOMAIN %></a> cùng những người
-                  bạn để trải nghiệm các thể loại hay nhất.
+                  vào server <a href="#" class="text-warning fw-bold"><%= process.env.SERVER_DOMAIN %></a> cùng những
+                  người bạn để trải nghiệm các thể loại hay nhất.
                 </p>
               </div>
               <hr class="text-dark" />
@@ -340,8 +344,13 @@
         </div>
       </div>
     </div>
-    <%- include('loading-box.ejs') %> <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%-
-    include('profile-box.ejs') %> <%- include('report-box.ejs') %> <%- include('credit-box.ejs') %>
+    <%- include('loading-box.ejs') %>
+    <%- include('login-box.ejs') %>
+    <%- include('register-box.ejs') %>
+    <%-
+    include('profile-box.ejs') %>
+    <%- include('report-box.ejs') %>
+    <%- include('credit-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>

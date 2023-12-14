@@ -85,7 +85,8 @@
           </div>
         </div>
       </div>
-      <% const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }); %> <% if (payload) {
+      <% const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }); %>
+      <% if (payload) {
       %>
       <div
         class="position-fixed end-0 top-0 rounded-2 py-3 px-5 border border-dark m-1 text-center bg-light small crs"
@@ -98,7 +99,9 @@
       </div>
       <% } %>
     </div>
-    <%- include('login-box.ejs') %> <%- include('register-box.ejs') %> <%- include('profile-box.ejs') %>
+    <%- include('login-box.ejs') %>
+    <%- include('register-box.ejs') %>
+    <%- include('profile-box.ejs') %>
   </body>
   <script src="/javascripts/encrypt-password.js"></script>
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>

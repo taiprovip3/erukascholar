@@ -9,7 +9,6 @@ window.letRate = function (numberOfStar) {
     url: '/rating-stars',
     data: data,
     success: function (sweetResponse) {
-      console.log('success = ', sweetResponse)
       if (sweetResponse.icon === 'success') {
         swal({
           title: sweetResponse.title,

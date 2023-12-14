@@ -29,8 +29,24 @@
     <span class="text-decoration-underline"><%= payload.userData.username %></span>
   </div>
   <div id="detail-profile" class="position-absolute top-100 start-0 p-2">
-    <span class="d-block">Thành viên: <span class="text-primary">#<%= payload.userData.profileId %></span></span>
-    <span class="d-block">Trạng thái: <%= payload.userData.isVerified %> <% if(!payload.userData.isVerified) { %><i class="fa-solid fa-triangle-exclamation text-danger" data-bs-toggle="tooltip" title="Tài khoản chưa xác thực sẽ không thể dùng hết chức năng"></i><% } else { %><i class="fa-solid fa-circle-check text-success" data-bs-toggle="tooltip" title="Tài khoản đã xác thực"></i><% } %></span>
+    <span class="d-block"
+      >Thành viên: <span class="text-primary">#<%= payload.userData.profileId %></span></span
+    >
+    <span class="d-block"
+      >Trạng thái:
+      <%= payload.userData.isVerified %>
+      <% if(!payload.userData.isVerified) { %><i
+        class="fa-solid fa-triangle-exclamation text-danger"
+        data-bs-toggle="tooltip"
+        title="Tài khoản chưa xác thực sẽ không thể dùng hết chức năng"
+      ></i
+      ><% } else { %><i
+        class="fa-solid fa-circle-check text-success"
+        data-bs-toggle="tooltip"
+        title="Tài khoản đã xác thực"
+      ></i
+      ><% } %></span
+    >
     <span
       >Số dư: <u class="violet fw-bold"><%= payload.userData.balance %></u> 🥮
       <b><i class="fa-solid fa-plus text-success crs" data-bs-toggle="modal" data-bs-target="#creditBox"></i></b

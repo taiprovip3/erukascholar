@@ -15,7 +15,7 @@
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <!-- Modal body -->
-      <div class="modal-body" style="max-height: 80vh; overflow: auto;">
+      <div class="modal-body" style="max-height: 80vh; overflow: auto">
         <div class="text-end">
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
@@ -61,7 +61,15 @@
                 <div class="position-relative">
                   <img src="/profile/avatar" alt="avatar" width="100px" height="100px" id="avatar" />
                   <div class="position-absolute end-0 bottom-0 violet rounded-1">
-                    <input type="file" id="avatarInput" name="avatarInput" accept="image/*" required class="invisible" onchange="uploadAvatar();" />
+                    <input
+                      type="file"
+                      id="avatarInput"
+                      name="avatarInput"
+                      accept="image/*"
+                      required
+                      class="invisible"
+                      onchange="uploadAvatar();"
+                    />
                     <label for="avatarInput" class="crs"><i class="fa-regular fa-images"></i></label>
                   </div>
                 </div>
@@ -77,7 +85,9 @@
                                 </div>
                                 <div class="small">100🌿</div>
                             </div> -->
-                <span>Thành viên thứ <span class="text-primary">#<%= payload.userData.profileId %></span></span>
+                <span
+                  >Thành viên thứ <span class="text-primary">#<%= payload.userData.profileId %></span></span
+                >
                 <br />
                 <br />
                 <div class="form-check form-switch">
@@ -91,7 +101,8 @@
                     checked
                     onchange="this.checked = !this.checked"
                   />
-                  ✅ <% } else { %>
+                  ✅
+                  <% } else { %>
                   <input
                     class="form-check-input"
                     type="checkbox"
@@ -100,7 +111,8 @@
                     value="no"
                     onclick="letVerifyAccount();"
                   />
-                  ⭕ <% } %>
+                  ⭕
+                  <% } %>
                   <label class="form-check-label" for="mySwitch">Xác thực Tài khoản</label>
                 </div>
               </div>
@@ -182,7 +194,9 @@
                 id="address"
                 name="address"
                 style="background-color: #1a233a"
-              ><%=  payload.userData.address %></textarea>
+              >
+<!=  payload.userData.address !></textarea
+              >
               <div class="w-100 mt-3 mb-3 text-end">
                 <button class="btn btn-primary w-25" onclick="saveProfile();">Cập nhật</button>
               </div>
@@ -225,7 +239,11 @@
                 background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
               "
             >
-              <div>Số xu đang có: <%= payload.userData.balance %> 🥮</div>
+              <div>
+                Số xu đang có:
+                <%= payload.userData.balance %>
+                🥮
+              </div>
               <div>
                 <span>Chuyển vào server:</span>
                 <select name="serverSelection" id="serverSelection" onchange="onServerSelectionChange(this);">
@@ -234,11 +252,22 @@
               </div>
               <div class="">
                 <span>Số xu muốn chuyển:</span>
-                <input type="number" name="inputCoin" id="inputCoin" maxlength="255" value="<%= payload.userData.balance %>" />
+                <input
+                  type="number"
+                  name="inputCoin"
+                  id="inputCoin"
+                  maxlength="255"
+                  value="<%= payload.userData.balance %>"
+                />
               </div>
               <div class="border border-secondary p-2 my-2 text-center" id="playerServerStatsBox">
                 <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
-                <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
+                <img
+                  src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif"
+                  alt="not-found"
+                  width="64"
+                  height="64"
+                />
               </div>
               <div class="text-end">
                 <button class="btn btn-primary text-white fw-bolder" onclick="forwardCoins();">Chuyển xu vào</button>
@@ -284,7 +313,11 @@
             >
               <div class="table-responsive">
                 <table border="1">
-                  <thead style="background-image: url('https://lh3.googleusercontent.com/A9-BYyZa2yRTJRP3vrg7cG_UTqX9hGEUMEMLJOzhwFH3534nKOpUFLEX3qEn6-3v7HvEzKrQRWN_yPS0KOt6Pij-th3Hp1bmIA=s400');">
+                  <thead
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/A9-BYyZa2yRTJRP3vrg7cG_UTqX9hGEUMEMLJOzhwFH3534nKOpUFLEX3qEn6-3v7HvEzKrQRWN_yPS0KOt6Pij-th3Hp1bmIA=s400');
+                    "
+                  >
                     <tr class="fw-bolder">
                       <td>#</td>
                       <td>Mã giao dịch</td>
@@ -295,7 +328,13 @@
                       <td>Trạng thái</td>
                     </tr>
                   </thead>
-                  <tbody id="historyBody" class="text-white" style="background-image: url('https://huggingface.co/TechieCrow/minecraft-log-textures/resolve/main/sample_images/minecraft_log_side_textures_(7).jpg');"></tbody>
+                  <tbody
+                    id="historyBody"
+                    class="text-white"
+                    style="
+                      background-image: url('https://huggingface.co/TechieCrow/minecraft-log-textures/resolve/main/sample_images/minecraft_log_side_textures_(7).jpg');
+                    "
+                  ></tbody>
                 </table>
               </div>
             </div>
@@ -307,59 +346,59 @@
 </div>
 <% } %>
 <script>
-
-  initSkeleton();
+  initSkeleton()
 
   async function initSkeleton() {
-    const servers = await getServers();
-    setServerSelection(servers);
-    setHistories();
+    const servers = await getServers()
+    setServerSelection(servers)
+    setHistories()
   }
 
   function setServerSelection(servers) {
-    const selectBox = $('#serverSelection');
+    const selectBox = $('#serverSelection')
     $.each(servers, function (index, obj) {
       const optionText = obj.charAt(0).toUpperCase() + obj.slice(1)
       const option = $('<option>').text(optionText).val(obj)
       selectBox.append(option)
-    });
+    })
   }
 
   function onServerSelectionChange(object) {
-    const selectedIndex = object.selectedIndex;
-    const selectedValue = object.options[selectedIndex].value;
-    const playerServerStatsBox = $("#playerServerStatsBox");
-    if(!selectedValue) {
+    const selectedIndex = object.selectedIndex
+    const selectedValue = object.options[selectedIndex].value
+    const playerServerStatsBox = $('#playerServerStatsBox')
+    if (!selectedValue) {
       const notFoundContent = `
         <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
         <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
-      `;
-      playerServerStatsBox.html(notFoundContent);
-      return;
+      `
+      playerServerStatsBox.html(notFoundContent)
+      return
     }
     $.ajax({
       url: `/servers/getPlayerCoins?server=${selectedValue}`,
       method: 'GET',
-      success: function(response) {
+      success: function (response) {
         /* expected result: {username:xxx, uuid:xxx, coins:xxx} */
         const userStatFoundContent = `
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTehc2GkyE0vk-HRcsYS_mxqm1RuGvtCwhXKZh8Qbdg63jTmbduhXJqqRw7pQxYJs3jtS8&usqp=CAU" alt="steve-head-icon" width="64" height="64" class="img-thumbnail" />
           <span class="d-block"><b>Username</b>: ${response.username}</span>
           <span class="d-block"><b>UUID</b>: ${response.uuid}</span>
           <span class="d-block"><b>Xu có sẵn</b>: ${response.coins} 🥮 <span class="text-success"><i class="fa-solid fa-up-long"></i></span></span>
-        `;
-        playerServerStatsBox.html(userStatFoundContent);
-      }, error: function(err) {
-        console.error('error=', err);
-        toastr.info('Không tìm thấy dữ liệu', 'Chưa tham gia máy chủ này');
+        `
+        playerServerStatsBox.html(userStatFoundContent)
+      },
+      error: function (err) {
+        console.error('error=', err)
+        toastr.info('Không tìm thấy dữ liệu', 'Chưa tham gia máy chủ này')
         const notFoundContent = `
           <span class="d-block">Chưa tìm thấy dữ liệu 🫗</span>
           <img src="https://i.pinimg.com/originals/a5/0c/98/a50c988565051c62e9315b8b591f877f.gif" alt="not-found" width="64" height="64" />
-        `;
-        const playerServerStatsBox = $("#playerServerStatsBox");
-        playerServerStatsBox.html(notFoundContent);
-      }
-    });
+        `
+        const playerServerStatsBox = $('#playerServerStatsBox')
+        playerServerStatsBox.html(notFoundContent)
+      },
+    })
   }
 
   async function getServers() {
@@ -367,26 +406,28 @@
       url: '/servers',
       method: 'GET',
       contentType: 'application/json',
-    }).then((data) => data);
+    }).then((data) => data)
   }
 
   async function setHistories() {
-    const transactions = await getHistories();
-    const tbody = $('#historyBody');
-    transactions.forEach(function(transaction, index) {
-      const formattedTime = moment(transaction.created_at).format('YYYY-MM-DD HH:mm:ss');
-      const formattedAmount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(transaction.amount);
+    const transactions = await getHistories()
+    const tbody = $('#historyBody')
+    transactions.forEach(function (transaction, index) {
+      const formattedTime = moment(transaction.created_at).format('YYYY-MM-DD HH:mm:ss')
+      const formattedAmount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+        transaction.amount,
+      )
       const row = `<tr>
-                      <td>${index + 1}</td>
-                      <td>${transaction.transId}</td>
-                      <td>${transaction.bankCode}</td>
-                      <td>${formattedAmount}</td>
-                      <td class="text-nowrap">${formattedTime}</td>
-                      <td>${transaction.message}</td>
-                      <td>${transaction.status ? transaction.status : " "}</td>
-                    </tr>`;
-      tbody.append(row);
-    });
+        <td class="small">${index + 1}</td>
+        <td class="small">${transaction.transId}</td>
+        <td class="small">${transaction.bankCode}</td>
+        <td class="small">${formattedAmount}</td>
+        <td class="text-nowrap small">${formattedTime}</td>
+        <td class="small">${transaction.message}</td>
+        <td class="small">${transaction.status ? transaction.status : ' '}</td>
+      </tr>`
+      tbody.append(row)
+    })
   }
 
   async function getHistories() {
@@ -394,7 +435,7 @@
       url: '/histories',
       type: 'GET',
       contentType: 'application/json',
-    }).then((data) => data);
+    }).then((data) => data)
   }
 
   function letVerifyAccount() {
@@ -516,84 +557,84 @@
   }
 
   function uploadAvatar() {
-    const fileInput = document.getElementById('avatarInput');
-    const file = fileInput.files[0];
-    if(file) {
+    const fileInput = document.getElementById('avatarInput')
+    const file = fileInput.files[0]
+    if (file) {
       if (file.size > 2 * 1024 * 1024) {
         swal({
           title: 'KÍCH THƯỚC ẢNH QUÁ LỚN',
           text: 'Tập tin đã vượt quá 2MB. Vui lòng chọn tập tin kích thước nhỏ hơn.',
-          icon: 'warning'
-        });
-        return;
+          icon: 'warning',
+        })
+        return
       }
-      var formData = new FormData();
-      formData.append('avatar', file);
+      var formData = new FormData()
+      formData.append('avatar', file)
       $.ajax({
         url: '/profile/upload-avatar',
         method: 'POST',
         data: formData,
         processData: false,
         contentType: false,
-        success: function(response) {
-          console.log('response=', response);
+        success: function (response) {
           swal({
             title: 'TẢI ẢNH LÊN THÀNH CÔNG',
             text: 'Avatar của bạn sẽ được cập nhật sau ít phút nữa. Kiên nhẫn chờ đợi nhé.',
-            icon: 'success'
+            icon: 'success',
           }).then(() => {
-            $("#avatar").attr("src", `/profile/avatar?randomRefresh=${Math.random()}`);
-          });
-        }, error: function(error) {
-          console.error(error);
-          toastr.error('Lỗi', error.responseText);
-        }
-      });
+            $('#avatar').attr('src', `/profile/avatar?randomRefresh=${Math.random()}`)
+          })
+        },
+        error: function (error) {
+          console.error(error)
+          toastr.error('Lỗi', error.responseText)
+        },
+      })
     } else {
-      alert('Please choose a file.');
+      alert('Please choose a file.')
     }
   }
 
   function forwardCoins() {
-    const balanceToForward = $("#inputCoin").val();
-    if(balanceToForward <= 0 || !Number(balanceToForward)) {
-      toastr.error('Số xu chuyển phải > 0', 'Lỗi');
-      return;
+    const balanceToForward = $('#inputCoin').val()
+    if (balanceToForward <= 0 || !Number(balanceToForward)) {
+      toastr.error('Số xu chuyển phải > 0', 'Lỗi')
+      return
     }
-    const selectedServerName = $("#serverSelection option:selected").val();
-    if(!selectedServerName) {
-      toastr.error('Vui lòng một chọn máy chủ để chuyển xu vào', 'Lỗi');
-      return;
+    const selectedServerName = $('#serverSelection option:selected').val()
+    if (!selectedServerName) {
+      toastr.error('Vui lòng một chọn máy chủ để chuyển xu vào', 'Lỗi')
+      return
     }
     swal({
-      title: "Bạn chắc chứ",
+      title: 'Bạn chắc chứ',
       text: `Sẽ chuyển ${balanceToForward} vào máy chủ ${selectedServerName} chứ. Hành động ngu ngốc này sẽ không thể hoàn tác, hãy cân nhắc kỹ!`,
-      icon: "warning",
+      icon: 'warning',
       buttons: true,
       dangerMode: true,
-    })
-    .then((willDelete) => {
+    }).then((willDelete) => {
       if (willDelete) {
         $.ajax({
           url: '/servers/forwardCoins',
           method: 'POST',
           data: { balanceToForward, serverName: selectedServerName },
-          success: function(sweetResponse) {
+          success: function (sweetResponse) {
             swal({
               title: sweetResponse.title,
               text: sweetResponse.text,
               icon: sweetResponse.icon,
             }).then(() => {
-              if(sweetResponse.icon === 'success') {
-                window.location.href = window.location.href;  
+              if (sweetResponse.icon === 'success') {
+                window.location.href = window.location.href
               }
-            });
-          }, error: function(err) {
-            console.error('error=', err);
-            toastr.error(err.responseText, 'Lỗi');
-          }
-        });
+            })
+          },
+          error: function (err) {
+            console.error('error=', err)
+            toastr.error(err.responseText, 'Lỗi')
+          },
+        })
       }
-    });
-    }
+    })
+  }
 </script>

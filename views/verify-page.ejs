@@ -23,32 +23,45 @@
         <div class="col-4"></div>
         <div class="col-4 d-flex justify-content-center align-items-center" style="height: 100vh">
           <% if(payload) { %>
-            <div class="border border-dark rounded-2 p-3" style="font-size: large;">
-                <div class="my-1">
-                    <b>1.&emsp;Username:</b><span> taiproduaxe <i class="fa-solid fa-check text-success"></i></span>
-                </div>
-                <div class="my-1">
-                    <b class="d-block">2.&emsp;UUID Spoof Fix:</b>
-                    <input type="text" name="uuid" id="uuid" placeholder="Vui lòng nhập UUID.." class="w-100" maxlength="255" autofocus />
-                    <div class="toast show">
-                        <div class="toast-header">
-                          <strong class="me-auto">UUID lấy ở trong server bạn chơi</strong>
-                          <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-                        </div>
-                        <div class="toast-body">
-                          <p>Vào server <%= process.env.SERVER_DOMAIN %>. Gõ /whois <%= payload.username %> sẽ thấy UUID. Xem mẫu hình bên dưới:</p>
-                          <img src="/images/whois-uuid.png" alt="whois-uuid" width="100%" height="100%" />
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <b class="d-block">3.&emsp;Thể loại server bạn vừa lấy UUID:</b>
-                    <select name="serverSelection" id="serverSelection" class="w-100"></select>
-                </div>
-                <div class="text-end mt-3">
-                    <button class="btn btn-primary" type="button" onclick="verifyAccount();">Xác thực</button>
-                </div>
+          <div class="border border-dark rounded-2 p-3" style="font-size: large">
+            <div class="my-1">
+              <b>1.&emsp;Username:</b><span> taiproduaxe <i class="fa-solid fa-check text-success"></i></span>
             </div>
+            <div class="my-1">
+              <b class="d-block">2.&emsp;UUID Spoof Fix:</b>
+              <input
+                type="text"
+                name="uuid"
+                id="uuid"
+                placeholder="Vui lòng nhập UUID.."
+                class="w-100"
+                maxlength="255"
+                autofocus
+              />
+              <div class="toast show">
+                <div class="toast-header">
+                  <strong class="me-auto">UUID lấy ở trong server bạn chơi</strong>
+                  <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                  <p>
+                    Vào server
+                    <%= process.env.SERVER_DOMAIN %>. Gõ /whois
+                    <%= payload.username %>
+                    sẽ thấy UUID. Xem mẫu hình bên dưới:
+                  </p>
+                  <img src="/images/whois-uuid.png" alt="whois-uuid" width="100%" height="100%" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <b class="d-block">3.&emsp;Thể loại server bạn vừa lấy UUID:</b>
+              <select name="serverSelection" id="serverSelection" class="w-100"></select>
+            </div>
+            <div class="text-end mt-3">
+              <button class="btn btn-primary" type="button" onclick="verifyAccount();">Xác thực</button>
+            </div>
+          </div>
           <% } %>
         </div>
         <div class="col-4"></div>
@@ -57,67 +70,68 @@
   </body>
   <script src="/javascripts/toggle-loading-box.js"></script>
   <script>
-    $(document).ready(function() {});
-    initSkeleton();
+    $(document).ready(function () {})
+    initSkeleton()
 
     async function initSkeleton() {
-        const servers = await getServers();
-        setServerSelection(servers);
+      const servers = await getServers()
+      setServerSelection(servers)
     }
 
     function setServerSelection(servers) {
-        const selectBox = $('#serverSelection');
-        $.each(servers, function (index, obj) {
-            const optionText = obj.charAt(0).toUpperCase() + obj.slice(1)
-            const option = $('<option>').text(optionText).val(obj)
-            selectBox.append(option)
-        });
+      const selectBox = $('#serverSelection')
+      $.each(servers, function (index, obj) {
+        const optionText = obj.charAt(0).toUpperCase() + obj.slice(1)
+        const option = $('<option>').text(optionText).val(obj)
+        selectBox.append(option)
+      })
     }
 
     async function getServers() {
-        return $.ajax({
+      return $.ajax({
         url: '/servers',
         method: 'GET',
         contentType: 'application/json',
-        }).then((data) => data);
+      }).then((data) => data)
     }
 
     function verifyAccount() {
-        window.showLoadingBox()
-        const uuid = $("#uuid").val();
-        const serverName = $("#serverSelection option:selected").val();
-        if(!uuid || uuid.length > 255) {
-            window.hideLoadingBox()
-            swal({
-                title: 'Trường UUID chưa hợp lệ',
-                text: 'Vui lòng nhập vào trường UUID một cách hợp lệ',
-                icon: 'error'
-            }).then(() => {
-                uuid.focus();
-                return;
-            });
-        }
-        $.ajax({
-            url: '/register/verify',
-            method: 'POST',
-            data: { uuid, serverName },
-            success: function(sweetResponse) {
-                window.hideLoadingBox()
-                swal({
-                    title: sweetResponse.title,
-                    text: sweetResponse.text,
-                    icon: sweetResponse.icon
-                }).then(() => {
-                    if(sweetResponse.icon === "success") {
-                        window.location.href = "/";
-                    }
-                });
-            }, error: function(err) {
-                window.hideLoadingBox()
-                console.error('errror=', err);
-                toastr.error('Lỗi', err.responseText);
+      window.showLoadingBox()
+      const uuid = $('#uuid').val()
+      const serverName = $('#serverSelection option:selected').val()
+      if (!uuid || uuid.length > 255) {
+        window.hideLoadingBox()
+        swal({
+          title: 'Trường UUID chưa hợp lệ',
+          text: 'Vui lòng nhập vào trường UUID một cách hợp lệ',
+          icon: 'error',
+        }).then(() => {
+          uuid.focus()
+          return
+        })
+      }
+      $.ajax({
+        url: '/register/verify',
+        method: 'POST',
+        data: { uuid, serverName },
+        success: function (sweetResponse) {
+          window.hideLoadingBox()
+          swal({
+            title: sweetResponse.title,
+            text: sweetResponse.text,
+            icon: sweetResponse.icon,
+          }).then(() => {
+            if (sweetResponse.icon === 'success') {
+              window.location.href = '/'
             }
-        });
+          })
+        },
+        error: function (err) {
+          window.hideLoadingBox()
+          console.error('errror=', err)
+          toastr.error('Lỗi', err.responseText)
+        },
+      })
     }
   </script>
 </html>

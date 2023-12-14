@@ -35,14 +35,22 @@ router.get('/postings', async (req, res) => {
 })
 
 router.post('/postings', authenticateToken, async (req, res) => {
+  const { title, content } = req.body
+  if (!title) {
+    const sweetResponse = {
+      title: 'LỖI',
+      text: 'Thiếu tiêu đề bài viết',
+      icon: 'error',
+    }
+    return res.json(sweetResponse)
+  }
   try {
-    const userId = req.session.user.userId;
-    const { author, title, content } = req.body
-    const result = await pool.query('INSERT INTO posts (title, content, users_id) VALUES ($1, $2, $3) RETURNING *', [
+    const userId = req.session.user.userId
+    await pool.query('INSERT INTO posts (title, content, users_id) VALUES ($1, $2, $3) RETURNING *', [
       title,
       content,
       userId,
-    ]);
+    ])
     const sweetResponse = {
       title: 'ĐĂNG TẢI THÀNH CÔNG',
       text: 'Nếu không nhìn thấy bài viết sự kiện mới, vui lòng bấm TẢI LẠI trang bằng ctrl + R nhé',
@@ -53,11 +61,6 @@ router.post('/postings', authenticateToken, async (req, res) => {
     console.error('/posting error=', error)
     return res.status(500).send('Internal Server Error')
   }
-})
-
-router.get('/status-hyx', async (req, res) => {
-  const response = await axios.get('https://api.mcstatus.io/v2/status/java/play.hypixel.net:25565')
-  console.log('response=', response.data)
 })
 
 module.exports = router

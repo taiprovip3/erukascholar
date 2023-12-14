@@ -17,8 +17,8 @@ const poolMysql = mysql.createPool({
 })
 
 poolMysql.getConnection(function (err, conn) {
-  if(err) {
-    console.error('error=', err);
+  if (err) {
+    console.error('error=', err)
   }
   conn.query('SELECT NOW() as currentTime', function (error, result) {
     console.log('Kết nối thành công vào MySQL, thời gian hiện tại:', result[0].currentTime)

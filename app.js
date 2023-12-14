@@ -20,7 +20,7 @@ const rfs = require('rotating-file-stream')
 const helper = require('./utils/calculate-timestamp')
 const pool = require('./utils/db.js')
 const poolMysql = require('./utils/mysqldb.js')
-const minio = require('minio');
+const minio = require('minio')
 
 // App settings
 const app = express()

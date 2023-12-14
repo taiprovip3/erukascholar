@@ -83,31 +83,31 @@
                 <a class="nav-link fw-bold text-white" href="#">CỬA HÀNG</a>
               </li>
               <% if(!payload.userData) { %>
-                <li class="nav-item dropdown">
-                  <a class="nav-link fw-bold text-white disabled" href="#"
-                    >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
-                  ></a>
-                  <ul class="nav nav-tabs dropdown_menu">
-                    <li class="nav-item">
-                      <a
-                        class="nav-link fw-bold text-dark"
-                        href="javascript:void(0)"
-                        data-bs-toggle="modal"
-                        data-bs-target="#loginBox"
-                        >Đăng nhập thành viên</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link fw-bold text-dark"
-                        href="javascript:void(0)"
-                        data-bs-toggle="modal"
-                        data-bs-target="#registerBox"
-                        >Đăng ký tài khoản</a
-                      >
-                    </li>
-                  </ul>
-                </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link fw-bold text-white disabled" href="#"
+                  >TÀI KHOẢN <i class="fa-solid fa-sort-down"></i
+                ></a>
+                <ul class="nav nav-tabs dropdown_menu">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#loginBox"
+                      >Đăng nhập thành viên</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link fw-bold text-dark"
+                      href="javascript:void(0)"
+                      data-bs-toggle="modal"
+                      data-bs-target="#registerBox"
+                      >Đăng ký tài khoản</a
+                    >
+                  </li>
+                </ul>
+              </li>
               <% } %>
             </ul>
           </div>
@@ -139,9 +139,9 @@
                 <!-- filter -->
                 <div class="d-flex justify-content-between p-1" id="filter">
                   <% if(payload.userData && payload.userData.roleId === 2) { %>
-                    <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#ckeditorBox">
-                      Tạo sự kiện mới
-                    </button>
+                  <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#ckeditorBox">
+                    Tạo sự kiện mới
+                  </button>
                   <% } %>
                   <select class="border-0" onchange="sortPosting(this);">
                     <option value="NEWEST">Mới nhất</option>
