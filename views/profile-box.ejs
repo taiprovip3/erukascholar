@@ -35,6 +35,15 @@
                   <a
                     class="nav-link fw-bolder borrow"
                     href="javascript:void(0);"
+                    id="inventory-li"
+                    onclick="changeRowDisplay(this);"
+                    >Túi</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
                     id="transfer-coin-li"
                     onclick="changeRowDisplay(this);"
                     >Chuyển xu vào Server</a
@@ -202,7 +211,64 @@
               </div>
             </div>
           </div>
-          <div class="d-none justify-content-center" id="transfer-coin-row">
+
+
+
+
+          <div class="row d-none justify-content-center" id="inventory-row">
+            <div
+              class="col-2 pt-2 border-end border-dark"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV3MnyeO5LAIsaQk_Dxc0dNb-FZQrE4CuU3lhZA9xaG94hQ5mhT_4pb8YFbQWpOoIZxD4&usqp=CAU');
+              "
+            >
+              <ul class="nav nav-tabs flex-column">
+                <li class="nav-item">
+                  <a class="nav-link fw-bolder borrow" href="javascript:void(0);" id="info-li" onclick="changeRowDisplay(this);">Thông tin</a>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow active"
+                    href="javascript:void(0);"
+                    id="inventory-li"
+                    >Túi</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="transfer-coin-li"
+                    onclick="changeRowDisplay(this);"
+                    >Chuyển xu vào Server</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="history-li"
+                    onclick="changeRowDisplay(this);"
+                    >Lịch sử giao dịch</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div
+              class="col-10 pt-2 small position-relative"
+              style="
+                background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
+              "
+            >
+            hello this is inventory
+            </div>
+          </div>
+
+
+
+
+
+          <div class="row d-none justify-content-center" id="transfer-coin-row">
             <div
               class="col-2 pt-2 border-end border-dark"
               style="
@@ -217,6 +283,15 @@
                     id="info-li"
                     onclick="changeRowDisplay(this);"
                     >Thông tin</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="inventory-li"
+                    onclick="changeRowDisplay(this);"
+                    >Túi</a
                   >
                 </li>
                 <li class="nav-item">
@@ -274,7 +349,13 @@
               </div>
             </div>
           </div>
-          <div class="d-none justify-content-center" id="history-row">
+
+
+
+
+
+          
+          <div class="row d-none justify-content-center" id="history-row">
             <div
               class="col-2 pt-2 border-end border-dark"
               style="
@@ -289,6 +370,15 @@
                     id="info-li"
                     onclick="changeRowDisplay(this);"
                     >Thông tin</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link fw-bolder borrow"
+                    href="javascript:void(0);"
+                    id="inventory-li"
+                    onclick="changeRowDisplay(this);"
+                    >Túi</a
                   >
                 </li>
                 <li class="nav-item">
@@ -484,7 +574,7 @@
   }
 
   function changeRowDisplay(obj) {
-    const arrayRows = ['info-li', 'transfer-coin-li', 'history-li']
+    const arrayRows = ['info-li', 'inventory-li', 'transfer-coin-li', 'history-li']
     for (let i = 0; i < arrayRows.length; i++) {
       const element = arrayRows[i]
       if (element !== obj.id) {
