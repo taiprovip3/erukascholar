@@ -260,7 +260,15 @@
                 background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVtergqy1I5RFXcG1--88_88HYHcS07MJhQf3awPzIq5uMYnmnCAFNssPlDhrAVdEBuSI&usqp=CAU');
               "
             >
-            hello this is inventory
+              <div class="d-flex flex-wrap" id="resources">
+                <div class="col-2 resource p-1">
+                  <div class="border border-dark text-center crs" data-bs-toggle="tooltip" title="Hooray!">
+                    <img src="./images/folder-grass.png" alt="resource" width="64" height="64" />
+                    <br>
+                    <a href="" class="text-decoration-none small" target="_blank">File Skyblock 1.12.+ 2021 <i class="fas fa-external-link-square-alt"></i></a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -438,12 +446,53 @@
   initSkeleton()
 
   async function initSkeleton() {
-    const servers = await getServers()
-    setServerSelection(servers)
+    /*
+      Các công việc cần load
+      01 Load serverSelection [transfer-coin]
+      02 Load historyUserTransaction [history]
+      03 Load userInventory [inventory]
+    */
+    setInventory();
+    setServerSelection()
     setHistories()
   }
 
-  function setServerSelection(servers) {
+  async function setInventory() {
+    const resouces = await getInventory();
+    const resourcesContainer = $("#resources");
+    if(resouces.length <= 0) {
+      const emptyResourceContent = `
+        Bạn không có gói tài nguyên nào cả!
+      `;
+      resourcesContainer.html(emptyResourceContent);
+      return;
+    }
+    let resourceContents = "";
+    resouces.forEach(resource => {
+      const formattedTime = moment(resource.created_at).format('YYYY-MM-DD HH:mm:ss')
+      resourceContents += `
+      <div class="col-2 resource p-1">
+        <div class="border border-dark text-center crs" data-bs-toggle="tooltip" title="Đã mua vào lúc ${formattedTime}">
+          <img src="./images/folder-grass.png" alt="resource" width="64" height="64" />
+          <br>
+          <a href="${resource.link}" class="text-decoration-none small" target="_blank">${resource.file_name}<i class="fas fa-external-link-square-alt"></i></a>
+        </div>
+      </div>
+      `;
+    });
+    resourcesContainer.html(resourceContents);
+  }
+
+  async function getInventory() {
+    return $.ajax({
+      url: '/inventory',
+      method: 'GET',
+      contentType: 'application/json',
+    }).then((data) => data)
+  }
+
+  async function setServerSelection() {
+    const servers = await getServers()
     const selectBox = $('#serverSelection')
     $.each(servers, function (index, obj) {
       const optionText = obj.charAt(0).toUpperCase() + obj.slice(1)
@@ -501,6 +550,13 @@
   async function setHistories() {
     const transactions = await getHistories()
     const tbody = $('#historyBody')
+    if(transactions.length <= 0) {
+      const row = `
+        <tr><td colspan="7" class="text-center">Không có giao dịch nào!</td></tr>
+      `;
+      tbody.append(row);
+      return;
+    }
     transactions.forEach(function (transaction, index) {
       const formattedTime = moment(transaction.created_at).format('YYYY-MM-DD HH:mm:ss')
       const formattedAmount = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
@@ -521,7 +577,7 @@
 
   async function getHistories() {
     return $.ajax({
-      url: '/histories',
+      url: '/history',
       type: 'GET',
       contentType: 'application/json',
     }).then((data) => data)

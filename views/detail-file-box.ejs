@@ -1,0 +1,59 @@
+<div class="modal fade" id="detailFileBox">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div id="detail-content">
+                    <div class="mb-2 des">
+                        <span class="d-block">Lobby</span>
+                        <img src="./images/whois-uuid.png" alt="review1" width="100%" />
+                    </div>
+                    <div class="mb-2 des">
+                        <span class="d-block">Lobby</span>
+                        <img src="./images/bbh-layer.png" alt="review1" width="100%" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script>
+    async function showDetailFile(fileId) {// Hàm được gội từ btn xem chi tiết onclick file bên shop.ejs template
+        const detailFile = await getDetailFileById(fileId);
+        const detailContentDiv = $("#detail-content");
+        if(Object.keys(detailFile).length === 0) {
+            detailContentDiv.html('Tác giá không đề cập gì thêm về tài nguyên này!');
+        } else {
+            detailContentDiv.html(renderDetailContent(detailFile));
+        }
+        $("#detailFileBox").modal('toggle');
+    }
+    
+    async function getDetailFileById(fileId) {
+        return $.ajax({
+            url: `/shop/files/${fileId}`,
+            method: 'GET',
+            contentType: 'application/json'
+        }).then((data) => data);
+    }
+
+    function renderDetailContent(detailFile) {
+        return `
+            <div class="mb-2 des">
+                <span class="d-block">${detailFile.des1}:</span>
+                <img src="${detailFile.img1}" alt="review1" width="100%" />
+            </div>
+            <div class="mb-2 des">
+                <span class="d-block">${detailFile.des2}:</span>
+                <img src="${detailFile.img2}" alt="review1" width="100%" />
+            </div>
+            <div class="mb-2 des">
+                <span class="d-block">${detailFile.des3}:</span>
+                <img src="${detailFile.img3}" alt="review1" width="100%" />
+            </div>
+        `;
+    }
+  </script>
+  

@@ -33,9 +33,10 @@ async function authenticateToken(req, res, next) {
     req.session.user = newPayload
     return next()
   } catch (error) {
-    console.error('authenticateToken error=', error.message)
+    console.error('authenticateToken error=', error)
     res.clearCookie('token')
-    return res.redirect('/auth')
+    // return res.redirect('/auth')
+    return res.status(500).send('Lỗi tài khoản đăng nhập');
   }
 }
 

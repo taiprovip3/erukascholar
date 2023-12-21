@@ -143,17 +143,17 @@ router.get('/profile/avatar', authenticateToken, async (req, res) => {
   }
 })
 
-router.get('/histories', authenticateToken, async (req, res) => {
+router.get('/history', authenticateToken, async (req, res) => {
   try {
     const transactions = await Transaction.find().sort({ created_at: -1 });
     return res.json(transactions)
   } catch (error) {
-    console.error('/histories error=', error)
+    console.error('/history error=', error)
     return res.status(500).send(error)
   }
 })
 
-router.post('/checkins', authenticateToken, async (req, res) => {
+router.post('/checkin', authenticateToken, async (req, res) => {
   const clientQuery = await pool.connect()
   try {
     const userId = req.session.user.userId;
@@ -172,7 +172,26 @@ router.post('/checkins', authenticateToken, async (req, res) => {
       return res.json(sweetReponse);
   } catch (error) {
     await clientQuery.query('ROLLBACK');
-    console.error('/checkins error=', error)
+    console.error('/checkin error=', error)
+    return res.status(500).send(error)
+  } finally {
+    clientQuery.release()
+  }
+});
+
+router.get('/inventory', authenticateToken, async (req, res) => {
+  const clientQuery = await pool.connect()
+  try {
+    const userId = req.session.user.userId;
+    const userFilesQuery = await clientQuery.query('SELECT * FROM users_files uf INNER JOIN files f ON uf.files_id = f.file_id WHERE users_id = $1', [userId]);
+    if(userFilesQuery.rowCount <= 0) {
+      return res.json([]);
+    }
+    const userFilesResult = userFilesQuery.rows;
+    return res.json(userFilesResult);
+  } catch (error) {
+    await clientQuery.query('ROLLBACK');
+    console.error('/inventory error=', error)
     return res.status(500).send(error)
   } finally {
     clientQuery.release()

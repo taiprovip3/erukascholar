@@ -135,9 +135,9 @@
                   <!-- filter -->
                   <div class="row">
                     <div class="col-12" id="filterBar">
-                      <select name="" id="">
-                        <option value="">Mới nhất</option>
-                        <option value="">Cũ nhất</option>
+                      <select name="sortSelection" id="sortSelection" onchange="sortFile(this);">
+                        <option value="OLDEST">Cũ nhất</option>
+                        <option value="NEWEST">Mới nhất</option>
                       </select>
                     </div>
                   </div>
@@ -145,12 +145,17 @@
                   <style>
                   </style>
                   <div class="row">
-                    <div class="col-12 d-flex flex-wrap border border-danger" id="files">
+                    <div class="col-12 d-flex flex-wrap" id="files">
                       <div class="p-1 col-4">
                         <div class="p-3 borrow file position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc0byIvjEehaPeeonoEw9LVeCGHNTJugyr4qzhwOG7-gwkMFba_zOvWDuseWwa6MLZx5g&usqp=CAU');">
-                          <div class="position-absolute top-0 end-0 m-1 text-center" style="font-size: smaller;">
-                            <i class="fas fa-download d-block"></i>
-                            0
+                          <div class="position-absolute top-0 start-0 p-1 w-100 d-flex justify-content-between">
+                            <div class="">
+                              #1
+                            </div>
+                            <div class="text-center" style="font-size: smaller;">
+                              <i class="fas fa-download d-block"></i>
+                              0
+                            </div>
                           </div>
                           <div class="text-center my-1">
                             <span class="fw-bold">File Skyblock 1.12+ 2021</span>
@@ -167,7 +172,7 @@
                               <button class="btn btn-primary w-100">Mua</button>
                             </div>
                             <div class="col-6 p-1">
-                              <button class="btn btn-light w-100" data-bs-toggle="modal" data-bs-target="#detailFileBox">Xem chi tiết</button>
+                              <button class="btn btn-light w-100" onclick="showDetailFile(1);">Xem chi tiết</button>
                             </div>
                           </div>
                         </div>
@@ -196,6 +201,7 @@
     <%- include('profile-box.ejs') %>
     <%- include('report-box.ejs') %>
     <%- include('credit-box.ejs') %>
+    <%- include('detail-file-box.ejs') %>
   </body>
   <script src="/javascripts/rating-stars.js"></script>
   <script src="/javascripts/toggle-loading-box.js"></script>
@@ -214,5 +220,113 @@
     socket.on('emitter', function (data) {
       console.log('client emitter=', data)
     })
+
+    initSkeleton();
+    function initSkeleton() {
+        $.ajax({
+            url: '/shop/files',
+            method: 'GET',
+            success: (response) => {
+              const divFiles = $("#files");
+              divFiles.empty();
+              const files = response;
+              for (const file of files) {
+                divFiles.append(renderDivFile(file));
+              }
+            }, error: (err) => {
+                console.error('error=', err);
+                toastr.error(err.responseText, 'Lỗi');
+            }
+        });
+    }
+    function renderDivFile(file) {
+      const publishDate = new Date(file.publish_date);
+      const formattedDate = `${publishDate.getDate()}/${publishDate.getMonth() + 1}/${publishDate.getFullYear()}`;
+      return `
+        <div data-post-id="${file.file_id}" class="p-1 col-4 file">
+          <div class="p-3 borrow position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc0byIvjEehaPeeonoEw9LVeCGHNTJugyr4qzhwOG7-gwkMFba_zOvWDuseWwa6MLZx5g&usqp=CAU');">
+            <div class="position-absolute top-0 start-0 p-1 w-100 d-flex justify-content-between">
+              <div class="">
+                #${file.file_id}
+              </div>
+              <div class="text-center" style="font-size: smaller;">
+                <i class="fas fa-download d-block"></i>
+                ${file.counter}
+              </div>
+            </div>
+            <div class="text-center my-1">
+              <span class="fw-bold">${file.file_name}</span>
+              <br>
+              <img src="https://staticg.sportskeeda.com/editor/2022/03/dfa47-16480512985216-1920.jpg" alt="file" width="100%" height="100%" class="img-thumbnail"/>
+            </div>
+            <span class="d-block"><b>Tác giả</b>: ${file.username}</span>
+            <span class="d-block"><b>Ngày update</b>: ${formattedDate}</span>
+            <span class="d-block"><b>Phiên bản gốc</b>: ${file.version}</span>
+            <span class="d-block"><b>Mô tả</b>: ${file.des}</span>
+            <div><b>Giá</b>: ${file.price < 10 ? '0' + file.price : file.price}🥮</div>
+            <div class="d-flex flex-wrap mt-2">
+              <div class="col-6 p-1">
+                <button class="btn btn-primary w-100" onclick="buyFile(${file.file_id});">Mua</button>
+              </div>
+              <div class="col-6 p-1">
+                <button class="btn btn-light w-100" onclick="showDetailFile(${file.file_id});">Xem chi tiết</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function sortFile(selectObject) {
+      const fileContainer = document.getElementById('files')
+      const fileDivs = Array.from(fileContainer.querySelectorAll('.file')) // Lấy tất cả các div post con
+
+      if (selectObject.value === 'NEWEST') {
+        // Sắp xếp mảng các div post theo id lớn nhất đến nhỏ nhất
+        fileDivs.sort((a, b) => {
+          const idA = parseInt(a.getAttribute('data-post-id'))
+          const idB = parseInt(b.getAttribute('data-post-id'))
+          return idB - idA
+        })
+      } else if (selectObject.value === 'OLDEST') {
+        // Sắp xếp mảng các div post theo id nhỏ nhất đến lớn nhất
+        fileDivs.sort((a, b) => {
+          const idA = parseInt(a.getAttribute('data-post-id'))
+          const idB = parseInt(b.getAttribute('data-post-id'))
+          return idA - idB
+        })
+      }
+
+      // Xóa nội dung cũ trong #posts
+      fileContainer.innerHTML = ''
+
+      // Thêm lại các div post đã được sắp xếp vào #posts
+      fileDivs.forEach((fileDiv) => {
+        fileContainer.appendChild(fileDiv)
+      })
+    }
+
+    function buyFile(fileId) {
+      $.ajax({
+        url: '/shop/buy-file',
+        method: 'PUT',
+        data: { fileId },
+        success: (sweetResponse) => {
+          console.log('response=', sweetResponse);
+          swal({ 
+            title: sweetResponse.title,
+            text: sweetResponse.text,
+            icon: sweetResponse.icon
+          }).then(() => {
+            if(sweetResponse.icon == 'success') {
+              window.location.href = window.location.href;
+            }
+          });
+        }, error: (error) => {
+          console.error('error=', error);
+          toastr.error(error.responseText, 'Lỗi');
+        }
+      });
+    }
   </script>
 </html>
