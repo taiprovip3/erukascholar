@@ -64,7 +64,7 @@
                 <a class="nav-link fw-bold text-white" href="/">TRANG CHỦ</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold text-white disabled" href="#"
+                <a class="nav-link fw-bold active" href="#"
                   >HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i
                 ></a>
                 <ul class="nav nav-tabs dropdown_menu">
@@ -72,12 +72,12 @@
                     <a class="nav-link fw-bold text-dark" href="/instruct/download">Cách tải Minecraft</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link fw-bold text-dark" href="/instruct/recharge">Nạp tiền vào tài khoản </a>
+                    <a class="nav-link fw-bold disabled" href="#">Nạp tiền vào tài khoản </a>
                   </li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold active" href="#">SỰ KIỆN</a>
+                <a class="nav-link fw-bold text-white" href="/postings">SỰ KIỆN</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link fw-bold text-white" href="/shop">CỬA HÀNG</a>
@@ -128,80 +128,73 @@
             <!-- pleft -->
             <div class="col-9 p-3 border" id="pleft">
               <style>
-                #post-panel {
-                  background-image: url('/images/sand-block.png');
-                  background-repeat: no-repeat;
-                  background-size: cover;
-                  height: 100%;
-                }
               </style>
-              <div id="post-panel">
-                <!-- filter -->
-                <div class="d-flex justify-content-between p-1" id="filter">
-                  <% if(payload.userData && payload.userData.roleId === 2) { %>
-                  <button class="btn btn-white fw-bold" data-bs-toggle="modal" data-bs-target="#ckeditorBox">
-                    Tạo sự kiện mới
-                  </button>
-                  <% } %>
-                  <select class="border-0" onchange="sortPosting(this);">
-                    <option value="NEWEST">Mới nhất</option>
-                    <option value="OLDEST">Cũ nhất</option>
-                  </select>
+              <div>
+                <div><p class="display-6 fw-bolder">Hướng Dẫn Nạp Tiền Vào Server Minecraft <span class="text-danger">(*)</span></p></div>
+                <p>Có 3 cách để nạp xu vào server bạn đang chơi</p>
+                <ol class="list-group list-group-numbered mb-2">
+                    <li class="list-group-item">Cách 1: Nạp trực tiếp trong game và nhận xu</li>
+                    <li class="list-group-item">Cách 2: Nạp qua website.</li>
+                    <li class="list-group-item">Cách 3: Nạp bằng cách chuyển khoản cho STK Ngân hàng của admin kèm nội dung chuyển khoản (Nạp chay).</li>
+                </ol>
+                <p>Quy trình để nạp xu vào server bạn đang chơi với từng cách như sau:</p>
+                <div class="my-2"><h3 class="borrow fw-bold">CÁCH 1: Nạp trực tiếp trong game</h3></div>
+                <div id="guide-steps" class="px-4 text-dark">
+                  <span>B1. Vào server bạn muốn nạp, gõ lệnh: <span class="text-info">/napthe</span> sẽ hiện ra GUI sau</span>
+                  <br>
+                  <img src="/images/recharge-choose-card-gui.png" alt="huong-dan-nap-the-ingame-1" />
+                  <img src="/images/recharge-choose-card-chat.png" alt="huong-dan-nap-the-ingame-2" />
+                  <br>
+                  <span>B2. Click vào chọn Chọn loại thẻ có trạng thái<span class="text-success fw-bold">Đang hoạt động</span>:</span>
+                  <br>
+                  <span>B3. Chọn mệnh giá (Lưu ý chọn đúng mệnh giá nếu không sẽ bị nuốt thẻ):</span>
+                  <br>
+                  <img src="/images/recharge-choose-value-gui.png" alt="huong-dan-nap-the-ingame-3" />
+                  <img src="/images/recharge-choose-value-chat.png" alt="huong-dan-nap-the-ingame-4" />
+                  <br>
+                  <span>B4. Nhập số SERI trên thẻ cào:</span>
+                  <br>
+                  <img src="/images/recharge-input-seri.png" alt="huong-dan-nap-the-ingame-5" />
+                  <br>
+                  <span>B5. Nhập mã PIN trên thẻ cào:</span>
+                  <br>
+                  <img src="/images/recharge-input-pin.png" alt="huong-dan-nap-the-ingame" />
+                  <br>
+                  <span>B6. Enter và đợi chờ kết quả và nhận xu:</span>
                 </div>
-                <!-- posts -->
-                <style>
-                  .childpost {
-                    background-image: url('/images/dark-oak-bg-2.jpg');
-                    color: white;
-                  }
-                </style>
-                <div id="posts">
-                  <%
-                    for(let i=0; i<payload.posts.length; i++) {
-                      const post = payload.posts[i]; %>
-                  <div
-                    data-post-id="<%= post.post_id %>"
-                    class="borrow py-3 px-2 mx-2 my-1 fw-bold border-top border-bottom border-dark d-flex justify-content-between align-items-center position-relative overflow-auto childpost"
-                  >
-                    <div>
-                      <div class="d-flex align-items-center crs">
-                        <div>
-                          <% if(helper.isHotPost(post.created_at)) { %>
-                          <img
-                            src="/images/fire-hot.gif"
-                            alt="hot-news"
-                            width="24"
-                            height="24"
-                          />
-                          <% } else { %>
-                          <img
-                            src="/images/new.gif"
-                            alt="hot-news"
-                            width="24"
-                            height="24"
-                          />
-                          <% } %>
-                        </div>
-                        <div data-bs-toggle="collapse" href="#collapse<%= post.post_id %>" class="mx-1">
-                          <%= post.title %>
-                        </div>
-                      </div>
-                      <div id="collapse<%= post.post_id %>" class="collapse" data-bs-parent="#posts">
-                        <div class="card-body pt-2">
-                          <%- post.content %>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      <i class="fa-regular fa-thumbs-up crs" onclick="likePost();"></i>
-                      &ensp;
-                      <i class="fa-regular fa-thumbs-down crs" onclick="dislikePost();"></i>
-                    </div>
-                    <div class="position-absolute bottom-0 end-0 me-2" style="font-size: x-small">
-                      (<%= helper.calculateTimeAgo(post.created_at) %>)
-                    </div>
-                  </div>
-                  <% } %>
+                <div class="my-2"><h3 class="borrow fw-bold">CÁCH 2: NẠP THẺ QUA WEBSITE</h3></div>
+                <div id="guide-steps" class="px-4 text-dark">
+                  <span>1. Tại website này, vào mục profile cá nhân <span class="borrow fw-bold fst-italic">(Bạn cần đăng nhập trước đó)</span></span>
+                  <br>
+                  <span>2. Bấm dấu <span class="text-warning fw-bold fw-larger">+</span> kế bên đồng xu để nạp thêm xu vào tài khoản website:</span>
+                  <br>
+                  <img src="/images/recharge-website-1.png" alt="recharge-website-1" width="100%" height="600" />
+                  <br>
+                  <span>3. Tại hộp thoại mới hiện ra, tiến hành điền thông tin vào các trường đầy đủ:</span>
+                  <br>
+                  <img src="/images/recharge-website-2.png" alt="recharge-website-2" width="100%" height="600" />
+                  <br>
+                  <span>4. Đợi chờ kết quả. Khi nạp thành công, đợi khoản 4-5s sẽ có thông báo, bạn hãy reload lại trang nếu xu chưa cập nhật.</span>
+                  <br>
+                  <span><span class="text-danger fw-bold">(Đừng hoản sợ)!</span> Nếu nạp thành công mà xu không được cộng vào. Chúng tôi có ghi nhận lịch sử giao dịch (nếu có gửi thẻ lên hệ thống). Hãy lập tức liên hệ admin qua trang facebook để được giải quyết nhanh chóng.</span>
+                  <br>
+                  <img src="/images/recharge-website-3.png" alt="recharge-website-3" width="100%" height="600" />
+                </div>
+                <div class="my-2"><h3 class="borrow fw-bold">CÁCH 3: CHUYỂN KHOẢN CHAY CHO STK NGÂN HÀNG HOẶC VÍ ĐIỆN TỬ ADMIN</h3></div>
+                <div id="guide-steps" class="px-4 text-dark">
+                  <span>1. Thông tin STK Ngân hàng và Ví điện tử của Admin</a></span>
+                  <br>
+                  <img src="/images/qr-mbbank.jpg" alt="qr-mbbank" />
+                  <br>
+                  <img src="/images/qr-momo.jpg" alt="qr-momo" />
+                  <br>
+                  <span>2. Khi chuyển tiền, vui lòng bắt buộc nhập nội dùng chuyển khoản là email hoặc username ứng với tài khoản trên website của bạn hoặc trong game. Để admin biết đường mà lần. Nếu quên thì nhắn tin facebook và gửi ảnh chụp chuyển khoản. Nếu nội dung của bạn có kèm thêm tên máy chủ bạn đang chơi thì admin sẽ chuyển xu trực tiếp vào game cho bạn luôn.</span>
+                  <br>
+                  <span>Ví dụ:</span>
+                  <span>taito1doraemon - OP Skyblock</span>
+                  <span>taiproduaxe - OP Prison</span>
+                  <br>
+                  <span>3. Đợi chờ 2-6h admin sẽ cố gắng online sớm nhất và gửi xu vào tài khoản website hoặc xu trực tiếp trong game cho bạn:</span>
                 </div>
               </div>
             </div>
@@ -224,10 +217,8 @@
     <%- include('register-box.ejs') %>
     <%- include('profile-box.ejs') %>
     <%- include('report-box.ejs') %>
-    <%- include('ckeditor-box.ejs') %>
     <%- include('credit-box.ejs') %>
   </body>
-  <script src="/javascripts/encrypt-password.js"></script>
   <script src="/javascripts/rating-stars.js"></script>
   <script src="/javascripts/toggle-loading-box.js"></script>
   <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
@@ -245,39 +236,5 @@
     socket.on('emitter', function (data) {
       console.log('client emitter=', data)
     })
-    function sortPosting(selectObject) {
-      const postsContainer = document.getElementById('posts')
-      const postDivs = Array.from(postsContainer.querySelectorAll('.childpost')) // Lấy tất cả các div post con
-
-      if (selectObject.value === 'NEWEST') {
-        // Sắp xếp mảng các div post theo id lớn nhất đến nhỏ nhất
-        postDivs.sort((a, b) => {
-          const idA = parseInt(a.getAttribute('data-post-id'))
-          const idB = parseInt(b.getAttribute('data-post-id'))
-          return idB - idA
-        })
-      } else if (selectObject.value === 'OLDEST') {
-        // Sắp xếp mảng các div post theo id nhỏ nhất đến lớn nhất
-        postDivs.sort((a, b) => {
-          const idA = parseInt(a.getAttribute('data-post-id'))
-          const idB = parseInt(b.getAttribute('data-post-id'))
-          return idA - idB
-        })
-      }
-
-      // Xóa nội dung cũ trong #posts
-      postsContainer.innerHTML = ''
-
-      // Thêm lại các div post đã được sắp xếp vào #posts
-      postDivs.forEach((postDiv) => {
-        postsContainer.appendChild(postDiv)
-      })
-    }
-    function likePost() {
-      toastr.success('Cám ơn bạn đã thích sự kiện 🥰', 'TUYỆT QUÁ')
-    }
-    function dislikePost() {
-      toastr.error('Bruh! 😡', 'Noooooooooh 😱')
-    }
   </script>
 </html>

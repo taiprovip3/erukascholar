@@ -48,7 +48,7 @@
             left: 0;
             top: calc(100% - 1px);
             width: 200px;
-            background-image: url('https://mineblocks.com/1/wiki/images/a/a7/Sand.png');
+            background-image: url('/images/bright-sand-bg.png');
             background-repeat: no-repeat;
             background-size: cover;
           }
@@ -69,10 +69,10 @@
                 ></a>
                 <ul class="nav nav-tabs dropdown_menu">
                   <li class="nav-item">
-                    <a class="nav-link fw-bold text-dark" href="/instruct/downlad">Cách tải Minecraft</a>
+                    <a class="nav-link fw-bold text-dark" href="/instruct/download">Cách tải Minecraft</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link fw-bold text-dark" href="#">Nạp tiền vào tài khoản </a>
+                    <a class="nav-link fw-bold text-dark" href="/instruct/recharge">Nạp tiền vào tài khoản </a>
                   </li>
                 </ul>
               </li>
@@ -80,7 +80,7 @@
                 <a class="nav-link fw-bold text-white" href="/postings">SỰ KIỆN</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold active" href="#">CỬA HÀNG</a>
+                <a class="nav-link fw-bold active" href="/shop">CỬA HÀNG</a>
               </li>
               <% if(!payload.userData) { %>
               <li class="nav-item dropdown">
@@ -113,7 +113,7 @@
           </div>
           <div>
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Xf26G7yYwc9DojeXTNj4EEy30_lu_YM5kkXiXtQraRLj7u6N0RFMJRZDqjU9TRaHL6c&usqp=CAU"
+              src="/images/grass-bg-1.jpg"
               alt="logo"
               width="32px"
               height="32px"
@@ -147,7 +147,7 @@
                   <div class="row">
                     <div class="col-12 d-flex flex-wrap" id="files">
                       <div class="p-1 col-4">
-                        <div class="p-3 borrow file position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc0byIvjEehaPeeonoEw9LVeCGHNTJugyr4qzhwOG7-gwkMFba_zOvWDuseWwa6MLZx5g&usqp=CAU');">
+                        <div class="p-3 borrow file position-relative" style="background-image: url('/images/bright-sand-bg-2.png');">
                           <div class="position-absolute top-0 start-0 p-1 w-100 d-flex justify-content-between">
                             <div class="">
                               #1
@@ -160,7 +160,7 @@
                           <div class="text-center my-1">
                             <span class="fw-bold">File Skyblock 1.12+ 2021</span>
                             <br>
-                            <img src="https://staticg.sportskeeda.com/editor/2022/03/dfa47-16480512985216-1920.jpg" alt="file" width="100%" height="100%" class="img-thumbnail"/>
+                            <img src="/images/island-skyblock-server.png" alt="file" width="100%" height="100%" class="img-thumbnail"/>
                           </div>
                           <span class="d-block"><b>Tác giả</b>: nhinguyenmc</span>
                           <span class="d-block"><b>Ngày update</b>: 05/09/2021</span>
@@ -244,7 +244,7 @@
       const formattedDate = `${publishDate.getDate()}/${publishDate.getMonth() + 1}/${publishDate.getFullYear()}`;
       return `
         <div data-post-id="${file.file_id}" class="p-1 col-4 file">
-          <div class="p-3 borrow position-relative" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc0byIvjEehaPeeonoEw9LVeCGHNTJugyr4qzhwOG7-gwkMFba_zOvWDuseWwa6MLZx5g&usqp=CAU');">
+          <div class="p-3 borrow position-relative" style="background-image: url('/images/bright-sand-bg-2.png');">
             <div class="position-absolute top-0 start-0 p-1 w-100 d-flex justify-content-between">
               <div class="">
                 #${file.file_id}
@@ -257,7 +257,7 @@
             <div class="text-center my-1">
               <span class="fw-bold">${file.file_name}</span>
               <br>
-              <img src="https://staticg.sportskeeda.com/editor/2022/03/dfa47-16480512985216-1920.jpg" alt="file" width="100%" height="100%" class="img-thumbnail"/>
+              <img src="/images/island-skyblock-server.png" alt="file" width="100%" height="100%" class="img-thumbnail"/>
             </div>
             <span class="d-block"><b>Tác giả</b>: ${file.username}</span>
             <span class="d-block"><b>Ngày update</b>: ${formattedDate}</span>
