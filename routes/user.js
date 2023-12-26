@@ -110,7 +110,7 @@ router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken
       minioClient.protocol + '://' + minioClient.host + ':' + minioClient.port + '/' + 'avatar' + '/' + objectName
     await clientQuery.query('UPDATE profiles SET avatar = $1 WHERE users_id = $2', [objectName, userId])
   } catch (error) {
-    console.log('error=', error)
+    console.error('error=', error)
     return res.status(500).send(error)
   } finally {
     clientQuery.release()

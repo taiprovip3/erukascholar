@@ -395,7 +395,7 @@ router.post('/login', async (req, res) => {
     }
     return res.json(sweetResponse)
   } catch (error) {
-    console.log('error=', error.message)
+    console.error('error=', error.message)
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
   } finally {
     clientQuery.release()

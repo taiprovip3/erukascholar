@@ -271,7 +271,6 @@
     $.each(inputArray, function (i, field) {
       formDataObject[field.name] = field.value
     })
-    console.log('formDataObject=', formDataObject)
     $.ajax({
       url: '/gb/ibanking/create-payment',
       method: 'POST',
@@ -308,7 +307,6 @@
     $.each(inputArray, function (i, field) {
       formDataObject[field.name] = field.value
     })
-    console.log('formDataObject=', formDataObject)
     $.ajax({
       url: '/tst/recharge',
       method: 'POST',
