@@ -7,6 +7,7 @@ const Transaction = require('../models/transaction')
 const logger = require('../utils/logger')
 const pool = require('../utils/db')
 const generateRandomString2 = require('../utils/generate-random-string')
+const { preparedStamentMysqlQuery, getConnectionPool } = require('../utils/mysql-factory-db')
 
 router.post('/vnp/ibanking/create_payment_url', async (req, res) => {
   /** * req= [Object: null prototype] {
@@ -310,9 +311,15 @@ router.post('/tst/callback', async (req, res) => {
     await Transaction.findOneAndUpdate({ transId: content }, { $set: newTransactionDataField })
     console.log('Hook callback success. Let"s update userData')
     const userId = transaction.userId
-    const client = await pool.connect()
-    await client.query('UPDATE profile SET balance = balance + $1 WHERE usersId = $2', [realAmount, userId])
-    client.release()
+
+    const mainPool = getConnectionPool('main')
+    const conn = await mainPool.getConnection()
+    const updateUserBalanceSqlQuery = 'UPDATE profile SET balance = balance + ? WHERE usersId = ?';
+    const updateUserBalanceResult = await preparedStamentMysqlQuery(conn, updateUserBalanceSqlQuery, [realAmount, userId]);
+    conn.release()
+    if(!updateUserBalanceResult) {
+      return res.status(500).send('Internal server error, can update your balance. Please quickly contact Administrator and take a screen shot this page!');
+    }
     return res.status(200).send()
   } catch (error) {
     console.error('/tst/callback=', error)

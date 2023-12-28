@@ -13,8 +13,6 @@ function updateUserSession(req, newObject) {
 
     // Gán lại giá trị mới cho req.session.user
     req.session.user = updatedUser;
-
-    console.log('req.session.user=', req.session.user);
 }
 
 module.exports = updateUserSession;

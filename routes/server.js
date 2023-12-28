@@ -2,7 +2,7 @@ const express = require('express')
 const { authenticateToken } = require('../utils/oauth-middleware')
 const { default: axios } = require('axios')
 const pool = require('../utils/db')
-const { getConnectionPool } = require('../utils/mysql-factory-db')
+const { getConnectionPool, preparedStamentMysqlQuery } = require('../utils/mysql-factory-db')
 const router = express.Router()
 require('dotenv').config()
 const Transaction = require('../models/transaction')
@@ -19,16 +19,17 @@ router.get('/servers/getPlayerCoins', authenticateToken, async (req, res) => {
   if (!serverName) {
     return res.status(500).send('No server name params found')
   }
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const username = req.session.user.username
-    const uuidQuery = await clientQuery.query('SELECT uuid FROM users WHERE username = $1', [username])
-    const uuid = uuidQuery.rows[0].uuid
+    const uuidSqlQuery = 'SELECT uuid FROM users WHERE username = ?';
+    const uuidResult = await preparedStamentMysqlQuery(conn, uuidSqlQuery, [username]);
+    const uuid = uuidResult[0].uuid
 
     const serverPool = await getConnectionPool(serverName)
-    const asyncServerPool = serverPool.promise()
-    const playerCoinQuery = `SELECT * FROM playerpoints_points WHERE uuid = ?`
-    const [result] = await asyncServerPool.query(playerCoinQuery, [uuid])
+    const playerCoinQuery = 'SELECT * FROM playerpoints_points WHERE uuid = ?'
+    const [result] = await serverPool.query(playerCoinQuery, [uuid])
     if (!result) {
       return res.status(500).send(`not found user ${username} with uuid ${uuid}`)
     }
@@ -42,7 +43,7 @@ router.get('/servers/getPlayerCoins', authenticateToken, async (req, res) => {
     console.error('/servers/getPlayerCoins error', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 })
 
@@ -57,14 +58,14 @@ router.post('/servers/forwardCoins', authenticateToken, async (req, res) => {
     }
     return res.json(sweetResponse)
   }
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const username = req.session.user.username
-    const uuidQuery = await clientQuery.query(
-      'SELECT u.uuid, p.balance FROM users u INNER JOIN profiles p ON u.id = p.users_id WHERE u.username = $1',
-      [username],
-    )
-    const balanceAvaiable = uuidQuery.rows[0].balance
+    const uuidSqlQuery = 'SELECT u.uuid, p.balance FROM users u INNER JOIN profiles p ON u.id = p.users_id WHERE u.username = ?';
+    const uuidResult = await preparedStamentMysqlQuery(conn, uuidSqlQuery, [username]);
+    const uuidData = uuidResult[0];
+    const balanceAvaiable = uuidData.balance
     if (balanceToForward > balanceAvaiable) {
       const sweetResponse = {
         title: 'Không đủ xu để chuyển',
@@ -74,10 +75,9 @@ router.post('/servers/forwardCoins', authenticateToken, async (req, res) => {
       return res.json(sweetResponse)
     }
     const serverPool = await getConnectionPool(serverName)
-    const asyncServerPool = serverPool.promise()
-    const uuid = uuidQuery.rows[0].uuid
+    const uuid = uuidData.uuid;
     const playerCoinQuery = `SELECT * FROM playerpoints_points WHERE uuid = ?`
-    const [result] = await asyncServerPool.query(playerCoinQuery, [uuid])
+    const [result] = await serverPool.query(playerCoinQuery, [uuid])
     if (!result) {
       const sweetResponse = {
         title: 'Lỗi',
@@ -89,16 +89,13 @@ router.post('/servers/forwardCoins', authenticateToken, async (req, res) => {
     /**Chuyển tiền vào server */
     const userId = req.session.user.userId
     try {
-      await clientQuery.query('BEGIN')
-      await clientQuery.query('UPDATE profiles SET balance = balance - $1 WHERE users_id = $2', [
-        balanceToForward,
-        userId,
-      ])
-      await asyncServerPool.query('UPDATE playerpoints_points SET points = points + ? WHERE uuid = ?', [
+      await conn.beginTransaction();
+      await conn.execute('UPDATE profiles SET balance = balance - ? WHERE users_id = ?', [balanceToForward, userId]);
+      await serverPool.query('UPDATE playerpoints_points SET points = points + ? WHERE uuid = ?', [
         balanceToForward,
         uuid,
       ])
-      await clientQuery.query('COMMIT')
+      await conn.commit();
       const balanceLeft = balanceAvaiable - balanceToForward
       const newPayload = { ...req.session.user, balance: balanceLeft }
       req.session.user = newPayload
@@ -120,10 +117,10 @@ router.post('/servers/forwardCoins', authenticateToken, async (req, res) => {
     } catch (error) {
       // Catch của pg
       console.error('/servers/forwardCoins error2=', error)
-      clientQuery.query('ROLLBACK')
+      conn.rollback();
       return res.status(500).send('Transaction thất bại. Cập nhật giao dịch không thành công do lỗi máy chủ')
     } finally {
-      clientQuery.release()
+      conn.release()
     }
   } catch (error) {
     switch (error.code) {

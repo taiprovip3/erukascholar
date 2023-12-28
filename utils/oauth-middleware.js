@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const pool = require('./db')
+const { preparedStamentMysqlQuery, getConnectionPool } = require('./mysql-factory-db')
 
 function authenticateGoogleOAuth(req, res, next) {
   if (req.user) {
@@ -16,12 +17,16 @@ async function authenticateToken(req, res, next) {
   if (req.session.user) {
     return next()
   }
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const token = req.signedCookies.token
     const payload = jwt.verify(token, 'concavang')
     const userId = payload.userId
-    const profileQuery = await pool.query('SELECT * FROM profiles WHERE users_id = $1', [userId])
-    const profileRow = profileQuery.rows[0]
+    const getProfileSqlQuery = 'SELECT * FROM profiles WHERE users_id = ?';
+    const getProfileResult = await preparedStamentMysqlQuery(conn, getProfileSqlQuery, [userId]);
+
+    const profileRow = getProfileResult[0]
     const fullname = profileRow.fullname
     const sdt = profileRow.sdt
     const country = profileRow.country
@@ -37,6 +42,8 @@ async function authenticateToken(req, res, next) {
     res.clearCookie('token')
     // return res.redirect('/auth')
     return res.status(500).send('Lỗi tài khoản đăng nhập');
+  } finally {
+    conn.release();
   }
 }
 

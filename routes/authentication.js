@@ -7,7 +7,7 @@ const bycrypt = require('bcryptjs')
 const sendEmail = require('../utils/send-mail')
 const { authenticateGoogleOAuth } = require('../utils/oauth-middleware')
 const hashPasswordSHA256 = require('../utils/encrypt-password.js')
-const { getConnectionPool } = require('../utils/mysql-factory-db.js')
+const { getConnectionPool, preparedStamentMysqlQuery } = require('../utils/mysql-factory-db.js')
 
 router.post('/register', async (req, res) => {
   /**
@@ -16,53 +16,50 @@ router.post('/register', async (req, res) => {
    *      -- chưa xác thức -> gửi link đăng ký
    * case02: không tồn tại username trong csdl -> gửi link đăng ký
    */
+  // get mysql connection
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
+  let sweetResponse = {}
   try {
     const { username, email, password } = req.body
     // Kiểm tra xem username đã tồn tại trong CSDL hay chưa
-    const checkMailQuery = await pool.query('SELECT * FROM authme WHERE username = $1', [username])
-    if (checkMailQuery.rowCount > 0) {
+    const checkMailSqlQuery = 'SELECT * FROM authme WHERE username = ?';
+    const checkMailResult = await preparedStamentMysqlQuery(conn, checkMailSqlQuery, ['taiproduaxe']);
+    if(checkMailResult.length > 0) {
       // Có tồn tại username register dưới csdl
-      const sweetResponse = {
+      sweetResponse = {
         title: `LỖI`,
         text: `Tài khoản ${username} này đã được sử dụng. Nếu bạn quên mật khẩu hãy chọn nút Quên Mật Khẩu ở hộp đăng nhập!`,
         icon: 'error',
       }
       return res.json(sweetResponse)
-    } else {
-      // Không tồn tại username trong csdl -> đăng ký
-      const clientQuery = await pool.connect()
-      const addUserQuery = await clientQuery.query(
-        `INSERT INTO authme
-      (id, username, realname, "password", ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp, uuid)
-      VALUES(nextval('authme_id_seq'::regclass), $1, $1, $2, '', 0, 0, '', '0'::double precision, '0'::double precision, '0'::double precision, 'world'::character varying, 0, 0, $3, '0'::smallint, '0'::smallint, '', '') RETURNING *`,
-        [username, password, email],
-      )
-      if (addUserQuery.rowCount <= 0) {
-        sweetResponse = {
-          title: 'LỖI',
-          text: 'ĐÃ CÓ LỖI XẢY RA KHI THÊM TÀI KHOẢN MỚI VÀO CƠ SỞ DỮ LIỆU. Vui lòng báo lỗi gấp cho Admin bằng cách dùng nút [REPORT] trên trang!',
-          icon: 'error',
-        }
-        return res.json(sweetResponse)
-      }
-      clientQuery.release()
-      let sweetResponse = {}
-      if (email) {
-        sendEmail(username, email)
-        sweetResponse = {
-          title: 'ĐĂNG KÝ THÀNH CÔNG',
-          text: `Tài khoản của bạn đã được đăng ký vào hệ thống thành viên. Để bảo mật tài khoản và toàn vẹn chức năng. Chúng tôi khuyến khích bạn cần thêm một bước xác thực email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để xác thực. Tránh rủi ro sau này!`,
-          icon: 'success',
-        }
-      } else {
-        sweetResponse = {
-          title: 'ĐĂNG KÝ THÀNH CÔNG',
-          text: 'Vui lòng đăng nhập. Tài khoản của bạn chưa thêm email xác thực nên bạn chưa thêm sử dụng đầy đủ chức năng của máy chủ cũng như rủi ro bảo mật có thể xảy ra. Chúng tôi khuyến khích bạn nên xác thực email ngay tại hộp thoại [Thông Tin Cá Nhân]',
-          icon: 'success',
-        }
+    }
+    // Không tồn tại username trong csdl -> đăng ký
+    const insertUserAuthmeSqlQuery = "INSERT INTO authme (id, username, realname, `password`, ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp) VALUES (NULL, ?, ?, ?, '', 0, 0, '', 0.0, 0.0, 0.0, 'world', 0, 0, ?, 0, 0, '');";
+    const insertuserAuthmeResult = await preparedStamentMysqlQuery(conn, insertUserAuthmeSqlQuery, [username, username, password, email]);
+    if(!insertuserAuthmeResult) {
+      sweetResponse = {
+        title: 'LỖI',
+        text: 'ĐÃ CÓ LỖI XẢY RA KHI THÊM TÀI KHOẢN MỚI VÀO CƠ SỞ DỮ LIỆU. Vui lòng báo lỗi gấp cho Admin bằng cách dùng nút [REPORT] trên trang!',
+        icon: 'error',
       }
       return res.json(sweetResponse)
     }
+    if (email) {
+      sendEmail(username, email)
+      sweetResponse = {
+        title: 'ĐĂNG KÝ THÀNH CÔNG',
+        text: `Tài khoản của bạn đã được đăng ký vào hệ thống thành viên. Để bảo mật tài khoản và toàn vẹn chức năng. Chúng tôi khuyến khích bạn cần thêm một bước xác thực email ${email}. Vui lòng kiểm tra Gmail (hoặc mục thư spam) và nhấp vào đường dẫn bên trong để xác thực. Tránh rủi ro sau này!`,
+        icon: 'success',
+      }
+    } else {
+      sweetResponse = {
+        title: 'ĐĂNG KÝ THÀNH CÔNG',
+        text: 'Vui lòng đăng nhập. Tài khoản của bạn chưa thêm email xác thực nên bạn chưa thêm sử dụng đầy đủ chức năng của máy chủ cũng như rủi ro bảo mật có thể xảy ra. Chúng tôi khuyến khích bạn nên xác thực email ngay tại hộp thoại [Thông Tin Cá Nhân]',
+        icon: 'success',
+      }
+    }
+    return res.json(sweetResponse)
   } catch (error) {
     console.error('Lỗi khi lưu dữ liệu vào cơ sở dữ liệu:', error)
     const sweetResponse = {
@@ -71,6 +68,8 @@ router.post('/register', async (req, res) => {
       icon: 'error',
     }
     return res.status(500).json(sweetResponse)
+  } finally {
+    conn.release();
   }
 })
 
@@ -125,12 +124,14 @@ router.post('/register/verify', async (req, res) => {
     }
     return res.json(sweetResponse)
   }
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const mainConn = await mainPool.getConnection()
   try {
     const username = payload.username
     const email = payload.email
-    const queryResult = await pool.query('SELECT * FROM users WHERE username = $1', [username])
-    if (queryResult.rowCount <= 0) {
+    const getUserSqlQuery = 'SELECT * FROM users WHERE username = ?';
+    const getUserResult = await preparedStamentMysqlQuery(mainConn, getUserSqlQuery, [username]);
+    if (getUserResult.length <= 0) {
       const sweetResponse = {
         title: 'LỖI TÀI KHOẢN KHÔNG TỒN TẠI TRONG HỆ THỐNG',
         text: `Tài khoản email ${email} không thể tìm thấy trong hệ thống chúng tôi. Có vẽ đã xảy ra bugs. Vui lòng liên hệ Admin để được hỗ trợ!`,
@@ -138,12 +139,12 @@ router.post('/register/verify', async (req, res) => {
       }
       return res.json(sweetResponse)
     }
-    const rowQuery = queryResult.rows[0]
-    const isVerified = rowQuery.is_verified
-    const userUuid = rowQuery.uuid
+    const userData = getUserResult[0];
+    const isVerified = userData.is_verified
+    const userUuid = userData.uuid
     if (isVerified && userUuid) {
       // TH tài khoản đã được xác thực
-      const existedEmailVerified = rowQuery.email
+      const existedEmailVerified = userData.email
       const sweetResponse = {
         title: 'TÀI KHOẢN ĐÃ ĐƯỢC XÁC THỰC',
         text: `Tài khoản user ${username} đã xác thực với email mang tên ${existedEmailVerified}. Không thể xác thực lại lần nữa!`,
@@ -152,12 +153,10 @@ router.post('/register/verify', async (req, res) => {
       return res.json(sweetResponse)
     }
     // TH email đang xác thực trùng với email đã liên kết với 1 tài khoản khác.
-    const verifiedEmailUsedQuery = await clientQuery.query(
-      'SELECT * FROM users WHERE email = $1 AND is_verified = TRUE',
-      [email],
-    )
-    if (verifiedEmailUsedQuery.rowCount > 0) {
-      const usernameUsedThisEmail = verifiedEmailUsedQuery.rows[0].username
+    const verifiedEmailUsedSqlQuery = 'SELECT * FROM users WHERE email = ? AND is_verified = TRUE';
+    const verifiedEmailUsedResult = await preparedStamentMysqlQuery(mainConn, verifiedEmailUsedSqlQuery, [email])
+    if (verifiedEmailUsedResult.length > 0) {
+      const usernameUsedThisEmail = verifiedEmailUsedResult[0].username
       const sweetResponse = {
         title: 'XÁC THỰC THẤT BẠI',
         text: `Tài khoản gmail google ${email} đã được liên kết với một user tên là ${usernameUsedThisEmail} trước đó. Không thể đùng lại cho user của bạn!`,
@@ -174,7 +173,6 @@ router.post('/register/verify', async (req, res) => {
       const playerCoinQuery = `SELECT * FROM playerpoints_points WHERE uuid = '${uuid}'`
       conn.query(playerCoinQuery, async function (error, result) {
         if (!result) {
-          //
           const sweetResponse = {
             title: 'Xác thực thất bại',
             text: `Không tìm thấy UUID trong máy chủ ${serverName} của chúng tôi. Vui lòng kiểm tra lại thông tin chính xác chưa!`,
@@ -182,12 +180,7 @@ router.post('/register/verify', async (req, res) => {
           }
           return res.json(sweetResponse)
         }
-        await clientQuery.query('UPDATE users SET email = $1, is_verified = $2, uuid = $3 WHERE username = $4', [
-          email,
-          true,
-          uuid,
-          username,
-        ])
+        await preparedStamentMysqlQuery(conn, 'UPDATE users SET email = ?, is_verified = ?, uuid = ? WHERE username = ?', [email, true, uuid, username]);
         const sweetResponse = {
           title: 'XÁC THỰC THÀNH CÔNG',
           text: `Tài khoản của bạn đã sẵn sàng. Đăng nhập ngay!`,
@@ -202,7 +195,7 @@ router.post('/register/verify', async (req, res) => {
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
   } finally {
     // Release the client back to the pool
-    clientQuery.release()
+    mainConn.release()
   }
 })
 
@@ -217,21 +210,24 @@ router.get(
 )
 
 router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) => {
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const email = req.user.email
-    const resultQuery = await clientQuery.query('SELECT * FROM users WHERE email = $1', [email])
-    if (resultQuery.rowCount > 0) {
-      const rowQuery = resultQuery.rows[0]
-      const isVerified = rowQuery.is_verified
+    const getUserByEmailSqlQuery = 'SELECT * FROM users WHERE email = ?';
+    const getUserByEmailResult = await preparedStamentMysqlQuery(conn, getUserByEmailSqlQuery, [email]);
+    if (getUserByEmailResult.length > 0) {
+      const userData = getUserByEmailResult[0]
+      const isVerified = userData.is_verified
       if (isVerified) {
         // email đã xác thực -> cho login
         // là login
-        const userId = rowQuery.id
-        const username = rowQuery.username
+        const userId = userData.id
+        const username = userData.username
 
-        const profileQuery = await clientQuery.query('SELECT * FROM profiles WHERE users_id = $1', [userId])
-        const profileRow = profileQuery.rows[0]
+        const profileSqlQuery = 'SELECT * FROM profiles WHERE users_id = ?';
+        const profileResult = await preparedStamentMysqlQuery(conn, profileSqlQuery, [userId]);
+        const profileRow = profileResult[0]
         const profileId = profileRow.profile_id
         const sdt = profileRow.sdt
         const country = profileRow.country
@@ -293,7 +289,7 @@ router.get('/oauth/google/success', authenticateGoogleOAuth, async (req, res) =>
     }
     return res.render('temp-page', { sweetResponse })
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 })
 
@@ -320,14 +316,13 @@ router.post('/login', async (req, res) => {
     }
     return res.json(sweetResponse)
   }
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const { username, password, is_remember } = req.body
-    const queryUser = await clientQuery.query(
-      'SELECT users.*, profiles.* FROM users INNER JOIN profiles ON users.id = profiles.users_id WHERE users.username = $1',
-      [username],
-    )
-    if (queryUser.rowCount <= 0) {
+    const userSqlQuery = 'SELECT users.*, profiles.* FROM users INNER JOIN profiles ON users.id = profiles.users_id WHERE users.username = ?';
+    const userResult = await preparedStamentMysqlQuery(conn, userSqlQuery, [username]);
+    if (userResult.length <= 0) {
       const sweetResponse = {
         title: 'TÀI KHOẢN KHÔNG TỒN TẠI',
         text: `Tài khoản user ${username} này chưa được đăng ký`,
@@ -335,7 +330,7 @@ router.post('/login', async (req, res) => {
       }
       return res.json(sweetResponse)
     }
-    const storedPassword = queryUser.rows[0].password
+    const storedPassword = userResult[0].password
     const match = storedPassword.match(/\$SHA\$(.*?)\$/)
     const salt = match[1]
     const userPasswordHash1 = hashPasswordSHA256(password)
@@ -351,8 +346,7 @@ router.post('/login', async (req, res) => {
       return res.json(sweetResponse)
     }
 
-    const rows = queryUser.rows
-    const row = rows[0]
+    const row = userResult[0];
     const userId = row.id
     const email = row.email
     const isVerified = row.is_verified
@@ -398,7 +392,7 @@ router.post('/login', async (req, res) => {
     console.error('error=', error.message)
     return res.status(500).send('Có lỗi xảy ra khi xác thực tài khoản.')
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 })
 

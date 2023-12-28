@@ -10,13 +10,15 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 const minioClient = require('../utils/minio-client')
 const Transaction = require('../models/transaction')
+const { getConnectionPool, preparedStamentMysqlQuery, mysqlTransaction } = require('../utils/mysql-factory-db')
 
 router.put('/profile/update', authenticateToken, async (req, res) => {
   /**
    * 01. thêm mới hoặc cập nhật cho bảng profiles
    * 02. cập nhật lại payload cho req.session.user
    */
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const data = req.body
 
@@ -28,10 +30,8 @@ router.put('/profile/update', authenticateToken, async (req, res) => {
     const payload = req.session.user
     const userId = payload.userId
 
-    await clientQuery.query(
-      'UPDATE profiles SET fullname = $1, sdt = $2, country = $3, address = $4 WHERE users_id = $5',
-      [fullname, sdt, country, address, userId],
-    )
+    const updateProfileSqlQuery = 'UPDATE profiles SET fullname = ?, sdt = ?, country = ?, address = ? WHERE users_id = ?';
+    await preparedStamentMysqlQuery(conn, updateProfileSqlQuery, [fullname, sdt, country, address, userId]);
 
     const newPayload = { ...payload, sdt, country, address, fullname }
 
@@ -47,7 +47,7 @@ router.put('/profile/update', authenticateToken, async (req, res) => {
     console.error('/profile/update=', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 })
 
@@ -61,13 +61,13 @@ router.post('/profile/verify', authenticateToken, async (req, res) => {
     }
     return res.json(sweetReponse)
   }
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const { email } = req.body
-    const isEmailUsedQuery = await clientQuery.query('SELECT * FROM users WHERE email = $1 AND is_verified = TRUE', [
-      email,
-    ])
-    if (isEmailUsedQuery.rowCount > 0) {
+    const isEmailUsedSqlQuery = 'SELECT * FROM users WHERE email = ? AND is_verified = TRUE';
+    const isEmailUsedResult = await preparedStamentMysqlQuery(conn, isEmailUsedSqlQuery, [email]);
+    if (isEmailUsedResult.length > 0) {
       // Đã có người dùng email này
       const sweetReponse = {
         title: 'EMAIL NÀY ĐÃ CÓ NGƯỜI SỬ DỤNG',
@@ -91,13 +91,14 @@ router.post('/profile/verify', authenticateToken, async (req, res) => {
     console.error('/profile/verify error=', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 })
 
 router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken, async (req, res) => {
   let imageUrl = ''
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const file = req.file
     const userId = req.session.user.userId
@@ -108,12 +109,13 @@ router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken
     await minioClient.putObject('avatar', objectName, file.buffer, metaData)
     imageUrl =
       minioClient.protocol + '://' + minioClient.host + ':' + minioClient.port + '/' + 'avatar' + '/' + objectName
-    await clientQuery.query('UPDATE profiles SET avatar = $1 WHERE users_id = $2', [objectName, userId])
+    const updateAvatarSqlQuery = 'UPDATE profiles SET avatar = ? WHERE users_id = ?';
+    const updateAvatarResult = await preparedStamentMysqlQuery(conn, updateAvatarSqlQuery, [objectName, userId]);
   } catch (error) {
     console.error('error=', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 
   try {
@@ -127,11 +129,13 @@ router.post('/profile/upload-avatar', upload.single('avatar'), authenticateToken
 })
 
 router.get('/profile/avatar', authenticateToken, async (req, res) => {
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const userId = req.session.user.userId
-    const getAvatarQuery = await clientQuery.query('SELECT avatar FROM profiles WHERE users_id = $1', [userId])
-    const objectName = getAvatarQuery.rows[0].avatar
+    const getAvatarSqlQuery = 'SELECT avatar FROM profiles WHERE users_id = ?';
+    const getAvatarResult = await preparedStamentMysqlQuery(conn, getAvatarSqlQuery, [userId]);
+    const objectName = getAvatarResult[0].avatar
     const dataStream = await minioClient.getObject('avatar', objectName)
     res.setHeader('Content-Type', 'image/jpeg')
     dataStream.pipe(res)
@@ -139,7 +143,7 @@ router.get('/profile/avatar', authenticateToken, async (req, res) => {
     console.error('error=', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 })
 
@@ -154,47 +158,52 @@ router.get('/history', authenticateToken, async (req, res) => {
 })
 
 router.post('/checkin', authenticateToken, async (req, res) => {
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const userId = req.session.user.userId;
-    const result = await clientQuery.query('SELECT * FROM checkins WHERE users_id = $1 AND checkin_date = CURRENT_DATE', [userId]);
-    if (result.rowCount > 0) {
+    const validateCheckinSqlQuery = 'SELECT * FROM checkins WHERE users_id = ? AND checkin_date = CURRENT_DATE';
+    const validateCheckinResult = await preparedStamentMysqlQuery(conn, validateCheckinSqlQuery, [userId]);
+    if (validateCheckinResult.length > 0) {
       // Đã điểm danh hôm nay
       const sweetReponse = { title: 'ĐÃ ĐIỂM DANH', text: 'Hôm nay đã điểm danh rồi :(', icon: 'error' };
       return res.json(sweetReponse);
     }
     // Đã tồn tại nhưng ngày bé hơn hoặc ko tồn tại
-    await clientQuery.query('BEGIN');
-    await clientQuery.query('INSERT INTO checkins (users_id) VALUES ($1) ON CONFLICT (users_id) DO UPDATE SET checkin_count = checkins.checkin_count + 1, checkin_date = CURRENT_DATE', [userId]);
-    await clientQuery.query('UPDATE profiles SET balance = balance + 1 WHERE users_id = $1', [userId]);
-    await clientQuery.query('COMMIT');
+    const queries = [
+      { sql: 'INSERT INTO checkins (users_id) VALUES (?) ON CONFLICT (users_id) DO UPDATE SET checkin_count = checkins.checkin_count + 1, checkin_date = CURRENT_DATE', params: [userId] },
+      { sql: 'UPDATE profiles SET balance = balance + 1 WHERE users_id = ?', params: [userId] },
+    ]
+    const resultTransaction = await mysqlTransaction(conn, queries);
+    if(!resultTransaction) {
+      return res.status(500).send('Update Transaction checkin was internal server error!');
+    }
     const sweetReponse = {title: 'THÀNH CÔNG', text: 'Xin chúc mừng bạn nhận được 1🥮 hôm nay.', icon: 'success'};
-      return res.json(sweetReponse);
+    return res.json(sweetReponse);
   } catch (error) {
-    await clientQuery.query('ROLLBACK');
     console.error('/checkin error=', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 });
 
 router.get('/inventory', authenticateToken, async (req, res) => {
-  const clientQuery = await pool.connect()
+  const mainPool = getConnectionPool('main')
+  const conn = await mainPool.getConnection()
   try {
     const userId = req.session.user.userId;
-    const userFilesQuery = await clientQuery.query('SELECT * FROM users_files uf INNER JOIN files f ON uf.files_id = f.file_id WHERE users_id = $1', [userId]);
-    if(userFilesQuery.rowCount <= 0) {
+    const userFilesSqlQuery = 'SELECT * FROM users_files uf INNER JOIN files f ON uf.files_id = f.file_id WHERE users_id = ?';
+    const userFilesResult = await preparedStamentMysqlQuery(conn, userFilesSqlQuery, [userId]);
+    if(userFilesResult.length <= 0) {
       return res.json([]);
     }
-    const userFilesResult = userFilesQuery.rows;
     return res.json(userFilesResult);
   } catch (error) {
-    await clientQuery.query('ROLLBACK');
     console.error('/inventory error=', error)
     return res.status(500).send(error)
   } finally {
-    clientQuery.release()
+    conn.release()
   }
 });
 
