@@ -18,9 +18,6 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 const rfs = require('rotating-file-stream')
 const helper = require('./utils/calculate-timestamp')
-const pool = require('./utils/db.js')
-const poolMysql = require('./utils/mysqldb.js')
-const minio = require('minio')
 const { getConnectionPool, mysqlQuery, preparedStamentMysqlQuery } = require('./utils/mysql-factory-db.js')
 
 // App settings
@@ -52,9 +49,13 @@ app.use(morgan('combined', { stream: accessLogStream }))
 
 // Certificates
 const options = {
-  key: fs.readFileSync('./certificates/erukascholar.live/key.pem'),
-  cert: fs.readFileSync('./certificates/erukascholar.live/certificate.crt'),
+  key: fs.readFileSync('./certificates/nhinguyen.tech/private.key'),
+  cert: fs.readFileSync('./certificates/nhinguyen.tech/certificate.crt'),
 }
+// const options = {
+//   key: fs.readFileSync('./certificates/nhinguyen.tech/key.pem'),
+//   cert: fs.readFileSync('./certificates/nhinguyen.tech/certificate.crt'),
+// }
 // const options = {
 //   key: fs.readFileSync('./certificates/erukalearn.me/key.pem'),
 //   cert: fs.readFileSync('./certificates/erukalearn.me/erukalearn_me.crt'),
@@ -98,7 +99,7 @@ app.get('/', async (req, res) => {
     const serverMetrics = serverMetricsResult[0]
     payload['serverMetrics'] = serverMetrics
 
-    const membersSqlQuery = 'SELECT COUNT(*) as TOTAL FROM users WHERE is_verified = TRUE';
+    const membersSqlQuery = 'SELECT COUNT(*) as TOTAL FROM users';
     const membersResult = await mysqlQuery(conn, membersSqlQuery);
     const members = membersResult[0].TOTAL
     const serverUrl = `https://api.mcstatus.io/v2/status/java/${process.env.SERVER_IPV4}:${process.env.SERVER_PORT}`

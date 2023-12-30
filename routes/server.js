@@ -1,7 +1,5 @@
 const express = require('express')
 const { authenticateToken } = require('../utils/oauth-middleware')
-const { default: axios } = require('axios')
-const pool = require('../utils/db')
 const { getConnectionPool, preparedStamentMysqlQuery } = require('../utils/mysql-factory-db')
 const router = express.Router()
 require('dotenv').config()

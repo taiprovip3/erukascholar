@@ -1,5 +1,4 @@
 const express = require('express')
-const pool = require('../utils/db')
 const { preparedStamentMysqlQuery, getConnectionPool } = require('../utils/mysql-factory-db')
 const Router = express.Router()
 

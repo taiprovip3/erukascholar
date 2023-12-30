@@ -96,6 +96,10 @@ CREATE TABLE files (
     author INT NOT NULL,
     CONSTRAINT files_fk FOREIGN KEY (author) REFERENCES users(id)
 );
+INSERT INTO files (file_name, avatar, publish_date, created_at, des, price, version, counter, link, author)
+VALUES
+    ('File Skyblock Vanila', 'https://i.ytimg.com/vi/Uyp_B9yQ56w/maxresdefault.jpg', '2021-01-06', '2023-12-20 09:32:54.216684', 'File skyblock sinh tồn trẻ trâu', 1, '1.12.2', 14, 'https://uploading.vn/07e67i6fqe1a', 2),
+    ('File Skyblock 1.12+ 2021', 'https://staticg.sportskeeda.com/editor/2022/03/dfa47-16480512985216-1920.jpg', '2021-09-05', '2023-12-20 09:22:32.062567', 'Share quả file server chất lượng cho ae. Nhớ Like và Đăng ký kênh nhinguyenMC nha. Thanks!', 2, '1.12.2', 23, 'https://uploading.vn/o1cl29edhmg3', 2);
 
 
 

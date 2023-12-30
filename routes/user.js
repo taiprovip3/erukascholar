@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const pool = require('../utils/db')
 const { authenticateToken } = require('../utils/oauth-middleware')
 const sendEmail = require('../utils/send-mail')
 const NodeCache = require('node-cache')
@@ -171,7 +170,12 @@ router.post('/checkin', authenticateToken, async (req, res) => {
     }
     // Đã tồn tại nhưng ngày bé hơn hoặc ko tồn tại
     const queries = [
-      { sql: 'INSERT INTO checkins (users_id) VALUES (?) ON CONFLICT (users_id) DO UPDATE SET checkin_count = checkins.checkin_count + 1, checkin_date = CURRENT_DATE', params: [userId] },
+      { sql: `
+          INSERT INTO checkins (users_id, checkin_count, checkin_date)
+          VALUES (?, 1, CURRENT_DATE)
+          ON DUPLICATE KEY UPDATE
+          checkin_count = checkin_count + 1, checkin_date = CURRENT_DATE;
+        `, params: [userId] },
       { sql: 'UPDATE profiles SET balance = balance + 1 WHERE users_id = ?', params: [userId] },
     ]
     const resultTransaction = await mysqlTransaction(conn, queries);

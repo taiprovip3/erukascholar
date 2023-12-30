@@ -1,6 +1,5 @@
 const { default: axios } = require('axios')
 const express = require('express')
-const pool = require('../utils/db')
 const helper = require('../utils/calculate-timestamp')
 const { authenticateToken } = require('../utils/oauth-middleware')
 const { preparedStamentMysqlQuery, getConnectionPool, mysqlQuery } = require('../utils/mysql-factory-db')
@@ -18,7 +17,7 @@ router.get('/postings', async (req, res) => {
     const serverMetrics = serverMetricsResult[0]
     payload['serverMetrics'] = serverMetrics
 
-    const membersSqlQuery = 'SELECT COUNT(*) as TOTAL FROM users WHERE is_verified = TRUE';
+    const membersSqlQuery = 'SELECT COUNT(*) as TOTAL FROM users';
     const membersResult = await mysqlQuery(conn, membersSqlQuery);
     const members = membersResult[0].TOTAL
     const serverUrl = `https://api.mcstatus.io/v2/status/java/${process.env.SERVER_IPV4}:${process.env.SERVER_PORT}`

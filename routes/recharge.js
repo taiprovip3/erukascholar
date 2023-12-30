@@ -5,7 +5,6 @@ const moment = require('moment')
 const crypto = require('crypto')
 const Transaction = require('../models/transaction')
 const logger = require('../utils/logger')
-const pool = require('../utils/db')
 const generateRandomString2 = require('../utils/generate-random-string')
 const { preparedStamentMysqlQuery, getConnectionPool } = require('../utils/mysql-factory-db')
 

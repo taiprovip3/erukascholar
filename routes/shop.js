@@ -1,5 +1,4 @@
 const express = require('express');
-const pool = require('../utils/db');
 const { default: axios } = require('axios');
 const router = express.Router();
 const helper = require('../utils/calculate-timestamp');
@@ -19,7 +18,7 @@ router.get('/shop', async (req, res) => {
     const serverMetrics = serverMetricsResult[0]
     payload['serverMetrics'] = serverMetrics
 
-    const membersSqlQuery = 'SELECT COUNT(*) as TOTAL FROM users WHERE is_verified = TRUE';
+    const membersSqlQuery = 'SELECT COUNT(*) as TOTAL FROM users';
     const membersResult = await mysqlQuery(conn, membersSqlQuery);
     const members = membersResult[0].TOTAL
     const serverUrl = `https://api.mcstatus.io/v2/status/java/${process.env.SERVER_IPV4}:${process.env.SERVER_PORT}`

@@ -64,12 +64,12 @@
                 <a class="nav-link fw-bold text-white" href="/">TRANG CHỦ</a>
               </li>
               <li class="nav-item dropdown">
-                <a class="nav-link fw-bold active" href="#"
+                <a class="nav-link fw-bold active disabled"
                   >HƯỚNG DẪN <i class="fa-solid fa-sort-down"></i
                 ></a>
                 <ul class="nav nav-tabs dropdown_menu">
                   <li class="nav-item">
-                    <a class="nav-link fw-bold disabled" href="#">Cách tải Minecraft</a>
+                    <a class="nav-link fw-bold disabled">Cách tải Minecraft</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link fw-bold text-dark" href="/instruct/recharge">Nạp tiền vào tài khoản </a>
@@ -216,7 +216,7 @@
   </body>
   <script src="/javascripts/rating-stars.js"></script>
   <script src="/javascripts/toggle-loading-box.js"></script>
-  <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
+  <script src="https://nhinguyen.tech/socket.io/socket.io.js"></script>
   <script>
     $(document).ready(function () {
       window.showLoadingBox()
@@ -224,7 +224,7 @@
     $(window).on('load', function () {
       window.hideLoadingBox()
     })
-    var socket = io.connect('wss://erukascholar.live')
+    var socket = io.connect('wss://nhinguyen.tech')
     socket.on('connect', function () {
       console.log('Connected to server')
     })

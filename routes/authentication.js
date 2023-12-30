@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const pool = require('../utils/db.js')
 const passport = require('passport')
 const jwt = require('jsonwebtoken')
 const bycrypt = require('bcryptjs')
