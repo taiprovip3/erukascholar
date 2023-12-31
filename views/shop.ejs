@@ -307,24 +307,35 @@
     }
 
     function buyFile(fileId) {
-      $.ajax({
-        url: '/shop/buy-file',
-        method: 'PUT',
-        data: { fileId },
-        success: (sweetResponse) => {
-          swal({ 
-            title: sweetResponse.title,
-            text: sweetResponse.text,
-            icon: sweetResponse.icon
-          }).then(() => {
-            if(sweetResponse.icon == 'success') {
-              window.location.href = window.location.href;
-            }
-          });
-        }, error: (error) => {
-          console.error('error=', error);
-          toastr.error(error.responseText, 'Lỗi');
+      swal({
+        title: "Bạn có chắc?",
+        text: "Một khi đã mua rồi sẽ không thể hoàn xu, tài nguyên sẽ được thêm vào túi cá nhân và có thể mua trùng. Vui lòng cân nhắc kĩ lại trước khi nhấp mua!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if(!willDelete) {
+          return;
         }
+        $.ajax({
+          url: '/shop/buy-file',
+          method: 'PUT',
+          data: { fileId },
+          success: (sweetResponse) => {
+            swal({ 
+              title: sweetResponse.title,
+              text: sweetResponse.text,
+              icon: sweetResponse.icon
+            }).then(() => {
+              if(sweetResponse.icon == 'success') {
+                window.location.href = window.location.href;
+              }
+            });
+          }, error: (error) => {
+            console.error('error=', error);
+            toastr.error(error.responseText, 'Lỗi');
+          }
+        });
       });
     }
   </script>

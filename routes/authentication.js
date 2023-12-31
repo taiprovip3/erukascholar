@@ -34,7 +34,7 @@ router.post('/register', async (req, res) => {
       return res.json(sweetResponse)
     }
     // Không tồn tại username trong csdl -> đăng ký
-    const insertUserAuthmeSqlQuery = "INSERT INTO authme (id, username, realname, `password`, ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp) VALUES (NULL, ?, ?, ?, '', 0, 0, '', 0.0, 0.0, 0.0, 'world', 0, 0, ?, 0, 0, '');";
+    const insertUserAuthmeSqlQuery = "INSERT INTO authme (username, realname, `password`, ip, lastlogin, regdate, regip, x, y, z, world, yaw, pitch, email, islogged, hassession, totp) VALUES (?, ?, ?, '', 0, 0, '', 0.0, 0.0, 0.0, 'world', 0, 0, ?, 0, 0, '');";
     const insertuserAuthmeResult = await preparedStamentMysqlQuery(conn, insertUserAuthmeSqlQuery, [username, username, password, email]);
     if(!insertuserAuthmeResult) {
       sweetResponse = {

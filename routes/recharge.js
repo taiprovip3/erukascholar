@@ -170,6 +170,7 @@ router.post('/tst/recharge', async (req, res) => {
     const { credit_box_email, credit_box_provider, credit_box_value, credit_box_seri, credit_box_pin } = req.body
     const userId = req.session.user.userId
     const APIkey = process.env.TST_APIKEY
+    console.log('APIkey=', APIkey);
     const mathe = credit_box_pin
     const seri = credit_box_seri
     const type = credit_box_provider

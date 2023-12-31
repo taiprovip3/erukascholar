@@ -161,7 +161,7 @@ router.post('/checkin', authenticateToken, async (req, res) => {
   const conn = await mainPool.getConnection()
   try {
     const userId = req.session.user.userId;
-    const validateCheckinSqlQuery = 'SELECT * FROM checkins WHERE users_id = ? AND checkin_date = CURRENT_DATE';
+    const validateCheckinSqlQuery = 'SELECT * FROM checkins WHERE users_id = ? AND DATE(checkin_date) = CURRENT_DATE';
     const validateCheckinResult = await preparedStamentMysqlQuery(conn, validateCheckinSqlQuery, [userId]);
     if (validateCheckinResult.length > 0) {
       // Đã điểm danh hôm nay
@@ -172,9 +172,9 @@ router.post('/checkin', authenticateToken, async (req, res) => {
     const queries = [
       { sql: `
           INSERT INTO checkins (users_id, checkin_count, checkin_date)
-          VALUES (?, 1, CURRENT_DATE)
+          VALUES (?, 1, CURRENT_TIMESTAMP)
           ON DUPLICATE KEY UPDATE
-          checkin_count = checkin_count + 1, checkin_date = CURRENT_DATE;
+          checkin_count = checkin_count + 1, checkin_date = CURRENT_TIMESTAMP;
         `, params: [userId] },
       { sql: 'UPDATE profiles SET balance = balance + 1 WHERE users_id = ?', params: [userId] },
     ]
