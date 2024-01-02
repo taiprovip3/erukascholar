@@ -53,10 +53,6 @@ const options = {
   cert: fs.readFileSync('./certificates/nhinguyen.tech/certificate.crt'),
 }
 // const options = {
-//   key: fs.readFileSync('./certificates/nhinguyen.tech/key.pem'),
-//   cert: fs.readFileSync('./certificates/nhinguyen.tech/certificate.crt'),
-// }
-// const options = {
 //   key: fs.readFileSync('./certificates/erukalearn.me/key.pem'),
 //   cert: fs.readFileSync('./certificates/erukalearn.me/erukalearn_me.crt'),
 // };
@@ -88,12 +84,6 @@ app.get('/', async (req, res) => {
   const mainPool = getConnectionPool('main')
   const conn = await mainPool.getConnection()
   try {
-    // testssss
-    const checkMailSqlQuery = 'SELECT * FROM authme WHERE username = ?';
-    const checkMailResult = await preparedStamentMysqlQuery(conn, checkMailSqlQuery, ['taiproduaxe']);
-
-
-
     const serverMetricsSqlQuery = 'SELECT * FROM server_metrics';
     const serverMetricsResult = await mysqlQuery(conn, serverMetricsSqlQuery);
     const serverMetrics = serverMetricsResult[0]
@@ -109,12 +99,11 @@ app.get('/', async (req, res) => {
     const serverStatus = { onlinePlayers, maxPlayers, members }
     payload['serverStatus'] = serverStatus
 
-    const titleSqlQuery = 'SELECT title FROM posts ORDER BY created_at DESC'
-    const titlesResult = await mysqlQuery(conn, titleSqlQuery)
-    const titles = titlesResult[0]
+    const titlesSqlQuery = 'SELECT title FROM posts ORDER BY created_at DESC'
+    const titlesResult = await mysqlQuery(conn, titlesSqlQuery)
     let eventTitles = []
-    if(titles) {
-      eventTitles = titles.map((e) => {
+    if(titlesResult.length > 0) {
+      eventTitles = titlesResult.map((e) => {
         return e.title
       })
     }

@@ -65,7 +65,7 @@ DELIMITER ;
 --
 
 CREATE TABLE IF NOT EXISTS `authme` (
-  `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `username` varchar(255) NOT NULL,
   `realname` varchar(255) NOT NULL,
   `password` varchar(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
@@ -156,7 +156,7 @@ CREATE TABLE profiles (
     FOREIGN KEY (roles_id) REFERENCES roles(role_id)
 );
 INSERT INTO `profiles` (`profile_id`, `fullname`, `sdt`, `address`, `country`, `users_id`, `created_at`, `avatar`, `balance`, `roles_id`) VALUES
-(2, NULL, NULL, NULL, '84', 2, '2023-12-28 12:41:42', '25-1702483920909-cat-oew.jpg', 2, 1);
+(2, NULL, NULL, NULL, '84', 2, '2023-12-28 12:41:42', '25-1702483920909-cat-oew.jpg', 2, 2);
 
 CREATE TABLE posts (
     post_id INT AUTO_INCREMENT PRIMARY KEY,

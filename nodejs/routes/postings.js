@@ -27,12 +27,11 @@ router.get('/postings', async (req, res) => {
     const serverStatus = { onlinePlayers, maxPlayers, members }
     payload['serverStatus'] = serverStatus
 
-    const titleSqlQuery = 'SELECT title FROM posts ORDER BY created_at DESC'
-    const titlesResult = await mysqlQuery(conn, titleSqlQuery)
-    const titles = titlesResult[0]
+    const titlesSqlQuery = 'SELECT title FROM posts ORDER BY created_at DESC'
+    const titlesResult = await mysqlQuery(conn, titlesSqlQuery)
     let eventTitles = []
-    if(titles) {
-      eventTitles = titles.map((e) => {
+    if(titlesResult.length > 0) {
+      eventTitles = titlesResult.map((e) => {
         return e.title
       })
     }

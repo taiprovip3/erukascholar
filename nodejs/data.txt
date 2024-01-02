@@ -1,1 +1,15 @@
+# GB Response
 {"code":1,"message":"Success","redirectLink":"https:\/\/chart.googleapis.com\/chart?cht=qr&chs=300x300&chl=2|99|0878313429|0878313429|0878313429|0|0|100000|oene4b3|transfer_myqr","bank":"MOMO","bankname":"TRI\u1ec6U TH\u1eca KH\u1edeI","banknumber":"","phonenumber":"0878313429","content":"oene4b3"}
+
+# Setup change
+0. clone new source code
+1. video trailer official
+2. server modes
+3. api getmember
+4. avatar bucket minio
+5. database server name extension playerpoint plugin
+6. domain eruka scholar
+    - web client service google authentication
+    - host send email
+7. authme config setup
+8. set up tài khoản ngân hàng nạp thẻ, tài khoản thẻ siêu tốc nhận tiền, test nạp thẻ

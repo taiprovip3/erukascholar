@@ -28,11 +28,11 @@
     />
     <script type="text/javascript" src="https://unpkg.com/bcryptjs@2.4.3/dist/bcrypt.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script
-      src="https://cdn.tiny.cloud/1/7xj5wvv9kasumgezlf02vpj9b672i5o3hax0hj8zarftbbk9/tinymce/6/tinymce.min.js"
-      referrerpolicy="origin"
-    ></script>
     <script src="https://momentjs.com/downloads/moment.min.js"></script>
+
+    <!-- Main Quill library -->
+    <link href="https://cdn.quilljs.com/1.2.2/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.2.2/quill.js"></script>
   </head>
   <body>
     <div class="container-fluid d-flex justify-content-center align-items-center overflow-auto">
@@ -232,9 +232,6 @@
   <script src="/javascripts/toggle-loading-box.js"></script>
   <script src="https://nhinguyen.tech/socket.io/socket.io.js"></script>
   <script>
-    $(document).ready(function () {
-      window.showLoadingBox()
-    })
     $(window).on('load', function () {
       window.hideLoadingBox()
     })
