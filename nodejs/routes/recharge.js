@@ -303,9 +303,10 @@ router.post('/tst/callback', async (req, res) => {
       await Transaction.findOneAndUpdate({ transId: content }, { $set: newTransactionDataField })
       return res.status(200).send()
     }
-    const realAmount = dataCallback.real_amount
+    const realAmount = Number(dataCallback.real_amount)
+    const realAmountInGame = realAmount / 100;
     const newTransactionDataField = {
-      status: `Giao dịch #${content} thành công. +${realAmount / 100} xu`,
+      status: `Giao dịch #${content} thành công. +${realAmountInGame} xu`,
     }
     await Transaction.findOneAndUpdate({ transId: content }, { $set: newTransactionDataField })
     console.log('Hook callback success. Let"s update userData')
@@ -314,7 +315,7 @@ router.post('/tst/callback', async (req, res) => {
     const mainPool = getConnectionPool('main')
     const conn = await mainPool.getConnection()
     const updateUserBalanceSqlQuery = 'UPDATE profiles SET balance = balance + ? WHERE users_id = ?';
-    const updateUserBalanceResult = await preparedStamentMysqlQuery(conn, updateUserBalanceSqlQuery, [realAmount, userId]);
+    const updateUserBalanceResult = await preparedStamentMysqlQuery(conn, updateUserBalanceSqlQuery, [realAmountInGame, userId]);
     conn.release()
     if(!updateUserBalanceResult) {
       return res.status(500).send('Internal server error, can update your balance. Please quickly contact Administrator and take a screen shot this page!');
