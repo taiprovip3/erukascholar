@@ -1,6 +1,29 @@
 # GB Response
 {"code":1,"message":"Success","redirectLink":"https:\/\/chart.googleapis.com\/chart?cht=qr&chs=300x300&chl=2|99|0878313429|0878313429|0878313429|0|0|100000|oene4b3|transfer_myqr","bank":"MOMO","bankname":"TRI\u1ec6U TH\u1eca KH\u1edeI","banknumber":"","phonenumber":"0878313429","content":"oene4b3"}
 
+# TST Response
+responseData= {
+nodejs_container  |   status: '00',
+nodejs_container  |   transaction_id: '913fb3abe40a1b83c9cf2751569c5108',
+nodejs_container  |   amount: 50000,
+nodejs_container  |   title: 'Thành công',
+nodejs_container  |   msg: 'Thẻ đã được gửi lên hệ thống vui lòng chờ xử lý'
+nodejs_container  | }
+
+
+dataCallback= [Object: null prototype] {
+nodejs_container  |   status: 'thanhcong',
+nodejs_container  |   serial: '2326400043196390',
+nodejs_container  |   pin: '498613636996',
+nodejs_container  |   card_type: 'Vietnamobile',
+nodejs_container  |   amount: '50000',
+nodejs_container  |   receive_amount: '50000',
+nodejs_container  |   real_amount: '42750',
+nodejs_container  |   transaction_id: '913fb3abe40a1b83c9cf2751569c5108',
+nodejs_container  |   content: '913fb3abe40a1b83c9cf2751569c5108',
+nodejs_container  |   noidung: 'Nạp thẻ thành công.'
+nodejs_container  | }
+
 # Setup change
 0. clone new source code
 1. video trailer official

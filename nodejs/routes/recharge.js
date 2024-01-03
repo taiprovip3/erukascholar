@@ -313,7 +313,7 @@ router.post('/tst/callback', async (req, res) => {
 
     const mainPool = getConnectionPool('main')
     const conn = await mainPool.getConnection()
-    const updateUserBalanceSqlQuery = 'UPDATE profiles SET balance = balance + ? WHERE usersId = ?';
+    const updateUserBalanceSqlQuery = 'UPDATE profiles SET balance = balance + ? WHERE users_id = ?';
     const updateUserBalanceResult = await preparedStamentMysqlQuery(conn, updateUserBalanceSqlQuery, [realAmount, userId]);
     conn.release()
     if(!updateUserBalanceResult) {
