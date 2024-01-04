@@ -221,12 +221,12 @@
   </body>
   <script src="/javascripts/rating-stars.js"></script>
   <script src="/javascripts/toggle-loading-box.js"></script>
-  <script src="https://nhinguyen.tech/socket.io/socket.io.js"></script>
+  <script src="https://erukascholar.live/socket.io/socket.io.js"></script>
   <script>
     $(window).on('load', function () {
       window.hideLoadingBox()
     })
-    var socket = io.connect('wss://nhinguyen.tech')
+    var socket = io.connect('wss://erukascholar.live')
     socket.on('connect', function () {
       console.log('Connected to server')
     })

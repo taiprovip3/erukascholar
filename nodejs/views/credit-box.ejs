@@ -280,13 +280,13 @@
         $('#creditBox').modal('toggle')
         if (response.code == 1) {
           const htmlContent = `
-                            <div class="text-danger">❗ Vui lòng không tắt hộp thoại này khi chưa làm xong thao tác. Hộp thoại sẽ tự đóng khi giao dịch hoàn tất.</div>
-                            <div class="my-1"><img src="${response.redirectLink}" alt="qrcode"></div>
-                            <div>${response.bank}</div>
-                            <div>${response.bankname}</div>
-                            <div>${response.phonenumber}</div>
-                            <div>Nội dung chuyển khoản: ${response.content}</div>
-                        `
+            <div class="text-danger">❗ Vui lòng không tắt hộp thoại này khi chưa làm xong thao tác. Hộp thoại sẽ tự đóng khi giao dịch hoàn tất.</div>
+            <div class="my-1"><img src="${response.redirectLink}" alt="qrcode"></div>
+            <div>${response.bank}</div>
+            <div>${response.bankname}</div>
+            <div>${response.phonenumber}</div>
+            <div>Nội dung chuyển khoản: ${response.content}</div>
+          `
           $('#qrContent').html(htmlContent)
           $('#qrBox').modal('toggle')
         } else {

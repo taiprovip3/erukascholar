@@ -3,26 +3,36 @@
 
 # TST Response
 responseData= {
-nodejs_container  |   status: '00',
-nodejs_container  |   transaction_id: '913fb3abe40a1b83c9cf2751569c5108',
-nodejs_container  |   amount: 50000,
-nodejs_container  |   title: 'Thành công',
-nodejs_container  |   msg: 'Thẻ đã được gửi lên hệ thống vui lòng chờ xử lý'
-nodejs_container  | }
-
-
+    status: '00',
+    transaction_id: '913fb3abe40a1b83c9cf2751569c5108',
+    amount: 50000,
+    title: 'Thành công',
+    msg: 'Thẻ đã được gửi lên hệ thống vui lòng chờ xử lý'
+    nodejs_container
+}
 dataCallback= [Object: null prototype] {
-nodejs_container  |   status: 'thanhcong',
-nodejs_container  |   serial: '2326400043196390',
-nodejs_container  |   pin: '498613636996',
-nodejs_container  |   card_type: 'Vietnamobile',
-nodejs_container  |   amount: '50000',
-nodejs_container  |   receive_amount: '50000',
-nodejs_container  |   real_amount: '42750',
-nodejs_container  |   transaction_id: '913fb3abe40a1b83c9cf2751569c5108',
-nodejs_container  |   content: '913fb3abe40a1b83c9cf2751569c5108',
-nodejs_container  |   noidung: 'Nạp thẻ thành công.'
-nodejs_container  | }
+    status: 'thanhcong',
+    serial: '2326400043196390',
+    pin: '498613636996',
+    card_type: 'Vietnamobile',
+    amount: '50000',
+    receive_amount: '50000',
+    real_amount: '42750',
+    transaction_id: '913fb3abe40a1b83c9cf2751569c5108',
+    content: '913fb3abe40a1b83c9cf2751569c5108',
+    noidung: 'Nạp thẻ thành công.'
+    nodejs_container
+}
+
+# GB Response
+sb_Params= {
+  amount: '10000',
+  bank_code: 'MOMO',
+  message: 'Giao+dich+ibanking+vao+luc%3A+20240104195650',
+  password: 'gp5e8bf43b079001586230331',
+  tran_id: '69cdc2dd9ee8596a6a780cc24dbac7cb',
+  username: 'taiproduaxe'
+}
 
 # Setup change
 0. clone new source code

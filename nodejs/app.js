@@ -49,8 +49,8 @@ app.use(morgan('combined', { stream: accessLogStream }))
 
 // Certificates
 const options = {
-  key: fs.readFileSync('./certificates/nhinguyen.tech/private.key'),
-  cert: fs.readFileSync('./certificates/nhinguyen.tech/certificate.crt'),
+  key: fs.readFileSync('./certificates/erukascholar.live/private.key'),
+  cert: fs.readFileSync('./certificates/erukascholar.live/certificate.crt'),
 }
 // const options = {
 //   key: fs.readFileSync('./certificates/erukalearn.me/key.pem'),

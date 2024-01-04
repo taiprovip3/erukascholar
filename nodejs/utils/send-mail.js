@@ -17,7 +17,7 @@ function sendEmail(username, toEmail) {
       from: 'taito1doraemon@gmail.com',
       to: toEmail,
       subject: 'nhinguyenmc',
-      text: `Tài khoản ${username} vừa đăng ký email này tại trang web minecraft chúng tôi. Nhấp vào đường link sau để xác thực tài khoản: https://nhinguyen.tech/register/verify?token=${token}. Link sẽ bị vô hiệu sau 60 phút.`,
+      text: `Tài khoản ${username} vừa đăng ký email này tại trang web minecraft chúng tôi. Nhấp vào đường link sau để xác thực tài khoản: https://erukascholar.live/register/verify?token=${token}. Link sẽ bị vô hiệu sau 60 phút.`,
     }
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
