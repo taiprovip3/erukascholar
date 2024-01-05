@@ -145,85 +145,87 @@ router.post('/gb/ibanking/create-payment', async (req, res) => {
 })
 
 router.get('/gb/ibanking/callback', async (req, res) => {
-  console.log('/gb/ibanking/callback was called!');
-  console.log('req.query=', req.query);
-  const username = req.query.username
-  const password = req.query.password
-  const amount = req.query.amount
-  const transId = req.query.tran_id
-  const errorCode = req.query.errorcode
-  const message = req.query.messages
-  const signature = req.query.signature
-
-  console.log('username=', username);
-  console.log('password=', password);
-  console.log('amount=', amount);
-  console.log('transId=', transId);
-  console.log('errorCode=', errorCode);
-  console.log('message=', message);
-  console.log('signature=', signature);
-
-  const isVerified = verifyWebhook(username, password, amount, transId, errorCode, message, signature)
-
-  if (isVerified) {
-    console.log('Webhook verified successfully.')
-  } else {
-    console.log('Webhook verification failed.')
-  }
-
-  const transaction = await Transaction.findOne({ transId })
-  if (!transaction) {
-    // nếu không tìm thấy transaction
-    logger.info(`Host receive callback but not found transaction: ${transId}`)
-    const newTransactionDataField = {
-      message: `${transaction.message} -> [${new Date().toLocaleString()}] Máy chủ đã nhận phản hồi third party nhưng không tìm thấy mã giao dịch ${transId}. Chấm dứt giao dịch.`,
-      status: 'END',
+  try {
+    console.log('/gb/ibanking/callback was called!');
+    const username = req.query.username
+    const password = req.query.password
+    const amount = req.query.amount
+    const transId = req.query.tran_id
+    const errorCode = req.query.errorcode
+    const message = req.query.messages
+    const signature = req.query.signature
+  
+    console.log('username=', username);
+    console.log('password=', password);
+    console.log('amount=', amount);
+    console.log('transId=', transId);
+    console.log('errorCode=', errorCode);
+    console.log('message=', message);
+    console.log('signature=', signature);
+  
+    const isVerified = verifyWebhook(username, password, amount, transId, errorCode, message, signature)
+  
+    if (isVerified) {
+      console.log('Webhook verified successfully.')
+    } else {
+      console.log('Webhook verification failed.')
     }
-    const updateTransaction = await Transaction.findOneAndUpdate(
-      { transId },
-      { $set: newTransactionDataField },
-      { new: true },
-    )
-    if (!updateTransaction) {
-      logger.info(
-        `Can't update failed transactions: ${transId} status to failed because update transaction stament is fail!`,
-      )
+  
+    const transaction = await Transaction.findOne({ transId })
+    if (!transaction) {
+      // nếu không tìm thấy transaction
+      const msg = `Transaction vô dannh. Nhận được callback via third party nhưng không tìm thấy transaction trong db: ${transId}`;
+      logger.info(msg)
+      const newTransactionDataField = {
+        message: `[${new Date().toLocaleString()}] ${msg}. Chấm dứt giao dịch.`,
+        status: 'END',
+      }
+      const anonymousTransaction = new Transaction({
+        amount,
+        transId,
+        bankCode: 'GB_IBANKING',
+        message: msg,
+        status: 'END',
+      })
+      await anonymousTransaction.save();
+      return res.status(500).send(msg);
     }
-    return res.status(500).send(`Nhận được callback nhưng không tìm thấy transaction ${transId}`);
-  }
-
-  // Co transaction trong db
-  if(errorCode != 9) {
-    logger.info(`Got callback from GB but errorcode is: ${errorCode}`)
+  
+    // Co transaction trong db
+    if(errorCode != 9) {
+      logger.info(`Got callback from GB but errorcode is: ${errorCode}`)
+      const newTransactionDataField = {
+        message: `${transaction.message} -> [${new Date().toLocaleString()}] Máy chủ đã nhận phản hồi third party và tìm thấy mã giao dịch ${transId}. Nhưng giao dịch thất bại do mã lỗi: ${errorCode}.`,
+        status: 'END',
+      }
+      await Transaction.findOneAndUpdate({ transId }, { $set: newTransactionDataField })
+      return res.status(500).send(`Nhận được callback nhưng mã lỗi ${errorCode}`);
+    }
+    
+    // Neu errorcode = 0 và tim thay transaction trong db
+    const realAmount = Number(amount)
+    const realAmountInGame = realAmount / 100;
     const newTransactionDataField = {
-      message: `${transaction.message} -> [${new Date().toLocaleString()}] Máy chủ đã nhận phản hồi third party và tìm thấy mã giao dịch ${transId}. Nhưng giao dịch thất bại do mã lỗi: ${errorCode}.`,
-      status: 'END',
+      message: `${transaction.message} -> Giao dịch #${transId} thành công. +${realAmountInGame} xu`,
+      status: 'END'
     }
     await Transaction.findOneAndUpdate({ transId }, { $set: newTransactionDataField })
-    return res.status(500).send(`Nhận được callback nhưng mã lỗi ${errorCode}`);
-  }
+    console.log('Hook callback success. Let"s update userData')
+    const userId = transaction.userId
   
-  // Neu errorcode = 0 và tim thay transaction trong db
-  const realAmount = Number(amount)
-  const realAmountInGame = realAmount / 100;
-  const newTransactionDataField = {
-    message: `${transaction.message} -> Giao dịch #${transId} thành công. +${realAmountInGame} xu`,
-    status: 'END'
+    const mainPool = getConnectionPool('main')
+    const conn = await mainPool.getConnection()
+    const updateUserBalanceSqlQuery = 'UPDATE profiles SET balance = balance + ? WHERE users_id = ?';
+    const updateUserBalanceResult = await preparedStamentMysqlQuery(conn, updateUserBalanceSqlQuery, [realAmountInGame, userId]);
+    conn.release()
+    if(!updateUserBalanceResult) {
+      logger.error('Internal server error, can update your balance. Please quickly contact Administrator and take a screen shot this page!');
+      return res.status(500).send('Internal server error, can update your balance. Please quickly contact Administrator and take a screen shot this page!');
+    }
+    return res.status(200).send('Transaction success');
+  } catch (error) {
+    console.error('/gb/ibanking/callback error=', error);
   }
-  await Transaction.findOneAndUpdate({ transId }, { $set: newTransactionDataField })
-  console.log('Hook callback success. Let"s update userData')
-  const userId = transaction.userId
-
-  const mainPool = getConnectionPool('main')
-  const conn = await mainPool.getConnection()
-  const updateUserBalanceSqlQuery = 'UPDATE profiles SET balance = balance + ? WHERE users_id = ?';
-  const updateUserBalanceResult = await preparedStamentMysqlQuery(conn, updateUserBalanceSqlQuery, [realAmountInGame, userId]);
-  conn.release()
-  if(!updateUserBalanceResult) {
-    logger.error('Internal server error, can update your balance. Please quickly contact Administrator and take a screen shot this page!');
-    return res.status(500).send('Internal server error, can update your balance. Please quickly contact Administrator and take a screen shot this page!');
-  }
-  return res.status(200).send('Transaction success');
 })
 
 router.get('/gb/check/:transId', async (req, res) => {
